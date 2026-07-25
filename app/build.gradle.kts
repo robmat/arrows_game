@@ -121,6 +121,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    // GameLevel/Snake/Direction (core:models), SolvabilityChecker (domain) and
+    // GAME_AREA_TEST_TAG (feature:game) aren't otherwise guaranteed to be on the
+    // androidTest compile classpath - the app module only depends on them transitively
+    // through implementation() edges in other modules (e.g. :navigation -> :feature:game).
+    androidTestImplementation(project(":core:models"))
+    androidTestImplementation(project(":domain"))
+    androidTestImplementation(project(":feature:game"))
     debugImplementation(libs.appyx.testing.ui.activity)
     androidTestImplementation(libs.appyx.testing.ui)
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -204,6 +205,8 @@ private fun updateConfettiState(uiState: GameUiState, currentState: List<Party>)
     }
 }
 
+const val GAME_AREA_TEST_TAG = "game_area"
+
 @Composable
 private fun ColumnScope.GameArea(params: GameAreaParams) {
     Box(
@@ -212,6 +215,7 @@ private fun ColumnScope.GameArea(params: GameAreaParams) {
             .weight(1f)
             .padding(16.dp)
             .clipToBounds()
+            .testTag(GAME_AREA_TEST_TAG)
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ -> params.engine.onTransform(pan, zoom) }
             }
