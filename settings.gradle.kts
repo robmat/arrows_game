@@ -1,5 +1,6 @@
 pluginManagement {
     includeBuild("build-logic")
+    includeBuild("../release-tools")
     repositories {
         google {
             content {

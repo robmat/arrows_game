@@ -1,21 +1,47 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("jacoco")
+    id("com.github.triplet.play")
+    id("com.batodev.releasetools")
+    id("com.github.ben-manes.versions")
+    id("se.patrikerdes.use-latest-versions")
 }
+
+val keystorePropertiesFile = rootProject.file("../keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
+}
+
+val versionProps = Properties()
+file("version.properties").inputStream().use { versionProps.load(it) }
 
 android {
     namespace = "com.batodev.arrows"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.batodev.arrows"
         minSdk = 29
-        targetSdk = 36
-        versionCode = 9
-        versionName = "1.8"
+        targetSdk = 37
+        versionCode = versionProps.getProperty("versionCode").toInt()
+        versionName = versionProps.getProperty("versionName")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
+        }
     }
 
     buildTypes {
@@ -25,6 +51,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["admobAppId"] = "ca-app-pub-9667420067790140~5728073317"
         }
         debug {
@@ -43,6 +70,12 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+}
+
+play {
+    serviceAccountCredentials.set(rootProject.file("../play-console-api-465319-0f9c399097c5.json"))
+    track.set("internal")
+    defaultToAppBundles.set(true)
 }
 
 tasks.withType<Test> {
