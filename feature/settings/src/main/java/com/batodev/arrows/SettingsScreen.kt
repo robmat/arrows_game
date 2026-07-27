@@ -32,6 +32,7 @@ import com.batodev.arrows.ui.AnimationSpeedSelectionDialog
 import com.batodev.arrows.ui.AppNavigationBar
 import com.batodev.arrows.ui.AppViewModel
 import com.batodev.arrows.ui.DebugMenu
+import com.batodev.arrows.ui.DebugViewModel
 import com.batodev.arrows.ui.FeedbackSection
 import com.batodev.arrows.ui.LegalSection
 import com.batodev.arrows.ui.NavigationDestination
@@ -46,6 +47,7 @@ import com.batodev.arrows.ui.theme.LocalThemeColors
 @Composable
 fun SettingsScreen(
     viewModel: AppViewModel,
+    debugViewModel: DebugViewModel,
     rewardAdManager: RewardAdManager,
     consentManager: ConsentManager,
     onNavigateHome: () -> Unit = {},
@@ -73,7 +75,7 @@ fun SettingsScreen(
 
     SettingsScaffold(
         SettingsScaffoldParams(
-            viewModel, rewardAdManager, consentManager, context, themeColors,
+            viewModel, debugViewModel, rewardAdManager, consentManager, context, themeColors,
             levelNumber, isAdFree, currentTheme, currentSpeed,
             { showThemeDialog = true }, { showSpeedDialog = true }, { showLicensesDialog = true },
             onNavigateHome, onNavigateToGenerate
@@ -83,6 +85,7 @@ fun SettingsScreen(
 
 private data class SettingsScaffoldParams(
     val viewModel: AppViewModel,
+    val debugViewModel: DebugViewModel,
     val rewardAdManager: RewardAdManager,
     val consentManager: ConsentManager,
     val context: android.content.Context,
@@ -185,7 +188,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
                     }
                 )
             }
-            if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(params.viewModel)
+            if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(params.viewModel, params.debugViewModel)
         }
     }
 }

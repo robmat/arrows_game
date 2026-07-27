@@ -27,9 +27,10 @@ private val FINGER_SIZE: Dp = 120.dp
 
 @Composable
 fun IntroFingerOverlay(level: GameLevel) {
-    val removableId = SolvabilityChecker.findRemovableSnake(level) ?: return
-    val snake = level.snakes.firstOrNull { it.id == removableId } ?: return
-    val head = snake.body.firstOrNull() ?: return
+    val removableId = SolvabilityChecker.findRemovableSnake(level)
+    val snake = level.snakes.firstOrNull { it.id == removableId }
+    val head = snake?.body?.firstOrNull()
+    if (snake == null || head == null) return
 
     val transition = rememberInfiniteTransition(label = "introFlash")
     val alpha by transition.animateFloat(

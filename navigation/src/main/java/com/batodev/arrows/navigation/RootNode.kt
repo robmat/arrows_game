@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.batodev.arrows.ui.AppViewModel
+import com.batodev.arrows.ui.DebugViewModel
 import com.batodev.arrows.ui.theme.LocalThemeColors
 import com.bumble.appyx.core.composable.Children
 import com.bumble.appyx.core.modality.BuildContext
@@ -19,6 +20,7 @@ import com.batodev.arrows.navigation.transitions.rememberRandomTransitionHandler
 class RootNode(
     buildContext: BuildContext,
     private val appViewModel: AppViewModel,
+    private val debugViewModel: DebugViewModel,
     private val backStack: BackStack<NavTarget> = BackStack(
         initialElement = NavTarget.Home,
         savedStateMap = buildContext.savedStateMap
@@ -60,6 +62,7 @@ class RootNode(
         NavTarget.Settings -> SettingsNode(
             buildContext = buildContext,
             appViewModel = appViewModel,
+            debugViewModel = debugViewModel,
             onNavigateHome = { backStack.newRoot(NavTarget.Home) },
             onNavigateToGenerate = { backStack.replace(NavTarget.Generate) }
         )

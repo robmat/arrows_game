@@ -130,10 +130,5 @@ private fun AdWatchButton(state: AdSettingsSectionState) {
 }
 
 private fun handleAdReward(state: AdSettingsSectionState) {
-    state.viewModel.incrementRewardAdCount()
-    val newCount = state.rewardAdCount + 1
-    if (newCount >= GameConstants.REQUIRED_AD_COUNT_FOR_AD_FREE) {
-        state.viewModel.saveIsAdFree(true)
-        state.viewModel.resetRewardAdCount()
-    }
+    state.viewModel.handleRewardedAdWatched()
 }

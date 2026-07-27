@@ -55,32 +55,6 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `test saveDebugOption width updates state`() = runTest {
-        val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.debugForcedWidth.collect {}
-        }
-
-        viewModel.saveDebugOption(AppViewModel.DebugOption.WIDTH, 10)
-        assertEquals(10, repository.debugForcedWidthFlow.value)
-        assertEquals(10, viewModel.debugForcedWidth.value)
-
-        collectJob.cancel()
-    }
-
-    @Test
-    fun `test saveDebugOption shape updates state`() = runTest {
-        val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.debugForcedShape.collect {}
-        }
-
-        viewModel.saveDebugOption(AppViewModel.DebugOption.SHAPE, "heart")
-        assertEquals("heart", repository.debugForcedShapeFlow.value)
-        assertEquals("heart", viewModel.debugForcedShape.value)
-
-        collectJob.cancel()
-    }
-
-    @Test
     fun `test regenerateCurrentLevel clears saved level`() = runTest {
         val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.hasSavedLevel.collect {}

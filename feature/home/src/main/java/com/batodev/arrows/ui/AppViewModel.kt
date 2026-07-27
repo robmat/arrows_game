@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.batodev.arrows.GameConstants
 import com.batodev.arrows.data.GameStateDao
 import com.batodev.arrows.data.IUserPreferencesRepository
+import com.batodev.arrows.data.hasSavedLevel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -14,10 +16,6 @@ class AppViewModel(
     private val userPreferencesRepository: IUserPreferencesRepository,
     private val gameStateDao: GameStateDao
 ) : ViewModel() {
-
-    enum class DebugOption {
-        WIDTH, HEIGHT, LIVES, SHAPE
-    }
 
     var shapeProvider: com.batodev.arrows.engine.BoardShapeProvider? = null
 
@@ -61,30 +59,6 @@ class AppViewModel(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
         initialValue = 1
-    )
-
-    val debugForcedWidth: StateFlow<Int?> = userPreferencesRepository.debugForcedWidth.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
-
-    val debugForcedHeight: StateFlow<Int?> = userPreferencesRepository.debugForcedHeight.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
-
-    val debugForcedLives: StateFlow<Int?> = userPreferencesRepository.debugForcedLives.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
-
-    val debugForcedShape: StateFlow<String?> = userPreferencesRepository.debugForcedShape.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
     )
 
     val hasSavedLevel: StateFlow<Boolean> = gameStateDao.hasSavedLevel().stateIn(
@@ -165,21 +139,15 @@ class AppViewModel(
         }
     }
 
-    fun saveIsAdFree(isAdFree: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveIsAdFree(isAdFree)
-        }
-    }
-
-    fun incrementRewardAdCount() {
+    /** Records a completed rewarded-ad view and grants ad-free once enough have been watched. */
+    fun handleRewardedAdWatched() {
         viewModelScope.launch {
             userPreferencesRepository.incrementRewardAdCount()
-        }
-    }
-
-    fun resetRewardAdCount() {
-        viewModelScope.launch {
-            userPreferencesRepository.resetRewardAdCount()
+            val newCount = userPreferencesRepository.rewardAdCount.first()
+            if (newCount >= GameConstants.REQUIRED_AD_COUNT_FOR_AD_FREE) {
+                userPreferencesRepository.saveIsAdFree(true)
+                userPreferencesRepository.resetRewardAdCount()
+            }
         }
     }
 
@@ -194,16 +162,4 @@ class AppViewModel(
             userPreferencesRepository.saveIntroCompleted(completed)
         }
     }
-
-    fun saveDebugOption(option: DebugOption, value: Any?) {
-        viewModelScope.launch {
-            when (option) {
-                DebugOption.WIDTH -> userPreferencesRepository.saveDebugForcedWidth(value as? Int)
-                DebugOption.HEIGHT -> userPreferencesRepository.saveDebugForcedHeight(value as? Int)
-                DebugOption.LIVES -> userPreferencesRepository.saveDebugForcedLives(value as? Int)
-                DebugOption.SHAPE -> userPreferencesRepository.saveDebugForcedShape(value as? String)
-            }
-        }
-    }
-
 }

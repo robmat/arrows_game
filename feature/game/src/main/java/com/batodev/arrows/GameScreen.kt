@@ -82,11 +82,6 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-data class CelebrationParams(
-    val showCelebration: Boolean,
-    val onCelebrationComplete: () -> Unit
-)
-
 private val LocalCelebrationParams = compositionLocalOf<CelebrationParams> {
     error("CelebrationParams not provided")
 }

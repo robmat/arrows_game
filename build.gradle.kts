@@ -14,6 +14,7 @@ plugins {
 }
 
 detekt {
+    buildUponDefaultConfig = true
     config.setFrom(files("config/detekt/detekt.yml"))
     source.setFrom(
         subprojects.map { "${it.projectDir}/src" }

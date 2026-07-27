@@ -36,13 +36,13 @@ import com.batodev.arrows.ui.theme.LocalThemeColors
 import com.batodev.arrows.ui.theme.White
 
 @Composable
-fun DebugMenu(viewModel: AppViewModel) {
+fun DebugMenu(viewModel: AppViewModel, debugViewModel: DebugViewModel) {
     val themeColors = LocalThemeColors.current
     val levelNumber by viewModel.levelNumber.collectAsState()
-    val forcedWidth by viewModel.debugForcedWidth.collectAsState()
-    val forcedHeight by viewModel.debugForcedHeight.collectAsState()
-    val forcedLives by viewModel.debugForcedLives.collectAsState()
-    val forcedShape by viewModel.debugForcedShape.collectAsState()
+    val forcedWidth by debugViewModel.debugForcedWidth.collectAsState()
+    val forcedHeight by debugViewModel.debugForcedHeight.collectAsState()
+    val forcedLives by debugViewModel.debugForcedLives.collectAsState()
+    val forcedShape by debugViewModel.debugForcedShape.collectAsState()
 
     var dialogToShow by remember { mutableStateOf<String?>(null) }
 
@@ -88,7 +88,7 @@ fun DebugMenu(viewModel: AppViewModel) {
 
     DebugDialogs(
         DebugDialogParams(
-            dialogToShow, viewModel, levelNumber, forcedWidth,
+            dialogToShow, viewModel, debugViewModel, levelNumber, forcedWidth,
             forcedHeight, forcedLives, forcedShape
         ) {
             dialogToShow = null
@@ -111,24 +111,24 @@ private fun DebugDialogs(params: DebugDialogParams) {
             params.forcedWidth ?: 0,
             params.onDismiss
         ) {
-            params.viewModel.saveDebugOption(AppViewModel.DebugOption.WIDTH, if (it > 0) it else null)
+            params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.WIDTH, if (it > 0) it else null)
         }
         "height" -> NumberInputDialog(
             stringResource(R.string.height_auto_label),
             params.forcedHeight ?: 0,
             params.onDismiss
         ) {
-            params.viewModel.saveDebugOption(AppViewModel.DebugOption.HEIGHT, if (it > 0) it else null)
+            params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.HEIGHT, if (it > 0) it else null)
         }
         "lives" -> NumberInputDialog(
             stringResource(R.string.lives_auto_label),
             params.forcedLives ?: 0,
             params.onDismiss
         ) {
-            params.viewModel.saveDebugOption(AppViewModel.DebugOption.LIVES, if (it > 0) it else null)
+            params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.LIVES, if (it > 0) it else null)
         }
         "shape" -> ShapeSelectionDialog(params.viewModel, params.forcedShape, params.onDismiss) {
-            params.viewModel.saveDebugOption(AppViewModel.DebugOption.SHAPE, it)
+            params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.SHAPE, it)
         }
     }
 }

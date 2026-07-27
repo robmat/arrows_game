@@ -21,14 +21,17 @@ val dataModule = module {
             .build()
     }
     single {
-        val dao = get<AppDatabase>().userPreferencesDao()
+        val dao = get<AppDatabase>().corePreferencesDao()
         CoroutineScope(Dispatchers.IO).launch {
             migrateFromDataStoreIfNeeded(androidContext(), dao)
             dao.insertDefault(UserPreferencesEntity())
         }
         dao
     }
+    single { get<AppDatabase>().gameplayPreferencesDao() }
+    single { get<AppDatabase>().debugPreferencesDao() }
+    single { get<AppDatabase>().monetizationPreferencesDao() }
     single { get<AppDatabase>().gameStateDao() }
-    single { UserPreferencesRepository(get()) }
+    single { UserPreferencesRepository(get(), get(), get(), get()) }
     single<IUserPreferencesRepository> { get<UserPreferencesRepository>() }
 }

@@ -95,6 +95,9 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userPreferencesDao(): UserPreferencesDao
+    abstract fun corePreferencesDao(): CorePreferencesDao
+    abstract fun gameplayPreferencesDao(): GameplayPreferencesDao
+    abstract fun debugPreferencesDao(): DebugPreferencesDao
+    abstract fun monetizationPreferencesDao(): MonetizationPreferencesDao
     abstract fun gameStateDao(): GameStateDao
 }

@@ -33,9 +33,6 @@ import org.koin.core.component.get
 // here. Screens are addressed via Compose's own test APIs (onNodeWithText /
 // onNodeWithTag) instead.
 
-@PublishedApi
-internal object KoinAccess : KoinComponent
-
 /** Typed access to any real singleton wired into the app's global Koin graph. */
 inline fun <reified T : Any> koinInstance(): T = KoinAccess.get<T>()
 

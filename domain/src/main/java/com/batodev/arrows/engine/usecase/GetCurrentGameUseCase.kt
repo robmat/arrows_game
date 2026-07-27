@@ -29,8 +29,9 @@ class GetCurrentGameUseCase(
     )
 
     suspend operator fun invoke(): Result? {
-        val initialData = gameStateRepository.loadGameLevel(STATE_INITIAL) ?: return null
-        val currentData = gameStateRepository.loadGameLevel(STATE_CURRENT) ?: return null
+        val initialData = gameStateRepository.loadGameLevel(STATE_INITIAL)
+        val currentData = gameStateRepository.loadGameLevel(STATE_CURRENT)
+        if (initialData == null || currentData == null) return null
         val levelNum = prefsRepository.levelNumber.firstOrNull() ?: 1
         val savedLives = prefsRepository.currentLives.firstOrNull()
         val config = LevelProgression.calculateLevelConfiguration(levelNum)

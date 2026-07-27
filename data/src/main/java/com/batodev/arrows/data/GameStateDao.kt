@@ -41,8 +41,6 @@ abstract class GameStateDao {
     @Query("SELECT COUNT(*) FROM game_boards WHERE stateType = 'CURRENT'")
     abstract fun getCurrentBoardCount(): Flow<Int>
 
-    fun hasSavedLevel(): Flow<Boolean> = getCurrentBoardCount().map { it > 0 }
-
     @Transaction
     open suspend fun saveGameLevel(stateType: String, width: Int, height: Int, snakes: List<SnakeSaveData>) {
         deleteByStateType(stateType)
@@ -79,3 +77,5 @@ abstract class GameStateDao {
         deleteAllBoards()
     }
 }
+
+fun GameStateDao.hasSavedLevel(): Flow<Boolean> = getCurrentBoardCount().map { it > 0 }

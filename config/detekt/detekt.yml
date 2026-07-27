@@ -9,6 +9,16 @@ complexity:
   LongParameterList:
     active: true
     ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    active: true
+    ignoreOverridden: true
+    ignoreAnnotatedFunctions: ['Composable']
+    # GameStateDao has 12: 9 Room-generated CRUD primitives (one @Insert/@Query per
+    # distinct entity/column - Room requires each as its own abstract method) plus 3
+    # @Transaction composite methods. Room only honors @Transaction on a method inside
+    # the @Dao class itself, so the composites can't move to a separate repository
+    # without losing the atomicity guarantee.
+    allowedFunctionsPerClass: 12
 
 style:
   MagicNumber:

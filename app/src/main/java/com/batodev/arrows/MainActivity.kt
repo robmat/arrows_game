@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.batodev.arrows.navigation.RootNode
 import com.batodev.arrows.ui.AppViewModel
+import com.batodev.arrows.ui.DebugViewModel
 import com.batodev.arrows.ui.theme.ArrowsTheme
 import com.bumble.appyx.core.integration.NodeHost
 import com.bumble.appyx.core.integrationpoint.ActivityIntegrationPoint
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity(), IntegrationPointProvider {
         private set
 
     private val appViewModel: AppViewModel by viewModel()
+    private val debugViewModel: DebugViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,8 @@ class MainActivity : ComponentActivity(), IntegrationPointProvider {
                 NodeHost(integrationPoint = appyxV1IntegrationPoint) { buildContext ->
                     RootNode(
                         buildContext = buildContext,
-                        appViewModel = appViewModel
+                        appViewModel = appViewModel,
+                        debugViewModel = debugViewModel
                     )
                 }
             }
