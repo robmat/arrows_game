@@ -18,7 +18,10 @@ complexity:
     # @Transaction composite methods. Room only honors @Transaction on a method inside
     # the @Dao class itself, so the composites can't move to a separate repository
     # without losing the atomicity guarantee.
-    allowedFunctionsPerClass: 12
+    # thresholdInClasses is inclusive under io.gitlab.arturbosch.detekt (triggers
+    # at count >= threshold, unlike dev.detekt's exclusive allowedFunctionsPerClass) -
+    # set to 13 so GameStateDao's 12 functions stay allowed.
+    thresholdInClasses: 13
 
 style:
   MagicNumber:

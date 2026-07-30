@@ -7,7 +7,6 @@ appyx = "1.7.1"
 composeBom = "2026.02.01"
 coreKtx = "1.17.0"
 coroutinesTest = "1.10.2"
-detekt = "2.0.0-alpha.2"
 espressoCore = "3.7.0"
 jacocoVersion = "0.8.13"
 junit = "4.13.2"
@@ -72,7 +71,6 @@ aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.re
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-detekt = { id = "dev.detekt", version.ref = "detekt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

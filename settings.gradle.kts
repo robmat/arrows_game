@@ -20,6 +20,11 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
     }
+    versionCatalogs {
+        create("sharedLibs") {
+            from(files("../release-tools/gradle/libs.versions.toml"))
+        }
+    }
 }
 
 rootProject.name = "Arrows"
