@@ -2,15 +2,19 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.kotlin.compose) apply false
-    alias(sharedLibs.plugins.detekt)
-    alias(libs.plugins.aboutlibraries) apply false
-    alias(libs.plugins.ksp) apply false
+    // Kotlin intentionally not on the shared alias - this repo is ahead of the
+    // fleet-wide 2.2.10 at 2.3.10; folding it in would be a real, untested-here
+    // Kotlin change, not a mechanical catalog migration.
+    id("org.jetbrains.kotlin.jvm") version "2.3.10" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.10" apply false
+    alias(libs.plugins.detekt)
+    // aboutlibraries isn't in the shared catalog (single-repo use).
+    id("com.mikepenz.aboutlibraries.plugin.android") version "14.0.0-b02" apply false
+    // KSP isn't in the shared catalog (only a handful of repos use it, each
+    // pinned to a KSP release matching its own Kotlin version).
+    id("com.google.devtools.ksp") version "2.3.6" apply false
     id("jacoco")
-    id("com.github.triplet.play") version "4.0.0" apply false
-    id("com.github.ben-manes.versions") version "0.54.0" apply false
-    id("se.patrikerdes.use-latest-versions") version "0.2.19" apply false
+    alias(libs.plugins.triplet.play) apply false
 }
 
 detekt {

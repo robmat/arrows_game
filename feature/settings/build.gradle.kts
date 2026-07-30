@@ -1,6 +1,6 @@
 plugins {
     id("arrows.android.feature")
-    alias(libs.plugins.aboutlibraries)
+    id("com.mikepenz.aboutlibraries.plugin.android")
 }
 
 android {
@@ -26,9 +26,9 @@ aboutLibraries {
 }
 
 dependencies {
-    implementation(libs.koin.android)
-    implementation(libs.aboutlibraries.compose.m3)
-    implementation(libs.play.review.ktx)
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("com.mikepenz:aboutlibraries-compose-m3:14.0.0-b02")
+    implementation(libs.google.play.review.ktx)
     implementation(project(":feature:home"))
     implementation(project(":core:ui"))
     implementation(project(":ads"))

@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         maven { url = uri("https://jitpack.io") }
     }
     versionCatalogs {
-        create("sharedLibs") {
+        create("libs") {
             from(files("../release-tools/gradle/libs.versions.toml"))
         }
     }

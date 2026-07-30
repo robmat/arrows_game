@@ -8,7 +8,7 @@ android {
 
 dependencies {
     api(libs.junit)
-    api(libs.kotlinx.coroutines.test)
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     api(project(":data"))
     api(project(":core:models"))
 }

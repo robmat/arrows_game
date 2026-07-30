@@ -2,12 +2,10 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.compose")
     id("jacoco")
     id("com.github.triplet.play")
     id("com.batodev.releasetools")
-    id("com.github.ben-manes.versions")
-    id("se.patrikerdes.use-latest-versions")
 }
 
 val keystorePropertiesFile = rootProject.file("../keystore.properties")
@@ -87,7 +85,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-    toolVersion = libs.versions.jacocoVersion.get()
+    toolVersion = "0.8.13"
 }
 
 tasks.register<JacocoReport>("testDebugUnitTestCoverage") {
@@ -131,29 +129,32 @@ tasks.register<JacocoReport>("testDebugUnitTestCoverage") {
 
 configurations.all {
     resolutionStrategy {
-        force(libs.androidx.annotation.experimental)
+        force("androidx.annotation:annotation-experimental:1.5.1")
     }
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.appyx.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+    // core-ktx/lifecycle-runtime-ktx/activity-compose/compose-bom intentionally not
+    // on the shared catalog's values - this repo is behind on all of them; bumping
+    // would be a real, untested-here change, not a mechanical catalog migration.
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.activity:activity-compose:1.12.4")
+    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
+    implementation("androidx.compose.ui:ui")
+    implementation("com.bumble.appyx:core:1.7.1")
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
     implementation(project(":navigation"))
     implementation(project(":feature:home"))
     implementation(project(":core:ui"))
     implementation(project(":data"))
     implementation(project(":ads"))
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.02.01"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     // GameLevel/Snake/Direction (core:models), SolvabilityChecker (domain) and
     // GAME_AREA_TEST_TAG (feature:game) aren't otherwise guaranteed to be on the
     // androidTest compile classpath - the app module only depends on them transitively
@@ -161,8 +162,8 @@ dependencies {
     androidTestImplementation(project(":core:models"))
     androidTestImplementation(project(":domain"))
     androidTestImplementation(project(":feature:game"))
-    debugImplementation(libs.appyx.testing.ui.activity)
-    androidTestImplementation(libs.appyx.testing.ui)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation("com.bumble.appyx:testing-ui-activity:1.7.1")
+    androidTestImplementation("com.bumble.appyx:testing-ui:1.7.1")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

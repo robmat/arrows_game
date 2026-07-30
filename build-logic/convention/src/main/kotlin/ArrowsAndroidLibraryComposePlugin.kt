@@ -3,7 +3,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
 
 class ArrowsAndroidLibraryComposePlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -17,14 +16,13 @@ class ArrowsAndroidLibraryComposePlugin : Plugin<Project> {
                 }
             }
 
-            val libs = extensions.getByType<org.gradle.api.artifacts.VersionCatalogsExtension>()
-                .named("libs")
-
             dependencies {
-                val bom = libs.findLibrary("androidx-compose-bom").get()
-                add("implementation", platform(bom))
-                add("implementation", libs.findLibrary("androidx-compose-ui").get())
-                add("implementation", libs.findLibrary("androidx-compose-material3").get())
+                // Compose BOM intentionally not on the shared catalog's value
+                // (2026.06.01) - this repo is behind at 2026.02.01; bumping would
+                // be a real, untested-here change, not a mechanical migration.
+                add("implementation", platform("androidx.compose:compose-bom:2026.02.01"))
+                add("implementation", "androidx.compose.ui:ui")
+                add("implementation", "androidx.compose.material3:material3")
             }
         }
     }

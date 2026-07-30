@@ -21,9 +21,9 @@ android {
 }
 
 dependencies {
-    implementation(libs.koin.android)
-    implementation(libs.konfetti.compose)
-    implementation(libs.androidx.core.ktx)
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("nl.dionsegijn:konfetti-compose:2.0.5")
+    implementation("androidx.core:core-ktx:1.17.0")
     implementation(project(":feature:home"))
     implementation(project(":domain"))
     implementation(project(":data"))
@@ -31,6 +31,6 @@ dependencies {
     implementation(project(":ads"))
     implementation(project(":core:resources"))
     testImplementation(project(":core:testing"))
-    testImplementation(libs.appyx.testing.unit.common)
-    testImplementation(libs.appyx.testing.junit5)
+    testImplementation("com.bumble.appyx:testing-unit-common:1.7.1")
+    testImplementation("com.bumble.appyx:testing-junit5:1.7.1")
 }
