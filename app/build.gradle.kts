@@ -134,12 +134,14 @@ configurations.all {
 }
 
 dependencies {
-    // core-ktx/lifecycle-runtime-ktx/activity-compose/compose-bom intentionally not
-    // on the shared catalog's values - this repo is behind on all of them; bumping
-    // would be a real, untested-here change, not a mechanical catalog migration.
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-    implementation("androidx.activity:activity-compose:1.12.4")
+    // Behind the shared catalog's versions - still sourced from it, strictly
+    // pinned to this repo's own values rather than bumped as a side effect.
+    implementation(libs.androidx.core.ktx) { version { strictly("1.17.0") } }
+    implementation(libs.androidx.lifecycle.runtime.ktx) { version { strictly("2.10.0") } }
+    implementation(libs.androidx.activity.compose) { version { strictly("1.12.4") } }
+    // compose-bom kept as a plain literal platform() - libs.x + strictly() doesn't
+    // resolve when wrapped in platform(), unlike a direct dependency reference;
+    // confirmed by a real compile failure.
     implementation(platform("androidx.compose:compose-bom:2026.02.01"))
     implementation("androidx.compose.ui:ui")
     implementation("com.bumble.appyx:core:1.7.1")

@@ -25,8 +25,8 @@ android {
 
 dependencies {
     implementation("io.insert-koin:koin-android:4.0.0")
-    // play-services-ads intentionally not on the shared catalog's value
-    // (25.4.0) - this repo is behind at 25.0.0.
-    api("com.google.android.gms:play-services-ads:25.0.0")
+    // Behind the shared catalog's value (25.4.0) - still sourced from it,
+    // strictly pinned to this repo's own value.
+    api(libs.play.services.ads) { version { strictly("25.0.0") } }
     api("com.google.android.ump:user-messaging-platform:4.0.0")
 }
