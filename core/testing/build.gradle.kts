@@ -8,7 +8,9 @@ android {
 
 dependencies {
     api(libs.junit)
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    // Behind the shared catalog's value (1.11.0) - still sourced from it,
+    // strictly pinned to this repo's own value.
+    api(libs.kotlinx.coroutines.test) { version { strictly("1.10.2") } }
     api(project(":data"))
     api(project(":core:models"))
 }

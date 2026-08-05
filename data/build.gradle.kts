@@ -15,7 +15,7 @@ ksp {
 }
 
 dependencies {
-    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation(libs.koin.android)
     api(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
@@ -28,5 +28,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core:resources"))
     testImplementation(libs.junit)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    // Behind the shared catalog's value (1.11.0) - still sourced from it,
+    // strictly pinned to this repo's own value.
+    testImplementation(libs.kotlinx.coroutines.test) { version { strictly("1.10.2") } }
 }

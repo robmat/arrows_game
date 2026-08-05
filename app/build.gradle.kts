@@ -122,7 +122,7 @@ tasks.register<JacocoReport>("testDebugUnitTestCoverage") {
 
 configurations.all {
     resolutionStrategy {
-        force("androidx.annotation:annotation-experimental:1.5.1")
+        force(libs.androidx.annotation.experimental)
     }
 }
 
@@ -132,14 +132,14 @@ dependencies {
     implementation(libs.androidx.core.ktx) { version { strictly("1.17.0") } }
     implementation(libs.androidx.lifecycle.runtime.ktx) { version { strictly("2.10.0") } }
     implementation(libs.androidx.activity.compose) { version { strictly("1.12.4") } }
-    // compose-bom kept as a plain literal platform() - libs.x + strictly() doesn't
-    // resolve when wrapped in platform(), unlike a direct dependency reference;
-    // confirmed by a real compile failure.
-    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
+    // Dedicated alias (not the generic composeBom + strictly()) - strictly()
+    // doesn't resolve wrapped in platform(), confirmed by a real compile
+    // failure; a plain catalog reference wrapped in platform() works fine.
+    implementation(platform(libs.arrows.androidx.compose.bom))
     implementation("androidx.compose.ui:ui")
-    implementation("com.bumble.appyx:core:1.7.1")
-    implementation("io.insert-koin:koin-android:4.0.0")
-    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+    implementation(libs.bumble.appyx.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
     implementation(project(":navigation"))
     implementation(project(":feature:home"))
     implementation(project(":core:ui"))
@@ -148,7 +148,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.02.01"))
+    androidTestImplementation(platform(libs.arrows.androidx.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     // GameLevel/Snake/Direction (core:models), SolvabilityChecker (domain) and
     // GAME_AREA_TEST_TAG (feature:game) aren't otherwise guaranteed to be on the
@@ -157,8 +157,8 @@ dependencies {
     androidTestImplementation(project(":core:models"))
     androidTestImplementation(project(":domain"))
     androidTestImplementation(project(":feature:game"))
-    debugImplementation("com.bumble.appyx:testing-ui-activity:1.7.1")
-    androidTestImplementation("com.bumble.appyx:testing-ui:1.7.1")
+    debugImplementation(libs.bumble.appyx.testing.ui.activity)
+    androidTestImplementation(libs.bumble.appyx.testing.ui)
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

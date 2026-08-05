@@ -26,8 +26,8 @@ aboutLibraries {
 }
 
 dependencies {
-    implementation("io.insert-koin:koin-android:4.0.0")
-    implementation("com.mikepenz:aboutlibraries-compose-m3:14.0.0-b02")
+    implementation(libs.koin.android)
+    implementation(libs.mikepenz.aboutlibraries.compose.m3)
     implementation(libs.google.play.review.ktx)
     implementation(project(":feature:home"))
     implementation(project(":core:ui"))

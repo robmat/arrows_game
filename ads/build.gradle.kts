@@ -24,9 +24,9 @@ android {
 }
 
 dependencies {
-    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation(libs.koin.android)
     // Behind the shared catalog's value (25.4.0) - still sourced from it,
     // strictly pinned to this repo's own value.
     api(libs.play.services.ads) { version { strictly("25.0.0") } }
-    api("com.google.android.ump:user-messaging-platform:4.0.0")
+    api(libs.google.ump)
 }
