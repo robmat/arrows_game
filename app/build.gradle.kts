@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     id("org.jetbrains.kotlin.plugin.compose")
     id("jacoco")
-    id("com.github.triplet.play")
     id("com.batodev.releasetools")
 }
 
@@ -68,12 +67,6 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
-}
-
-play {
-    serviceAccountCredentials.set(rootProject.file("../play-console-api-465319-0f9c399097c5.json"))
-    track.set("internal")
-    defaultToAppBundles.set(true)
 }
 
 tasks.withType<Test> {

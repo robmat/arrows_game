@@ -14,7 +14,6 @@ plugins {
     // pinned to a KSP release matching its own Kotlin version).
     id("com.google.devtools.ksp") version "2.3.6" apply false
     id("jacoco")
-    alias(libs.plugins.triplet.play) apply false
 }
 
 detekt {
