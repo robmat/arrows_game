@@ -16,9 +16,9 @@ ksp {
 
 dependencies {
     implementation("io.insert-koin:koin-android:4.0.0")
-    api("androidx.room:room-runtime:2.8.4")
-    implementation("androidx.room:room-ktx:2.8.4")
-    ksp("androidx.room:room-compiler:2.8.4")
+    api(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     // Ahead of the shared catalog's value (1.1.7) - still sourced from it,
     // strictly pinned to this repo's own value.
     implementation(libs.androidx.datastore.preferences) { version { strictly("1.2.0") } }
