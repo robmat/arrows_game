@@ -23,7 +23,7 @@ android {
 dependencies {
     implementation("io.insert-koin:koin-android:4.0.0")
     implementation("nl.dionsegijn:konfetti-compose:2.0.5")
-    implementation("androidx.core:core-ktx:1.17.0")
+    implementation(libs.androidx.core.ktx) { version { strictly("1.17.0") } }
     implementation(project(":feature:home"))
     implementation(project(":domain"))
     implementation(project(":data"))
