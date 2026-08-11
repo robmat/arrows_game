@@ -300,6 +300,12 @@ Test coverage: `GameEngineTapTest`, `GameEngineShapeLogicTest`, `CustomGameShape
 
 ## Build
 
+This repo's Gradle build pulls shared build logic and the version catalog from [release-tools](https://github.com/robmat/release-tools) via `includeBuild`. Clone it as a sibling directory before building:
+
+```bash
+git clone https://github.com/robmat/release-tools.git ../release-tools
+```
+
 ```bash
 # Run tests, lint, and static analysis
 ./gradlew test lint detekt
