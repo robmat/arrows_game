@@ -9,17 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -93,17 +87,7 @@ private fun LicensesTopBar(onDismiss: () -> Unit, themeColors: ThemeColors) {
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            onClick = onDismiss,
-            colors = IconButtonDefaults.iconButtonColors(containerColor = themeColors.bottomBar),
-            modifier = Modifier.size(40.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.content_description_back),
-                tint = White
-            )
-        }
+        BackIconButton(onClick = onDismiss, containerColor = themeColors.bottomBar)
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = stringResource(R.string.third_party_licenses_label),

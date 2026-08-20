@@ -12,6 +12,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.batodev.arrows.GameConstants
 import com.batodev.arrows.core.resources.R
@@ -52,15 +53,20 @@ fun AppNavigationBar(
 }
 
 @Composable
-fun RowScope.HomeNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
+private fun RowScope.SimpleNavigationItem(
+    icon: ImageVector,
+    label: String,
+    selected: Boolean,
+    onNavigate: () -> Unit
+) {
     NavigationBarItem(
         icon = {
             Icon(
-                Icons.Default.Home,
-                contentDescription = stringResource(R.string.home_label)
+                icon,
+                contentDescription = label
             )
         },
-        label = { Text(stringResource(R.string.home_label)) },
+        label = { Text(label) },
         selected = selected,
         onClick = {
             if (!selected) {
@@ -78,28 +84,22 @@ fun RowScope.HomeNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
 }
 
 @Composable
-fun RowScope.SettingsNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
-    NavigationBarItem(
-        icon = {
-            Icon(
-                Icons.Default.Settings,
-                contentDescription = stringResource(R.string.settings_label)
-            )
-        },
-        label = { Text(stringResource(R.string.settings_label)) },
+fun RowScope.HomeNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
+    SimpleNavigationItem(
+        icon = Icons.Default.Home,
+        label = stringResource(R.string.home_label),
         selected = selected,
-        onClick = {
-            if (!selected) {
-                onNavigate()
-            }
-        },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = White,
-            indicatorColor = NavigationIndicator,
-            selectedTextColor = White,
-            unselectedIconColor = InactiveIcon,
-            unselectedTextColor = InactiveIcon
-        )
+        onNavigate = onNavigate
+    )
+}
+
+@Composable
+fun RowScope.SettingsNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
+    SimpleNavigationItem(
+        icon = Icons.Default.Settings,
+        label = stringResource(R.string.settings_label),
+        selected = selected,
+        onNavigate = onNavigate
     )
 }
 

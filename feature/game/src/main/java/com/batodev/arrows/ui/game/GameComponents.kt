@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.batodev.arrows.GameConstants
 import com.batodev.arrows.core.resources.R
+import com.batodev.arrows.ui.BackIconButton
 import com.batodev.arrows.ui.theme.HeartRed
 import com.batodev.arrows.ui.theme.LocalThemeColors
 import com.batodev.arrows.ui.theme.ProgressBarGreen
@@ -77,17 +77,7 @@ fun GameTopBar(state: GameTopBarState, callbacks: GameTopBarCallbacks) {
 @Composable
 private fun GameControls(onBack: () -> Unit, onRestart: () -> Unit, themeColors: ThemeColors) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(
-            onClick = onBack,
-            colors = IconButtonDefaults.iconButtonColors(containerColor = themeColors.topBarButton),
-            modifier = Modifier.size(40.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.content_description_back),
-                tint = White
-            )
-        }
+        BackIconButton(onClick = onBack, containerColor = themeColors.topBarButton)
         Spacer(modifier = Modifier.width(8.dp))
         IconButton(
             onClick = onRestart,

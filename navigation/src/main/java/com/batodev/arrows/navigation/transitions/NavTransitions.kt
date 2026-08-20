@@ -3,6 +3,8 @@ package com.batodev.arrows.navigation.transitions
 import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -26,12 +28,14 @@ internal fun Modifier.applyNavTransition(
     NavTransitionType.ROTATE_FADE -> composedRotateFade(transition)
 }
 
-private fun Modifier.composedFade(
-    transition: Transition<BackStack.State>,
-): Modifier = composed {
-    val alpha by transition.animateFloat(
+/**
+ * Fades out towards the backstack edges, staying opaque only while [BackStack.State.ACTIVE].
+ */
+@Composable
+private fun Transition<BackStack.State>.animateVisibilityAlpha(label: String): State<Float> =
+    animateFloat(
         transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "fade-alpha",
+        label = label,
         targetValueByState = { state ->
             when (state) {
                 BackStack.State.ACTIVE -> 1f
@@ -39,16 +43,17 @@ private fun Modifier.composedFade(
             }
         }
     )
-    graphicsLayer { this.alpha = alpha }
-}
 
-private fun Modifier.composedSlideHorizontal(
-    transition: Transition<BackStack.State>,
-    params: TransitionParams,
-): Modifier = composed {
-    val xFraction by transition.animateFloat(
+/**
+ * Fraction used to slide an element in/out along one axis: off-screen ahead while
+ * [BackStack.State.CREATED]/[BackStack.State.DESTROYED], centered while
+ * [BackStack.State.ACTIVE], and slightly behind while [BackStack.State.STASHED].
+ */
+@Composable
+private fun Transition<BackStack.State>.animateEdgeFraction(label: String): State<Float> =
+    animateFloat(
         transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "slide-h-x",
+        label = label,
         targetValueByState = { state ->
             when (state) {
                 BackStack.State.CREATED -> 1f
@@ -58,16 +63,20 @@ private fun Modifier.composedSlideHorizontal(
             }
         }
     )
-    val alpha by transition.animateFloat(
-        transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "slide-h-alpha",
-        targetValueByState = { state ->
-            when (state) {
-                BackStack.State.ACTIVE -> 1f
-                else -> 0f
-            }
-        }
-    )
+
+private fun Modifier.composedFade(
+    transition: Transition<BackStack.State>,
+): Modifier = composed {
+    val alpha by transition.animateVisibilityAlpha("fade-alpha")
+    graphicsLayer { this.alpha = alpha }
+}
+
+private fun Modifier.composedSlideHorizontal(
+    transition: Transition<BackStack.State>,
+    params: TransitionParams,
+): Modifier = composed {
+    val xFraction by transition.animateEdgeFraction("slide-h-x")
+    val alpha by transition.animateVisibilityAlpha("slide-h-alpha")
     val widthDp = params.bounds.width.value
     layout { measurable, constraints ->
         val placeable = measurable.measure(constraints)
@@ -84,28 +93,8 @@ private fun Modifier.composedSlideVertical(
     transition: Transition<BackStack.State>,
     params: TransitionParams,
 ): Modifier = composed {
-    val yFraction by transition.animateFloat(
-        transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "slide-v-y",
-        targetValueByState = { state ->
-            when (state) {
-                BackStack.State.CREATED -> 1f
-                BackStack.State.ACTIVE -> 0f
-                BackStack.State.STASHED -> -0.25f
-                BackStack.State.DESTROYED -> 1f
-            }
-        }
-    )
-    val alpha by transition.animateFloat(
-        transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "slide-v-alpha",
-        targetValueByState = { state ->
-            when (state) {
-                BackStack.State.ACTIVE -> 1f
-                else -> 0f
-            }
-        }
-    )
+    val yFraction by transition.animateEdgeFraction("slide-v-y")
+    val alpha by transition.animateVisibilityAlpha("slide-v-alpha")
     val heightDp = params.bounds.height.value
     layout { measurable, constraints ->
         val placeable = measurable.measure(constraints)
@@ -131,16 +120,7 @@ private fun Modifier.composedScaleFade(
             }
         }
     )
-    val alpha by transition.animateFloat(
-        transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "scale-alpha",
-        targetValueByState = { state ->
-            when (state) {
-                BackStack.State.ACTIVE -> 1f
-                else -> 0f
-            }
-        }
-    )
+    val alpha by transition.animateVisibilityAlpha("scale-alpha")
     graphicsLayer {
         scaleX = scale
         scaleY = scale
@@ -163,16 +143,7 @@ private fun Modifier.composedRotateFade(
             }
         }
     )
-    val alpha by transition.animateFloat(
-        transitionSpec = { tween(TRANSITION_DURATION_MS) },
-        label = "rotate-alpha",
-        targetValueByState = { state ->
-            when (state) {
-                BackStack.State.ACTIVE -> 1f
-                else -> 0f
-            }
-        }
-    )
+    val alpha by transition.animateVisibilityAlpha("rotate-alpha")
     graphicsLayer {
         rotationZ = rotation
         this.alpha = alpha

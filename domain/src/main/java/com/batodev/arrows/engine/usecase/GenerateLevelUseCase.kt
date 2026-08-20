@@ -1,6 +1,5 @@
 package com.batodev.arrows.engine.usecase
 
-import com.batodev.arrows.GameConstants
 import com.batodev.arrows.engine.BoardShape
 import com.batodev.arrows.engine.BoardShapeProvider
 import com.batodev.arrows.engine.GameGenerator
@@ -62,21 +61,7 @@ class GenerateLevelUseCase(
     ): BoardShape? = when {
         forcedShape != null -> shapeProvider?.getShapeByName(forcedShape)
         isCustomGame -> null
-        shouldApplyShape(config) -> shapeProvider?.getRandomShape()
+        LevelProgression.shouldApplyShape(config, random) -> shapeProvider?.getRandomShape()
         else -> null
-    }
-
-    private fun shouldApplyShape(config: LevelConfiguration): Boolean {
-        val size = maxOf(config.width, config.height)
-        val probability = when {
-            size < GameConstants.MIN_BOARD_SIZE_FOR_SHAPES -> 0f
-            size >= GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE -> 1f
-            else -> {
-                val ratio = (size - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES).toFloat() /
-                    (GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES)
-                GameConstants.BASE_SHAPE_PROBABILITY + (1f - GameConstants.BASE_SHAPE_PROBABILITY) * ratio
-            }
-        }
-        return random.nextFloat() < probability
     }
 }

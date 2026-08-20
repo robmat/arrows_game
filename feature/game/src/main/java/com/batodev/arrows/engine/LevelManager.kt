@@ -1,6 +1,5 @@
 package com.batodev.arrows.engine
 
-import com.batodev.arrows.GameConstants
 import com.batodev.arrows.data.GameLevelData
 import com.batodev.arrows.data.GameStateDao
 import com.batodev.arrows.data.PointData
@@ -97,26 +96,11 @@ class LevelManager(
             shapeProvider?.getShapeByName(forcedShape)
         } else if (isCustomGame) {
             null
-        } else if (shouldApplyShape(config)) {
+        } else if (LevelProgression.shouldApplyShape(config, random)) {
             shapeProvider?.getRandomShape()
         } else {
             null
         }
-    }
-
-    private fun shouldApplyShape(config: LevelConfiguration): Boolean {
-        val size = maxOf(config.width, config.height)
-        val probability = when {
-            size < GameConstants.MIN_BOARD_SIZE_FOR_SHAPES -> 0f
-            size >= GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE -> 1f
-            else -> {
-                val ratio = (size - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES).toFloat() /
-                        (GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES)
-                GameConstants.BASE_SHAPE_PROBABILITY + (1f - GameConstants.BASE_SHAPE_PROBABILITY) * ratio
-            }
-        }
-
-        return random.nextFloat() < probability
     }
 
     suspend fun saveState(level: GameLevel, lives: Int) {

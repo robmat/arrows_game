@@ -1,6 +1,7 @@
 package com.batodev.arrows.engine
 
 import com.batodev.arrows.GameConstants
+import kotlin.random.Random
 
 object LevelProgression {
     fun calculateLevelConfiguration(
@@ -24,5 +25,24 @@ object LevelProgression {
             .coerceIn(GameConstants.MIN_SNAKE_LENGTH_MIN, GameConstants.MIN_SNAKE_LENGTH_MAX)
 
         return LevelConfiguration(w, h, snakeLen, maxLives)
+    }
+
+    /**
+     * Randomly decides whether a board shape should be applied to a level,
+     * with the probability scaling from 0 at [GameConstants.MIN_BOARD_SIZE_FOR_SHAPES]
+     * up to 1 at [GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE].
+     */
+    fun shouldApplyShape(config: LevelConfiguration, random: Random): Boolean {
+        val size = maxOf(config.width, config.height)
+        val probability = when {
+            size < GameConstants.MIN_BOARD_SIZE_FOR_SHAPES -> 0f
+            size >= GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE -> 1f
+            else -> {
+                val ratio = (size - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES).toFloat() /
+                    (GameConstants.MAX_BOARD_SIZE_FOR_ALWAYS_SHAPE - GameConstants.MIN_BOARD_SIZE_FOR_SHAPES)
+                GameConstants.BASE_SHAPE_PROBABILITY + (1f - GameConstants.BASE_SHAPE_PROBABILITY) * ratio
+            }
+        }
+        return random.nextFloat() < probability
     }
 }

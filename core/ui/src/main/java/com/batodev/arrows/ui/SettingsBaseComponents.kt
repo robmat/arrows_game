@@ -49,18 +49,16 @@ fun SettingsGroup(backgroundColor: Color, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun SettingsSwitchItem(
+private fun SettingsItemRow(
     icon: ImageVector,
     title: String,
-    initialValue: Boolean,
-    accentColor: Color,
-    onCheckedChange: ((Boolean) -> Unit)? = null
+    rowModifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit
 ) {
-    var checked by remember { mutableStateOf(initialValue) }
-    LaunchedEffect(initialValue) { checked = initialValue }
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(rowModifier)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -78,6 +76,21 @@ fun SettingsSwitchItem(
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f)
         )
+        trailingContent()
+    }
+}
+
+@Composable
+fun SettingsSwitchItem(
+    icon: ImageVector,
+    title: String,
+    initialValue: Boolean,
+    accentColor: Color,
+    onCheckedChange: ((Boolean) -> Unit)? = null
+) {
+    var checked by remember { mutableStateOf(initialValue) }
+    LaunchedEffect(initialValue) { checked = initialValue }
+    SettingsItemRow(icon = icon, title = title) {
         Switch(
             checked = checked,
             onCheckedChange = {
@@ -101,27 +114,7 @@ fun SettingsClickableItem(
     valueText: String? = null,
     onClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = White.copy(alpha = 0.7f),
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = title,
-            color = White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
-        )
+    SettingsItemRow(icon = icon, title = title, rowModifier = Modifier.clickable(onClick = onClick)) {
         if (valueText != null) {
             Text(
                 text = valueText,
