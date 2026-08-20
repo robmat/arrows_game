@@ -10,26 +10,28 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class IntroPreferencesTest {
+    @Test
+    fun `test default introCompleted is false`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            assertFalse(repo.introCompleted.first())
+        }
 
     @Test
-    fun `test default introCompleted is false`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        assertFalse(repo.introCompleted.first())
-    }
+    fun `test saveIntroCompleted updates flow to true`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            repo.saveIntroCompleted(true)
+            assertTrue(repo.introCompleted.first())
+        }
 
     @Test
-    fun `test saveIntroCompleted updates flow to true`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        repo.saveIntroCompleted(true)
-        assertTrue(repo.introCompleted.first())
-    }
-
-    @Test
-    fun `test saveIntroCompleted can reset to false`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        repo.saveIntroCompleted(true)
-        assertTrue(repo.introCompleted.first())
-        repo.saveIntroCompleted(false)
-        assertFalse(repo.introCompleted.first())
-    }
+    fun `test saveIntroCompleted can reset to false`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            repo.saveIntroCompleted(true)
+            assertTrue(repo.introCompleted.first())
+            repo.saveIntroCompleted(false)
+            assertFalse(repo.introCompleted.first())
+        }
 }

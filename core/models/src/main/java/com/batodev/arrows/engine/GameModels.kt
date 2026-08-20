@@ -1,11 +1,20 @@
 package com.batodev.arrows.engine
 
-data class Point(val x: Int, val y: Int) {
+data class Point(
+    val x: Int,
+    val y: Int,
+) {
     operator fun plus(dir: Direction) = Point(x + dir.dx, y + dir.dy)
 }
 
-enum class Direction(val dx: Int, val dy: Int) {
-    UP(0, -1), DOWN(0, 1), LEFT(-1, 0), RIGHT(1, 0)
+enum class Direction(
+    val dx: Int,
+    val dy: Int,
+) {
+    UP(0, -1),
+    DOWN(0, 1),
+    LEFT(-1, 0),
+    RIGHT(1, 0),
 }
 
 data class Snake(

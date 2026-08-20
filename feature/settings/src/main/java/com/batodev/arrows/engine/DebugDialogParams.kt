@@ -12,5 +12,5 @@ data class DebugDialogParams(
     val forcedHeight: Int?,
     val forcedLives: Int?,
     val forcedShape: String?,
-    val onDismiss: () -> Unit
+    val onDismiss: () -> Unit,
 )

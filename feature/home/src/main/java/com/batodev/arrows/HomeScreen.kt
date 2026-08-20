@@ -51,7 +51,7 @@ fun MainScreen(
     appViewModel: AppViewModel,
     onPlay: () -> Unit,
     onNavigateToGenerate: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToSettings: () -> Unit = {},
 ) {
     val hasSavedLevel by appViewModel.hasSavedLevel.collectAsState()
     val levelNumber by appViewModel.levelNumber.collectAsState()
@@ -73,18 +73,19 @@ fun MainScreen(
                     themeColors = themeColors,
                     onNavigateHome = {},
                     onNavigateToGenerate = onNavigateToGenerate,
-                    onNavigateToSettings = onNavigateToSettings
+                    onNavigateToSettings = onNavigateToSettings,
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 32.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Spacer(modifier = Modifier.weight(1f))
             LogoSection(levelNumber, themeColors, visible)
@@ -96,22 +97,27 @@ fun MainScreen(
 }
 
 @Composable
-private fun Modifier.homeEntryModifier(visible: Boolean, staggerIndex: Int): Modifier {
+private fun Modifier.homeEntryModifier(
+    visible: Boolean,
+    staggerIndex: Int,
+): Modifier {
     val translationY by animateFloatAsState(
         targetValue = if (visible) 0f else GameConstants.HOME_ENTER_OFFSET_DP,
-        animationSpec = tween(
-            durationMillis = GameConstants.HOME_ENTER_ANIM_DURATION,
-            delayMillis = HomeScreenLogic.entryDelayMs(staggerIndex)
-        ),
-        label = "homeEntryTransY$staggerIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.HOME_ENTER_ANIM_DURATION,
+                delayMillis = HomeScreenLogic.entryDelayMs(staggerIndex),
+            ),
+        label = "homeEntryTransY$staggerIndex",
     )
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = GameConstants.HOME_ENTER_ANIM_DURATION,
-            delayMillis = HomeScreenLogic.entryDelayMs(staggerIndex)
-        ),
-        label = "homeEntryAlpha$staggerIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.HOME_ENTER_ANIM_DURATION,
+                delayMillis = HomeScreenLogic.entryDelayMs(staggerIndex),
+            ),
+        label = "homeEntryAlpha$staggerIndex",
     )
     return graphicsLayer {
         this.translationY = translationY * density
@@ -120,50 +126,58 @@ private fun Modifier.homeEntryModifier(visible: Boolean, staggerIndex: Int): Mod
 }
 
 @Composable
-private fun LogoSection(levelNumber: Int, themeColors: ThemeColors, visible: Boolean) {
+private fun LogoSection(
+    levelNumber: Int,
+    themeColors: ThemeColors,
+    visible: Boolean,
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "logoAnim")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = GameConstants.HOME_TRIANGLE_ROTATE_DURATION,
-                easing = LinearEasing
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = GameConstants.HOME_TRIANGLE_ROTATE_DURATION,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Restart,
             ),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "triangleRotation"
+        label = "triangleRotation",
     )
     val trianglePulse by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = GameConstants.HOME_TRIANGLE_PULSE_SCALE,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = GameConstants.HOME_TRIANGLE_PULSE_DURATION),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "trianglePulse"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = GameConstants.HOME_TRIANGLE_PULSE_DURATION),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "trianglePulse",
     )
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.homeEntryModifier(visible, staggerIndex = 0)
+            modifier = Modifier.homeEntryModifier(visible, staggerIndex = 0),
         ) {
             TriangleIcon(
-                modifier = Modifier
-                    .size(40.dp)
-                    .graphicsLayer {
-                        rotationZ = rotation
-                        scaleX = trianglePulse
-                        scaleY = trianglePulse
-                    },
-                color = White
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .graphicsLayer {
+                            rotationZ = rotation
+                            scaleX = trianglePulse
+                            scaleY = trianglePulse
+                        },
+                color = White,
             )
             Text(
                 text = stringResource(R.string.logo_text),
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
-                color = White
+                color = White,
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -172,51 +186,66 @@ private fun LogoSection(levelNumber: Int, themeColors: ThemeColors, visible: Boo
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = themeColors.accent,
-            modifier = Modifier.homeEntryModifier(visible, staggerIndex = 1)
+            modifier = Modifier.homeEntryModifier(visible, staggerIndex = 1),
         )
     }
 }
 
 @Composable
-private fun PlayButton(isContinue: Boolean, themeColors: ThemeColors, visible: Boolean, onClick: () -> Unit) {
+private fun PlayButton(
+    isContinue: Boolean,
+    themeColors: ThemeColors,
+    visible: Boolean,
+    onClick: () -> Unit,
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "buttonPulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = GameConstants.HOME_BUTTON_PULSE_SCALE,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = GameConstants.HOME_BUTTON_PULSE_DURATION),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "buttonPulseScale"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = GameConstants.HOME_BUTTON_PULSE_DURATION),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "buttonPulseScale",
     )
-    val text = if (isContinue) {
-        stringResource(R.string.continue_label)
-    } else {
-        stringResource(R.string.play_label)
-    }
+    val text =
+        if (isContinue) {
+            stringResource(R.string.continue_label)
+        } else {
+            stringResource(R.string.play_label)
+        }
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .homeEntryModifier(visible, staggerIndex = 2)
-            .graphicsLayer { scaleX = pulseScale; scaleY = pulseScale },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .homeEntryModifier(visible, staggerIndex = 2)
+                .graphicsLayer {
+                    scaleX = pulseScale
+                    scaleY = pulseScale
+                },
         colors = ButtonDefaults.buttonColors(containerColor = themeColors.accent),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(28.dp),
     ) {
         Text(text = text, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
 }
 
 @Composable
-fun TriangleIcon(modifier: Modifier = Modifier, color: Color) {
+fun TriangleIcon(
+    modifier: Modifier = Modifier,
+    color: Color,
+) {
     androidx.compose.foundation.Canvas(modifier = modifier) {
-        val path = Path().apply {
-            moveTo(size.width / 2f, 0f)
-            lineTo(size.width, size.height)
-            lineTo(0f, size.height)
-            close()
-        }
+        val path =
+            Path().apply {
+                moveTo(size.width / 2f, 0f)
+                lineTo(size.width, size.height)
+                lineTo(0f, size.height)
+                close()
+            }
         drawPath(path = path, color = color)
     }
 }

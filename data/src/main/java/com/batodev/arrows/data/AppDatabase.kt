@@ -70,34 +70,39 @@ private const val SQL_INSERT_USER_PREFS_FROM_OLD = """INSERT INTO user_preferenc
 private const val SQL_DROP_USER_PREFS = "DROP TABLE user_preferences"
 private const val SQL_RENAME_USER_PREFS = "ALTER TABLE user_preferences_new RENAME TO user_preferences"
 
-val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(SQL_CREATE_GAME_BOARDS)
-        db.execSQL(SQL_CREATE_SNAKES)
-        db.execSQL(SQL_CREATE_SNAKES_INDEX)
-        db.execSQL(SQL_CREATE_SNAKE_BODY_POINTS)
-        db.execSQL(SQL_CREATE_BODY_POINTS_INDEX)
-        db.execSQL(SQL_CREATE_USER_PREFS_NEW)
-        db.execSQL(SQL_INSERT_USER_PREFS_FROM_OLD)
-        db.execSQL(SQL_DROP_USER_PREFS)
-        db.execSQL(SQL_RENAME_USER_PREFS)
+val MIGRATION_1_2 =
+    object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(SQL_CREATE_GAME_BOARDS)
+            db.execSQL(SQL_CREATE_SNAKES)
+            db.execSQL(SQL_CREATE_SNAKES_INDEX)
+            db.execSQL(SQL_CREATE_SNAKE_BODY_POINTS)
+            db.execSQL(SQL_CREATE_BODY_POINTS_INDEX)
+            db.execSQL(SQL_CREATE_USER_PREFS_NEW)
+            db.execSQL(SQL_INSERT_USER_PREFS_FROM_OLD)
+            db.execSQL(SQL_DROP_USER_PREFS)
+            db.execSQL(SQL_RENAME_USER_PREFS)
+        }
     }
-}
 
 @Database(
     entities = [
         UserPreferencesEntity::class,
         GameBoardEntity::class,
         SnakeEntity::class,
-        SnakeBodyPointEntity::class
+        SnakeBodyPointEntity::class,
     ],
     version = 2,
-    exportSchema = true
+    exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun corePreferencesDao(): CorePreferencesDao
+
     abstract fun gameplayPreferencesDao(): GameplayPreferencesDao
+
     abstract fun debugPreferencesDao(): DebugPreferencesDao
+
     abstract fun monetizationPreferencesDao(): MonetizationPreferencesDao
+
     abstract fun gameStateDao(): GameStateDao
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class TapHandler(
     private val coroutineScope: CoroutineScope,
     private val soundManager: SoundManager?,
-    private val onVibrate: () -> Unit
+    private val onVibrate: () -> Unit,
 ) {
     var flashingSnakeId by mutableStateOf<Int?>(null)
         private set
@@ -34,7 +34,11 @@ class TapHandler(
         }
     }
 
-    private fun handleObstructed(snake: Snake, lives: Int, onPenalty: () -> Unit) {
+    private fun handleObstructed(
+        snake: Snake,
+        lives: Int,
+        onPenalty: () -> Unit,
+    ) {
         if (lives > 0) {
             onPenalty()
             if (lives > 1) soundManager?.playLiveLost() else soundManager?.playGameLost()
@@ -47,5 +51,7 @@ class TapHandler(
         onSuccess()
     }
 
-    fun clearFlash() { flashingSnakeId = null }
+    fun clearFlash() {
+        flashingSnakeId = null
+    }
 }

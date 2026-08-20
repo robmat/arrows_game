@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NavTransitionTypeTest {
-
     @Test
     fun `has exactly five transition types`() {
         assertEquals(5, NavTransitionType.entries.size)

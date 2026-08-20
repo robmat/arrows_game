@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GameCompletionTest {
-
     @Test
     fun `test ad-free user never sees interstitial`() {
         assertFalse(shouldShowInterstitialAd(isAdFree = true, gamesCompleted = 5))

@@ -5,16 +5,16 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GameGeneratorFillBoardLimitTest {
-
     @Test
     fun testFillBoardLimitsDimensionsTo35() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 50,
-            height = 50,
-            maxSnakeLength = 7,
-            fillTheBoard = true
-        )
+        val params =
+            GenerationParams(
+                width = 50,
+                height = 50,
+                maxSnakeLength = 7,
+                fillTheBoard = true,
+            )
 
         val level = generator.generateSolvableLevel(params)
 
@@ -25,12 +25,13 @@ class GameGeneratorFillBoardLimitTest {
     @Test
     fun testFillBoardAllowsSmallerDimensions() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 20,
-            height = 25,
-            maxSnakeLength = 7,
-            fillTheBoard = true
-        )
+        val params =
+            GenerationParams(
+                width = 20,
+                height = 25,
+                maxSnakeLength = 7,
+                fillTheBoard = true,
+            )
 
         val level = generator.generateSolvableLevel(params)
 
@@ -41,12 +42,13 @@ class GameGeneratorFillBoardLimitTest {
     @Test
     fun testNonFillBoardAllowsLargerDimensions() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 50,
-            height = 50,
-            maxSnakeLength = 7,
-            fillTheBoard = false
-        )
+        val params =
+            GenerationParams(
+                width = 50,
+                height = 50,
+                maxSnakeLength = 7,
+                fillTheBoard = false,
+            )
 
         val level = generator.generateSolvableLevel(params)
 
@@ -57,12 +59,13 @@ class GameGeneratorFillBoardLimitTest {
     @Test
     fun testFillBoardLimitsOnlyExceedingDimension() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 40,
-            height = 20,
-            maxSnakeLength = 7,
-            fillTheBoard = true
-        )
+        val params =
+            GenerationParams(
+                width = 40,
+                height = 20,
+                maxSnakeLength = 7,
+                fillTheBoard = true,
+            )
 
         val level = generator.generateSolvableLevel(params)
 
@@ -73,12 +76,13 @@ class GameGeneratorFillBoardLimitTest {
     @Test
     fun testFillBoardAt35x35ProducesSolvableLevel() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 35,
-            height = 35,
-            maxSnakeLength = 7,
-            fillTheBoard = true
-        )
+        val params =
+            GenerationParams(
+                width = 35,
+                height = 35,
+                maxSnakeLength = 7,
+                fillTheBoard = true,
+            )
 
         val level = generator.generateSolvableLevel(params)
 
@@ -89,12 +93,13 @@ class GameGeneratorFillBoardLimitTest {
     @Test
     fun testFillBoardWithLimitedSizeProducesSolvableLevel() {
         val generator = GameGenerator()
-        val params = GenerationParams(
-            width = 100,
-            height = 100,
-            maxSnakeLength = 7,
-            fillTheBoard = true
-        )
+        val params =
+            GenerationParams(
+                width = 100,
+                height = 100,
+                maxSnakeLength = 7,
+                fillTheBoard = true,
+            )
 
         val level = generator.generateSolvableLevel(params)
 

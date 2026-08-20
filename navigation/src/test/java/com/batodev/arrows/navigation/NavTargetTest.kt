@@ -9,7 +9,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NavTargetTest {
-
     @Test
     fun `home is always the same singleton`() {
         assertSame(NavTarget.Home, NavTarget.Home)
@@ -104,12 +103,13 @@ class NavTargetTest {
 
     @Test
     fun `toCustomGameParams maps all custom fields together`() {
-        val game = NavTarget.Game(
-            isCustom = true,
-            customWidth = 7,
-            customHeight = 5,
-            customShape = "star"
-        )
+        val game =
+            NavTarget.Game(
+                isCustom = true,
+                customWidth = 7,
+                customHeight = 5,
+                customShape = "star",
+            )
         val params = game.toCustomGameParams()
         assertTrue(params.isCustom)
         assertEquals(7, params.customWidth)

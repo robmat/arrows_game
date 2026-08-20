@@ -9,7 +9,6 @@ class UserPreferencesRepository(
     private val debug: DebugPreferencesDao,
     private val monetization: MonetizationPreferencesDao,
 ) : IUserPreferencesRepository {
-
     override val theme: Flow<String> get() = core.getTheme()
     override val animationSpeed: Flow<String> get() = core.getAnimationSpeed()
     override val isVibrationEnabled: Flow<Boolean> get() = core.getIsVibrationEnabled()
@@ -28,20 +27,36 @@ class UserPreferencesRepository(
     override val isWinVideosEnabled: Flow<Boolean> get() = monetization.getIsWinVideosEnabled()
 
     override suspend fun saveThemePreference(theme: String) = core.updateTheme(theme)
+
     override suspend fun saveAnimationSpeed(speed: String) = core.updateAnimationSpeed(speed)
+
     override suspend fun saveVibrationPreference(enabled: Boolean) = core.updateVibrationEnabled(enabled)
+
     override suspend fun saveSoundsPreference(enabled: Boolean) = core.updateSoundsEnabled(enabled)
+
     override suspend fun saveFillBoardPreference(enabled: Boolean) = gameplay.updateFillBoardEnabled(enabled)
+
     override suspend fun saveLevelNumber(level: Int) = gameplay.updateLevelNumber(level)
+
     override suspend fun saveCurrentLives(lives: Int) = gameplay.updateCurrentLives(lives)
+
     override suspend fun saveDebugForcedWidth(width: Int?) = debug.updateDebugForcedWidth(width)
+
     override suspend fun saveDebugForcedHeight(height: Int?) = debug.updateDebugForcedHeight(height)
+
     override suspend fun saveDebugForcedLives(lives: Int?) = debug.updateDebugForcedLives(lives)
+
     override suspend fun saveDebugForcedShape(shape: String?) = debug.updateDebugForcedShape(shape)
+
     override suspend fun saveIsAdFree(isAdFree: Boolean) = monetization.updateIsAdFree(isAdFree)
+
     override suspend fun incrementRewardAdCount() = monetization.incrementRewardAdCount()
+
     override suspend fun resetRewardAdCount() = monetization.resetRewardAdCount()
+
     override suspend fun saveIntroCompleted(completed: Boolean) = gameplay.updateIntroCompleted(completed)
+
     override suspend fun saveWinVideosEnabled(enabled: Boolean) = monetization.updateWinVideosEnabled(enabled)
+
     override suspend fun incrementGamesCompleted() = gameplay.incrementGamesCompleted()
 }

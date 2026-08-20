@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GeneratorUnlockTest {
-
     @Test
     fun testGeneratorLockedBelowUnlockLevel() {
         val levelNumber = GameConstants.GENERATOR_UNLOCK_LEVEL - 1

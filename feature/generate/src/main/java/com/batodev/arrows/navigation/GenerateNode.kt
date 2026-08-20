@@ -14,9 +14,8 @@ class GenerateNode(
     private val onStartCustomGame: (CustomGameParams) -> Unit,
     private val onBack: () -> Unit,
     private val onNavigateHome: () -> Unit,
-    private val onNavigateToSettings: () -> Unit
+    private val onNavigateToSettings: () -> Unit,
 ) : Node(buildContext) {
-
     @Composable
     override fun View(modifier: Modifier) {
         GenerateScreen(
@@ -24,7 +23,7 @@ class GenerateNode(
             onStartCustomGame = onStartCustomGame,
             onBack = onBack,
             onNavigateHome = onNavigateHome,
-            onNavigateToSettings = onNavigateToSettings
+            onNavigateToSettings = onNavigateToSettings,
         )
     }
 }

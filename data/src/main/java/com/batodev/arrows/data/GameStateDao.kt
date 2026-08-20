@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 abstract class GameStateDao {
-
     @Insert
     abstract suspend fun insertBoard(board: GameBoardEntity): Long
 
@@ -42,17 +41,23 @@ abstract class GameStateDao {
     abstract fun getCurrentBoardCount(): Flow<Int>
 
     @Transaction
-    open suspend fun saveGameLevel(stateType: String, width: Int, height: Int, snakes: List<SnakeSaveData>) {
+    open suspend fun saveGameLevel(
+        stateType: String,
+        width: Int,
+        height: Int,
+        snakes: List<SnakeSaveData>,
+    ) {
         deleteByStateType(stateType)
         val boardId = insertBoard(GameBoardEntity(stateType = stateType, width = width, height = height))
         for (snake in snakes) {
-            val snakeRowId = insertSnake(
-                SnakeEntity(boardId = boardId, snakeId = snake.id, headDirection = snake.headDirection)
-            )
+            val snakeRowId =
+                insertSnake(
+                    SnakeEntity(boardId = boardId, snakeId = snake.id, headDirection = snake.headDirection),
+                )
             insertBodyPoints(
                 snake.bodyPoints.mapIndexed { index, point ->
                     SnakeBodyPointEntity(snakeRowId = snakeRowId, orderIndex = index, x = point.x, y = point.y)
-                }
+                },
             )
         }
     }
@@ -61,14 +66,15 @@ abstract class GameStateDao {
     open suspend fun loadGameLevel(stateType: String): GameLevelData? {
         val board = getBoard(stateType) ?: return null
         val snakeEntities = getSnakes(board.boardId)
-        val snakes = snakeEntities.map { snakeEntity ->
-            val points = getBodyPoints(snakeEntity.snakeRowId)
-            SnakeData(
-                id = snakeEntity.snakeId,
-                headDirection = snakeEntity.headDirection,
-                bodyPoints = points.map { PointData(it.x, it.y) }
-            )
-        }
+        val snakes =
+            snakeEntities.map { snakeEntity ->
+                val points = getBodyPoints(snakeEntity.snakeRowId)
+                SnakeData(
+                    id = snakeEntity.snakeId,
+                    headDirection = snakeEntity.headDirection,
+                    bodyPoints = points.map { PointData(it.x, it.y) },
+                )
+            }
         return GameLevelData(board.width, board.height, snakes)
     }
 

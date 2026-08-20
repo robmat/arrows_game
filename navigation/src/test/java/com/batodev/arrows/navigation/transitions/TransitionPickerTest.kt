@@ -6,7 +6,6 @@ import org.junit.Test
 import kotlin.random.Random
 
 class TransitionPickerTest {
-
     @Test
     fun `pick returns a type from the available list`() {
         val picker = TransitionPicker(random = Random(seed = 0))
@@ -50,10 +49,11 @@ class TransitionPickerTest {
 
     @Test
     fun `single type list always returns that type`() {
-        val picker = TransitionPicker(
-            types = listOf(NavTransitionType.FADE),
-            random = Random(seed = 0)
-        )
+        val picker =
+            TransitionPicker(
+                types = listOf(NavTransitionType.FADE),
+                random = Random(seed = 0),
+            )
         repeat(10) {
             assertEquals(NavTransitionType.FADE, picker.pick())
         }

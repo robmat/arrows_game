@@ -4,8 +4,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface IGameStateRepository {
     fun hasSavedLevel(): Flow<Boolean>
-    suspend fun saveGameLevel(stateType: String, width: Int, height: Int, snakes: List<SnakeSaveData>)
+
+    suspend fun saveGameLevel(
+        stateType: String,
+        width: Int,
+        height: Int,
+        snakes: List<SnakeSaveData>,
+    )
+
     suspend fun loadGameLevel(stateType: String): GameLevelData?
+
     suspend fun clearAllSavedLevels()
 }
 
@@ -16,8 +24,11 @@ interface ICorePreferences {
     val isSoundsEnabled: Flow<Boolean>
 
     suspend fun saveThemePreference(theme: String)
+
     suspend fun saveAnimationSpeed(speed: String)
+
     suspend fun saveVibrationPreference(enabled: Boolean)
+
     suspend fun saveSoundsPreference(enabled: Boolean)
 }
 
@@ -29,9 +40,13 @@ interface IGameplayPreferences {
     val introCompleted: Flow<Boolean>
 
     suspend fun saveFillBoardPreference(enabled: Boolean)
+
     suspend fun saveLevelNumber(level: Int)
+
     suspend fun saveCurrentLives(lives: Int)
+
     suspend fun incrementGamesCompleted()
+
     suspend fun saveIntroCompleted(completed: Boolean)
 }
 
@@ -42,8 +57,11 @@ interface IDebugPreferences {
     val debugForcedShape: Flow<String?>
 
     suspend fun saveDebugForcedWidth(width: Int?)
+
     suspend fun saveDebugForcedHeight(height: Int?)
+
     suspend fun saveDebugForcedLives(lives: Int?)
+
     suspend fun saveDebugForcedShape(shape: String?)
 }
 
@@ -53,8 +71,11 @@ interface IMonetizationPreferences {
     val isWinVideosEnabled: Flow<Boolean>
 
     suspend fun saveIsAdFree(isAdFree: Boolean)
+
     suspend fun incrementRewardAdCount()
+
     suspend fun resetRewardAdCount()
+
     suspend fun saveWinVideosEnabled(enabled: Boolean)
 }
 

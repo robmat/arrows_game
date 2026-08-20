@@ -11,18 +11,17 @@ import org.junit.rules.Timeout
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-
 class GameBoardAsciiTest {
-
     @get:Rule
     val timeout: Timeout = Timeout(30, TimeUnit.SECONDS)
 
     @Test
     fun printGameBoardAsAsciiArt() {
         val engine = GameGenerator()
-        val params = GenerationParams(width = 39, height = 39, maxSnakeLength = 18) { progress ->
-            println("Progress: $progress")
-        }
+        val params =
+            GenerationParams(width = 39, height = 39, maxSnakeLength = 18) { progress ->
+                println("Progress: $progress")
+            }
         val level = engine.generateSolvableLevel(params)
 
         println("\n" + "=".repeat(60))
@@ -47,18 +46,25 @@ class GameBoardAsciiTest {
         }
     }
 
-    private fun printAsciiCell(x: Int, y: Int, snakeId: Int, snakeMap: Map<Int, Snake>) {
+    private fun printAsciiCell(
+        x: Int,
+        y: Int,
+        snakeId: Int,
+        snakeMap: Map<Int, Snake>,
+    ) {
         if (snakeId == 0) {
             print(" . ")
         } else {
             val snake = snakeMap[snakeId]!!
             if (snake.body.first() == Point(x, y)) {
-                print(when (snake.headDirection) {
-                    Direction.UP -> " ↑ "
-                    Direction.DOWN -> " ↓ "
-                    Direction.LEFT -> " ← "
-                    Direction.RIGHT -> " → "
-                })
+                print(
+                    when (snake.headDirection) {
+                        Direction.UP -> " ↑ "
+                        Direction.DOWN -> " ↓ "
+                        Direction.LEFT -> " ← "
+                        Direction.RIGHT -> " → "
+                    },
+                )
             } else {
                 print(String.format(Locale.US, "%2d ", snakeId % 100))
             }

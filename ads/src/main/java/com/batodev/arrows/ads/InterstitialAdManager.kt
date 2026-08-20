@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class InterstitialAdManager(private val context: Context) {
+class InterstitialAdManager(
+    private val context: Context,
+) {
     private var interstitialAd: InterstitialAd? = null
     private val _isAdLoaded = MutableStateFlow(false)
     val isAdLoaded: StateFlow<Boolean> = _isAdLoaded.asStateFlow()
@@ -41,28 +43,29 @@ class InterstitialAdManager(private val context: Context) {
                     _isAdLoaded.value = false
                     _isAdLoading.value = false
                 }
-            }
+            },
         )
     }
 
     fun showInterstitialAd(
         activity: Activity,
-        onAdDismissed: () -> Unit
+        onAdDismissed: () -> Unit,
     ) {
         interstitialAd?.let { ad ->
             ad.show(activity)
             _isAdLoaded.value = false
             interstitialAd = null
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    onAdDismissed()
-                    loadInterstitialAd()
-                }
+            ad.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        onAdDismissed()
+                        loadInterstitialAd()
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                    onAdDismissed()
+                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
+                        onAdDismissed()
+                    }
                 }
-            }
         } ?: run {
             loadInterstitialAd()
             onAdDismissed()

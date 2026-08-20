@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SettingsScreenLogicTest {
-
     @Test
     fun `sectionEntryDelayMs returns zero for first section`() {
         assertEquals(0, SettingsScreenLogic.sectionEntryDelayMs(0))

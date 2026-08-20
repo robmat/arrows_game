@@ -40,7 +40,7 @@ fun WinCelebrationScreen(onCelebrationComplete: () -> Unit) {
     val animatedAlpha by animateFloatAsState(
         targetValue = videoAlpha,
         animationSpec = tween(durationMillis = GameConstants.VIDEO_FADE_IN_DURATION),
-        label = "video_fade"
+        label = "video_fade",
     )
 
     PlayCelebrationTimeline(
@@ -49,7 +49,7 @@ fun WinCelebrationScreen(onCelebrationComplete: () -> Unit) {
         onComplete = {
             shouldShowCelebration = false
             onCelebrationComplete()
-        }
+        },
     )
 
     if (shouldShowCelebration) {
@@ -81,22 +81,24 @@ private fun CelebrationContent(
     alpha: Float,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+        contentAlignment = Alignment.Center,
     ) {
         // Video plays underneath
         VideoPlayerView(
             videoResId = videoResId,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
         // Black overlay fades out (1-alpha) for fade-in, fades in for fade-out
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(1f - alpha)
-                .background(Color.Black)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .alpha(1f - alpha)
+                    .background(Color.Black),
         )
         // Text fades with the content
         Text(
@@ -104,13 +106,16 @@ private fun CelebrationContent(
             fontSize = GameConstants.CONGRATULATIONS_FONT_SIZE.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier.alpha(alpha)
+            modifier = Modifier.alpha(alpha),
         )
     }
 }
 
 @Composable
-private fun VideoPlayerView(videoResId: Int, modifier: Modifier = Modifier) {
+private fun VideoPlayerView(
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     val mediaPlayer = remember { MediaPlayer() }
 
@@ -126,20 +131,20 @@ private fun VideoPlayerView(videoResId: Int, modifier: Modifier = Modifier) {
                 surfaceTextureListener = createSurfaceTextureListener(mediaPlayer, ctx, videoResId)
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 private fun createSurfaceTextureListener(
     mediaPlayer: MediaPlayer,
     context: android.content.Context,
-    videoResId: Int
-): TextureView.SurfaceTextureListener {
-    return object : TextureView.SurfaceTextureListener {
+    videoResId: Int,
+): TextureView.SurfaceTextureListener =
+    object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(
             surfaceTexture: SurfaceTexture,
             width: Int,
-            height: Int
+            height: Int,
         ) {
             prepareAndStartVideo(mediaPlayer, context, videoResId, Surface(surfaceTexture))
         }
@@ -147,20 +152,19 @@ private fun createSurfaceTextureListener(
         override fun onSurfaceTextureSizeChanged(
             surfaceTexture: SurfaceTexture,
             width: Int,
-            height: Int
+            height: Int,
         ) = Unit
 
         override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean = true
 
         override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) = Unit
     }
-}
 
 private fun prepareAndStartVideo(
     mediaPlayer: MediaPlayer,
     context: android.content.Context,
     videoResId: Int,
-    surface: Surface
+    surface: Surface,
 ) {
     try {
         mediaPlayer.reset()
@@ -168,10 +172,12 @@ private fun prepareAndStartVideo(
 
         // Configure audio attributes to NOT request audio focus
         // This prevents YouTube and other media apps from pausing
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
-            .build()
+        val audioAttributes =
+            AudioAttributes
+                .Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+                .build()
         mediaPlayer.setAudioAttributes(audioAttributes)
 
         // Mute the video completely

@@ -8,9 +8,10 @@ package com.batodev.arrows.engine
  * simultaneously displaying the game-over dialog.
  */
 sealed interface GameUiState {
-
     /** Level generation or initial load is in progress. */
-    data class Loading(val progress: Float) : GameUiState
+    data class Loading(
+        val progress: Float,
+    ) : GameUiState
 
     /** The player is actively playing the level. */
     data class Playing(

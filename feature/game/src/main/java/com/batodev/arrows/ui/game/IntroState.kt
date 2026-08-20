@@ -12,13 +12,16 @@ import com.batodev.arrows.feature.game.BuildConfig
 import com.batodev.arrows.ui.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 
-data class IntroState(val showIntro: Boolean, val onDismiss: () -> Unit)
+data class IntroState(
+    val showIntro: Boolean,
+    val onDismiss: () -> Unit,
+)
 
 @Composable
 fun rememberIntroState(
     viewModel: AppViewModel,
     isLoading: Boolean,
-    snakesCount: Int
+    snakesCount: Int,
 ): IntroState {
     val introCompleted by viewModel.introCompleted.collectAsState()
     var showIntro by remember { mutableStateOf(false) }

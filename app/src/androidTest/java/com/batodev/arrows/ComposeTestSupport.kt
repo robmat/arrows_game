@@ -104,17 +104,19 @@ fun <A : ComponentActivity> assertBackPressFinishesScenario(scenario: ActivitySc
     assertEquals(Lifecycle.State.DESTROYED, scenario.state)
 }
 
-private fun GameLevelData.toDomain(): GameLevel = GameLevel(
-    width = width,
-    height = height,
-    snakes = snakes.map { s ->
-        Snake(
-            id = s.id,
-            body = s.bodyPoints.map { Point(it.x, it.y) },
-            headDirection = Direction.valueOf(s.headDirection)
-        )
-    }
-)
+private fun GameLevelData.toDomain(): GameLevel =
+    GameLevel(
+        width = width,
+        height = height,
+        snakes =
+            snakes.map { s ->
+                Snake(
+                    id = s.id,
+                    body = s.bodyPoints.map { Point(it.x, it.y) },
+                    headDirection = Direction.valueOf(s.headDirection),
+                )
+            },
+    )
 
 /**
  * GameEngine persists the level being played to Room under stateType "CURRENT"
@@ -122,7 +124,10 @@ private fun GameLevelData.toDomain(): GameLevel = GameLevel(
  * the UI itself finishes its loading transition - polled rather than read once since
  * that save happens on a background dispatcher.
  */
-private suspend fun awaitCurrentLevel(gameStateDao: GameStateDao, timeoutMs: Long = 15_000): GameLevel {
+private suspend fun awaitCurrentLevel(
+    gameStateDao: GameStateDao,
+    timeoutMs: Long = 15_000,
+): GameLevel {
     val deadline = System.currentTimeMillis() + timeoutMs
     while (System.currentTimeMillis() < deadline) {
         val data = gameStateDao.loadGameLevel("CURRENT")
@@ -162,14 +167,17 @@ fun ComposeTestRule.solveCurrentLevel(gameStateDao: GameStateDao) {
     val remaining = level.snakes.toMutableList()
     while (remaining.isNotEmpty()) {
         val workingLevel = level.copy(snakes = remaining)
-        val removableId = SolvabilityChecker.findRemovableSnake(workingLevel)
-            ?: error("Level not solvable from current remaining snake set - ${remaining.size} left: $remaining")
+        val removableId =
+            SolvabilityChecker.findRemovableSnake(workingLevel)
+                ?: error("Level not solvable from current remaining snake set - ${remaining.size} left: $remaining")
         val snake = remaining.first { it.id == removableId }
         val head = snake.body.first()
-        val gridX = head.x + GameConstants.CELL_CENTER +
-            snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR
-        val gridY = head.y + GameConstants.CELL_CENTER +
-            snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR
+        val gridX =
+            head.x + GameConstants.CELL_CENTER +
+                snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR
+        val gridY =
+            head.y + GameConstants.CELL_CENTER +
+                snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR
         val screenX = gridX * cellSize + leftOffset
         val screenY = gridY * cellSize + topOffset
 

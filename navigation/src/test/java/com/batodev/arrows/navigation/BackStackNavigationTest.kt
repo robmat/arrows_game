@@ -11,15 +11,15 @@ import org.junit.Before
 import org.junit.Test
 
 class BackStackNavigationTest {
-
     private lateinit var backStack: BackStack<NavTarget>
 
     @Before
     fun setUp() {
-        backStack = BackStack(
-            initialElement = NavTarget.Home,
-            savedStateMap = null
-        )
+        backStack =
+            BackStack(
+                initialElement = NavTarget.Home,
+                savedStateMap = null,
+            )
     }
 
     @Test

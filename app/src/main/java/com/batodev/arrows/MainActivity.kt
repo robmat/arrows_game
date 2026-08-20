@@ -15,8 +15,9 @@ import com.bumble.appyx.core.integrationpoint.ActivityIntegrationPoint
 import com.bumble.appyx.core.integrationpoint.IntegrationPointProvider
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : ComponentActivity(), IntegrationPointProvider {
-
+class MainActivity :
+    ComponentActivity(),
+    IntegrationPointProvider {
     override lateinit var appyxV1IntegrationPoint: ActivityIntegrationPoint
         private set
 
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity(), IntegrationPointProvider {
                     RootNode(
                         buildContext = buildContext,
                         appViewModel = appViewModel,
-                        debugViewModel = debugViewModel
+                        debugViewModel = debugViewModel,
                     )
                 }
             }

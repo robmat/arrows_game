@@ -7,7 +7,7 @@ data class RegenerationParams(
     val forcedShape: String?,
     val isCustomGame: Boolean = false,
     val onProgress: (Float) -> Unit,
-    val onComplete: (GameLevel, LevelConfiguration) -> Unit
+    val onComplete: (GameLevel, LevelConfiguration) -> Unit,
 )
 
 data class LoSParams(
@@ -16,5 +16,5 @@ data class LoSParams(
     val sId: Int,
     val grid: Array<IntArray>,
     val w: Int,
-    val h: Int
+    val h: Int,
 )

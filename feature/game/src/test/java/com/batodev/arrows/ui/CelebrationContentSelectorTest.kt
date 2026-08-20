@@ -9,13 +9,12 @@ import org.junit.Test
 import kotlin.random.Random
 
 class CelebrationContentSelectorTest {
-
     @Test
     fun `selectContent returns label from CONGRATULATION_LABELS`() {
         val content = CelebrationContentSelector.selectContent()
         assertTrue(
             "Label should be from CONGRATULATION_LABELS",
-            content.labelResId in WinCelebrationResources.CONGRATULATION_LABELS
+            content.labelResId in WinCelebrationResources.CONGRATULATION_LABELS,
         )
     }
 
@@ -24,7 +23,7 @@ class CelebrationContentSelectorTest {
         val content = CelebrationContentSelector.selectContent()
         assertTrue(
             "Video should be from WIN_VIDEOS",
-            content.videoResId in WinCelebrationResources.WIN_VIDEOS
+            content.videoResId in WinCelebrationResources.WIN_VIDEOS,
         )
     }
 
@@ -38,9 +37,10 @@ class CelebrationContentSelectorTest {
 
     @Test
     fun `selectContent with different seeds produces different results`() {
-        val results = (1..50).map { seed ->
-            CelebrationContentSelector.selectContent(Random(seed))
-        }
+        val results =
+            (1..50).map { seed ->
+                CelebrationContentSelector.selectContent(Random(seed))
+            }
         val distinctLabels = results.map { it.labelResId }.distinct()
         val distinctVideos = results.map { it.videoResId }.distinct()
         assertTrue("Should produce multiple distinct labels", distinctLabels.size > 1)
@@ -49,25 +49,31 @@ class CelebrationContentSelectorTest {
 
     @Test
     fun `selectContent covers all labels over many calls`() {
-        val allLabels = (0..999).map { seed ->
-            CelebrationContentSelector.selectContent(Random(seed)).labelResId
-        }.distinct().toSet()
+        val allLabels =
+            (0..999)
+                .map { seed ->
+                    CelebrationContentSelector.selectContent(Random(seed)).labelResId
+                }.distinct()
+                .toSet()
         assertEquals(
             "All congratulation labels should be reachable",
             WinCelebrationResources.CONGRATULATION_LABELS.size,
-            allLabels.size
+            allLabels.size,
         )
     }
 
     @Test
     fun `selectContent covers all videos over many calls`() {
-        val allVideos = (0..999).map { seed ->
-            CelebrationContentSelector.selectContent(Random(seed)).videoResId
-        }.distinct().toSet()
+        val allVideos =
+            (0..999)
+                .map { seed ->
+                    CelebrationContentSelector.selectContent(Random(seed)).videoResId
+                }.distinct()
+                .toSet()
         assertEquals(
             "All win videos should be reachable",
             WinCelebrationResources.WIN_VIDEOS.size,
-            allVideos.size
+            allVideos.size,
         )
     }
 
@@ -76,7 +82,7 @@ class CelebrationContentSelectorTest {
         assertEquals(
             "WIN_VIDEOS_COUNT should match WIN_VIDEOS list size",
             GameConstants.WIN_VIDEOS_COUNT,
-            WinCelebrationResources.WIN_VIDEOS.size
+            WinCelebrationResources.WIN_VIDEOS.size,
         )
     }
 }

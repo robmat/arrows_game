@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HomeScreenLogicTest {
-
     @Test
     fun `entryDelayMs returns zero for first element`() {
         assertEquals(0, HomeScreenLogic.entryDelayMs(0))

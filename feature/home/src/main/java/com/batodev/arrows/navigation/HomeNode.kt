@@ -12,16 +12,15 @@ class HomeNode(
     private val appViewModel: AppViewModel,
     private val onPlay: () -> Unit,
     private val onNavigateToGenerate: () -> Unit,
-    private val onNavigateToSettings: () -> Unit
+    private val onNavigateToSettings: () -> Unit,
 ) : Node(buildContext) {
-
     @Composable
     override fun View(modifier: Modifier) {
         MainScreen(
             appViewModel = appViewModel,
             onPlay = onPlay,
             onNavigateToGenerate = onNavigateToGenerate,
-            onNavigateToSettings = onNavigateToSettings
+            onNavigateToSettings = onNavigateToSettings,
         )
     }
 }

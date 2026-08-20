@@ -11,5 +11,5 @@ data class AdSettingsSectionState(
     val activity: Activity?,
     val rewardAdCount: Int,
     val isAdLoaded: Boolean,
-    val isAdLoading: Boolean
+    val isAdLoading: Boolean,
 )

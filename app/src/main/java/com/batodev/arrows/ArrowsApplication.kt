@@ -8,16 +8,15 @@ import com.batodev.arrows.ads.di.adsModule
 import com.batodev.arrows.data.di.dataModule
 import com.batodev.arrows.ui.di.viewModelModule
 import com.google.android.gms.ads.MobileAds
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ArrowsApplication : Application() {
-
     private val isAdsInitialized = AtomicBoolean(false)
 
     override fun onCreate() {

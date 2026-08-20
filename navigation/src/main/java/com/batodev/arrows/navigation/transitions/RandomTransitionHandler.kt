@@ -13,7 +13,6 @@ import com.bumble.appyx.navmodel.backstack.BackStack
 class RandomTransitionHandler<T>(
     private val picker: TransitionPicker = TransitionPicker(),
 ) : ModifierTransitionHandler<T, BackStack.State>() {
-
     // Lint recommends Modifier factory functions be extension functions, but this is an
     // override of ModifierTransitionHandler.createModifier() from the Appyx library —
     // the signature is fixed by the library contract and cannot be changed.
@@ -22,10 +21,11 @@ class RandomTransitionHandler<T>(
         modifier: Modifier,
         transition: Transition<BackStack.State>,
         descriptor: TransitionDescriptor<T, BackStack.State>,
-    ): Modifier = modifier.composed {
-        val type = remember { picker.pick() }
-        applyNavTransition(transition, type, descriptor.params)
-    }
+    ): Modifier =
+        modifier.composed {
+            val type = remember { picker.pick() }
+            applyNavTransition(transition, type, descriptor.params)
+        }
 }
 
 @Composable

@@ -51,7 +51,7 @@ fun SettingsScreen(
     rewardAdManager: RewardAdManager,
     consentManager: ConsentManager,
     onNavigateHome: () -> Unit = {},
-    onNavigateToGenerate: () -> Unit = {}
+    onNavigateToGenerate: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val levelNumber by viewModel.levelNumber.collectAsState()
@@ -65,9 +65,15 @@ fun SettingsScreen(
 
     SettingsDialogs(
         SettingsDialogsState(
-            showThemeDialog, { showThemeDialog = it }, currentTheme, { viewModel.saveTheme(it) },
-            showSpeedDialog, { showSpeedDialog = it }, currentSpeed, { viewModel.saveAnimationSpeed(it) }
-        )
+            showThemeDialog,
+            { showThemeDialog = it },
+            currentTheme,
+            { viewModel.saveTheme(it) },
+            showSpeedDialog,
+            { showSpeedDialog = it },
+            currentSpeed,
+            { viewModel.saveAnimationSpeed(it) },
+        ),
     )
     if (showLicensesDialog) {
         ThirdPartyLicensesDialog(onDismiss = { showLicensesDialog = false })
@@ -75,11 +81,22 @@ fun SettingsScreen(
 
     SettingsScaffold(
         SettingsScaffoldParams(
-            viewModel, debugViewModel, rewardAdManager, consentManager, context, themeColors,
-            levelNumber, isAdFree, currentTheme, currentSpeed,
-            { showThemeDialog = true }, { showSpeedDialog = true }, { showLicensesDialog = true },
-            onNavigateHome, onNavigateToGenerate
-        )
+            viewModel,
+            debugViewModel,
+            rewardAdManager,
+            consentManager,
+            context,
+            themeColors,
+            levelNumber,
+            isAdFree,
+            currentTheme,
+            currentSpeed,
+            { showThemeDialog = true },
+            { showSpeedDialog = true },
+            { showLicensesDialog = true },
+            onNavigateHome,
+            onNavigateToGenerate,
+        ),
     )
 }
 
@@ -98,26 +115,31 @@ private data class SettingsScaffoldParams(
     val onSpeedClick: () -> Unit,
     val onLicensesClick: () -> Unit,
     val onNavigateHome: () -> Unit,
-    val onNavigateToGenerate: () -> Unit
+    val onNavigateToGenerate: () -> Unit,
 )
 
 @Composable
-private fun Modifier.settingsEntryModifier(visible: Boolean, sectionIndex: Int): Modifier {
+private fun Modifier.settingsEntryModifier(
+    visible: Boolean,
+    sectionIndex: Int,
+): Modifier {
     val translationX by animateFloatAsState(
         targetValue = if (visible) 0f else GameConstants.SETTINGS_ENTER_OFFSET_DP,
-        animationSpec = tween(
-            durationMillis = GameConstants.SETTINGS_ENTER_ANIM_DURATION,
-            delayMillis = SettingsScreenLogic.sectionEntryDelayMs(sectionIndex)
-        ),
-        label = "settingsEntryTransX$sectionIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.SETTINGS_ENTER_ANIM_DURATION,
+                delayMillis = SettingsScreenLogic.sectionEntryDelayMs(sectionIndex),
+            ),
+        label = "settingsEntryTransX$sectionIndex",
     )
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = GameConstants.SETTINGS_ENTER_ANIM_DURATION,
-            delayMillis = SettingsScreenLogic.sectionEntryDelayMs(sectionIndex)
-        ),
-        label = "settingsEntryAlpha$sectionIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.SETTINGS_ENTER_ANIM_DURATION,
+                delayMillis = SettingsScreenLogic.sectionEntryDelayMs(sectionIndex),
+            ),
+        label = "settingsEntryAlpha$sectionIndex",
     )
     return graphicsLayer {
         this.translationX = translationX * density
@@ -143,26 +165,31 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
                     themeColors = params.themeColors,
                     onNavigateHome = params.onNavigateHome,
                     onNavigateToGenerate = params.onNavigateToGenerate,
-                    onNavigateToSettings = {}
+                    onNavigateToSettings = {},
                 )
             }
-        }
+        },
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 0)) {
                 PreferencesSection(
                     PreferencesParams(
-                        params.viewModel, params.themeColors, params.currentTheme, params.currentSpeed,
-                        params.onThemeClick, params.onSpeedClick
-                    )
+                        params.viewModel,
+                        params.themeColors,
+                        params.currentTheme,
+                        params.currentSpeed,
+                        params.onThemeClick,
+                        params.onSpeedClick,
+                    ),
                 )
             }
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 1)) {
@@ -172,7 +199,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
                 PurchasesSection(
                     viewModel = params.viewModel,
                     rewardAdManager = params.rewardAdManager,
-                    themeColors = params.themeColors
+                    themeColors = params.themeColors,
                 )
             }
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 3)) {
@@ -185,7 +212,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
                         (params.context as? Activity)?.let { activity ->
                             params.consentManager.showPrivacyOptionsForm(activity) { }
                         }
-                    }
+                    },
                 )
             }
             if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(params.viewModel, params.debugViewModel)
@@ -201,7 +228,7 @@ private data class SettingsDialogsState(
     val showSpeedDialog: Boolean,
     val onShowSpeedDialog: (Boolean) -> Unit,
     val currentSpeed: String,
-    val onSpeedSelected: (String) -> Unit
+    val onSpeedSelected: (String) -> Unit,
 )
 
 @Composable

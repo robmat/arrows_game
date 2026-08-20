@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.dp
  * across all screens and components.
  */
 object Dimensions {
-
     // Padding / Spacing
     val paddingXSmall = 4.dp
     val paddingSmall = 8.dp

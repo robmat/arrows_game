@@ -14,82 +14,93 @@ import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val userPreferencesRepository: IUserPreferencesRepository,
-    private val gameStateDao: GameStateDao
+    private val gameStateDao: GameStateDao,
 ) : ViewModel() {
-
     var shapeProvider: com.batodev.arrows.engine.BoardShapeProvider? = null
 
-    val theme: StateFlow<String> = userPreferencesRepository.theme.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = "Dark"
-    )
+    val theme: StateFlow<String> =
+        userPreferencesRepository.theme.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = "Dark",
+        )
 
-    val animationSpeed: StateFlow<String> = userPreferencesRepository.animationSpeed.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = "Medium"
-    )
+    val animationSpeed: StateFlow<String> =
+        userPreferencesRepository.animationSpeed.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = "Medium",
+        )
 
-    val isVibrationEnabled: StateFlow<Boolean> = userPreferencesRepository.isVibrationEnabled.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = true
-    )
+    val isVibrationEnabled: StateFlow<Boolean> =
+        userPreferencesRepository.isVibrationEnabled.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = true,
+        )
 
-    val isSoundsEnabled: StateFlow<Boolean> = userPreferencesRepository.isSoundsEnabled.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = true
-    )
+    val isSoundsEnabled: StateFlow<Boolean> =
+        userPreferencesRepository.isSoundsEnabled.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = true,
+        )
 
-    val isFillBoardEnabled: StateFlow<Boolean> = userPreferencesRepository.isFillBoardEnabled.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = false
-    )
+    val isFillBoardEnabled: StateFlow<Boolean> =
+        userPreferencesRepository.isFillBoardEnabled.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = false,
+        )
 
-    val isWinVideosEnabled: StateFlow<Boolean> = userPreferencesRepository.isWinVideosEnabled.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = true
-    )
+    val isWinVideosEnabled: StateFlow<Boolean> =
+        userPreferencesRepository.isWinVideosEnabled.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = true,
+        )
 
-    val levelNumber: StateFlow<Int> = userPreferencesRepository.levelNumber.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = 1
-    )
+    val levelNumber: StateFlow<Int> =
+        userPreferencesRepository.levelNumber.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = 1,
+        )
 
-    val hasSavedLevel: StateFlow<Boolean> = gameStateDao.hasSavedLevel().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = false
-    )
+    val hasSavedLevel: StateFlow<Boolean> =
+        gameStateDao.hasSavedLevel().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = false,
+        )
 
-    val isAdFree: StateFlow<Boolean> = userPreferencesRepository.isAdFree.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = false
-    )
+    val isAdFree: StateFlow<Boolean> =
+        userPreferencesRepository.isAdFree.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = false,
+        )
 
-    val rewardAdCount: StateFlow<Int> = userPreferencesRepository.rewardAdCount.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = 0
-    )
+    val rewardAdCount: StateFlow<Int> =
+        userPreferencesRepository.rewardAdCount.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = 0,
+        )
 
-    val gamesCompleted: StateFlow<Int> = userPreferencesRepository.gamesCompleted.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = 0
-    )
+    val gamesCompleted: StateFlow<Int> =
+        userPreferencesRepository.gamesCompleted.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = 0,
+        )
 
-    val introCompleted: StateFlow<Boolean?> = userPreferencesRepository.introCompleted.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
+    val introCompleted: StateFlow<Boolean?> =
+        userPreferencesRepository.introCompleted.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = null,
+        )
 
     fun saveTheme(theme: String) {
         viewModelScope.launch {

@@ -12,15 +12,15 @@ import androidx.room.PrimaryKey
             entity = SnakeEntity::class,
             parentColumns = ["snakeRowId"],
             childColumns = ["snakeRowId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index("snakeRowId")]
+    indices = [Index("snakeRowId")],
 )
 data class SnakeBodyPointEntity(
     @PrimaryKey(autoGenerate = true) val pointId: Long = 0,
     val snakeRowId: Long,
     val orderIndex: Int,
     val x: Int,
-    val y: Int
+    val y: Int,
 )

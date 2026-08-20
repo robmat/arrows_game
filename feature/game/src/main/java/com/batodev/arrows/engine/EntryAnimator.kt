@@ -11,7 +11,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.pow
 
-class EntryAnimator(private val coroutineScope: CoroutineScope) {
+class EntryAnimator(
+    private val coroutineScope: CoroutineScope,
+) {
     companion object {
         private const val CUBIC_EASING_POWER = 3
         private const val COMPLETION_BUFFER_MS = 50L
@@ -24,7 +26,11 @@ class EntryAnimator(private val coroutineScope: CoroutineScope) {
 
     private var entryJobs = mutableListOf<Job>()
 
-    fun animate(snakes: List<Snake>, boardWidth: Int, boardHeight: Int) {
+    fun animate(
+        snakes: List<Snake>,
+        boardWidth: Int,
+        boardHeight: Int,
+    ) {
         clear()
         if (snakes.isEmpty()) return
 
@@ -36,11 +42,20 @@ class EntryAnimator(private val coroutineScope: CoroutineScope) {
         val centerX = boardWidth.toFloat() / 2f
         val centerY = boardHeight.toFloat() / 2f
 
-        val sortedSnakes = snakes.sortedBy { snake ->
-            val cx = snake.body.map { it.x.toFloat() }.average().toFloat()
-            val cy = snake.body.map { it.y.toFloat() }.average().toFloat()
-            (cx - centerX) * (cx - centerX) + (cy - centerY) * (cy - centerY)
-        }
+        val sortedSnakes =
+            snakes.sortedBy { snake ->
+                val cx =
+                    snake.body
+                        .map { it.x.toFloat() }
+                        .average()
+                        .toFloat()
+                val cy =
+                    snake.body
+                        .map { it.y.toFloat() }
+                        .average()
+                        .toFloat()
+                (cx - centerX) * (cx - centerX) + (cy - centerY) * (cy - centerY)
+            }
 
         val duration = GameConstants.SNAKE_ENTRY_DURATION_MS
         val stagger = GameConstants.SNAKE_ENTRY_STAGGER_MS
@@ -50,39 +65,41 @@ class EntryAnimator(private val coroutineScope: CoroutineScope) {
             val delayMs = stagger * index
             val snakeId = snake.id
 
-            val job = coroutineScope.launch {
-                if (delayMs > 0) {
-                    delay(delayMs)
-                }
-                if (!isActive) return@launch
-
-                val startTime = System.currentTimeMillis()
-                while (isActive) {
-                    val elapsed = System.currentTimeMillis() - startTime
-                    val progress = (elapsed.toFloat() / duration).coerceIn(0f, 1f)
-                    // Ease-out cubic for smooth deceleration: 1 - (1 - x)^3
-                    val eased = 1f - (1f - progress).pow(CUBIC_EASING_POWER)
-                    
-                    entryProgress = entryProgress.toMutableMap().apply { put(snakeId, eased) }
-
-                    if (progress >= 1f) {
-                        entryProgress = entryProgress.toMutableMap().apply { remove(snakeId) }
-                        break
+            val job =
+                coroutineScope.launch {
+                    if (delayMs > 0) {
+                        delay(delayMs)
                     }
-                    delay(frameDelay)
+                    if (!isActive) return@launch
+
+                    val startTime = System.currentTimeMillis()
+                    while (isActive) {
+                        val elapsed = System.currentTimeMillis() - startTime
+                        val progress = (elapsed.toFloat() / duration).coerceIn(0f, 1f)
+                        // Ease-out cubic for smooth deceleration: 1 - (1 - x)^3
+                        val eased = 1f - (1f - progress).pow(CUBIC_EASING_POWER)
+
+                        entryProgress = entryProgress.toMutableMap().apply { put(snakeId, eased) }
+
+                        if (progress >= 1f) {
+                            entryProgress = entryProgress.toMutableMap().apply { remove(snakeId) }
+                            break
+                        }
+                        delay(frameDelay)
+                    }
                 }
-            }
             entryJobs.add(job)
         }
 
         // Clear isEntryAnimating after all snakes finish
         val totalDuration = stagger * (sortedSnakes.size - 1) + duration + COMPLETION_BUFFER_MS
-        val completionJob = coroutineScope.launch {
-            delay(totalDuration)
-            if (isActive) {
-                isEntryAnimating = false
+        val completionJob =
+            coroutineScope.launch {
+                delay(totalDuration)
+                if (isActive) {
+                    isEntryAnimating = false
+                }
             }
-        }
         entryJobs.add(completionJob)
     }
 

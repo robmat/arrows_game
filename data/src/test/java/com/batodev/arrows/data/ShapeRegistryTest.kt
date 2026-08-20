@@ -8,7 +8,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ShapeRegistryTest {
-
     @Test
     fun `registry contains nineteen shapes`() {
         assertEquals(19, ShapeRegistry.shapes.size)
@@ -41,12 +40,28 @@ class ShapeRegistryTest {
 
     @Test
     fun `expected shape names are present`() {
-        val expected = listOf(
-            "bolt", "brick", "build", "cannabis", "chess_queen", "chess_rook",
-            "delete", "disabled", "favorite", "home", "humerus", "key",
-            "star_kid", "mood_bad", "satisfied", "settings", "star", "tibia",
-            "water_bottle"
-        )
+        val expected =
+            listOf(
+                "bolt",
+                "brick",
+                "build",
+                "cannabis",
+                "chess_queen",
+                "chess_rook",
+                "delete",
+                "disabled",
+                "favorite",
+                "home",
+                "humerus",
+                "key",
+                "star_kid",
+                "mood_bad",
+                "satisfied",
+                "settings",
+                "star",
+                "tibia",
+                "water_bottle",
+            )
         expected.forEach { name ->
             assertNotNull("$name must be in ShapeRegistry", ShapeRegistry.shapes[name])
         }
@@ -57,7 +72,7 @@ class ShapeRegistryTest {
         ShapeRegistry.shapes.keys.forEach { name ->
             assertTrue(
                 "'$name' must not contain whitespace — used as nav param",
-                name.none { it.isWhitespace() }
+                name.none { it.isWhitespace() },
             )
         }
     }

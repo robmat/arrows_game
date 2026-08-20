@@ -9,16 +9,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class RemovalAnimator(private val coroutineScope: CoroutineScope) {
+class RemovalAnimator(
+    private val coroutineScope: CoroutineScope,
+) {
     var removalProgress by mutableStateOf<Map<Int, Float>>(emptyMap())
         private set
 
-    fun animate(snakeId: Int, animationSpeed: String, onStep: (Int, Float) -> Unit, onComplete: (Int) -> Unit) {
-        val durationMs = when (animationSpeed) {
-            "High" -> GameConstants.REMOVAL_DURATION_HIGH
-            "Low" -> GameConstants.REMOVAL_DURATION_LOW
-            else -> GameConstants.REMOVAL_DURATION_MEDIUM
-        }
+    fun animate(
+        snakeId: Int,
+        animationSpeed: String,
+        onStep: (Int, Float) -> Unit,
+        onComplete: (Int) -> Unit,
+    ) {
+        val durationMs =
+            when (animationSpeed) {
+                "High" -> GameConstants.REMOVAL_DURATION_HIGH
+                "Low" -> GameConstants.REMOVAL_DURATION_LOW
+                else -> GameConstants.REMOVAL_DURATION_MEDIUM
+            }
         coroutineScope.launch {
             removalProgress = removalProgress.toMutableMap().apply { put(snakeId, 0f) }
             var elapsed = 0L

@@ -36,16 +36,24 @@ data class GameEngineFeatures(
     val forcedShape: String? = null,
 )
 
-class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEngineFeatures()) : ViewModel() {
+class GameEngine(
+    config: GameEngineConfig,
+    features: GameEngineFeatures = GameEngineFeatures(),
+) : ViewModel() {
     private val coroutineScope = config.coroutineScopeOverride ?: viewModelScope
     private val repository = config.repository
     private val isCustomGame = config.isCustomGame
     private val backgroundDispatcher = config.backgroundDispatcher
     private val soundManager = features.soundManager
     private val inputHandler = InputHandler()
-    private val levelManager = LevelManager(
-        repository, config.gameGenerator, features.shapeProvider, features.random, config.gameStateDao
-    )
+    private val levelManager =
+        LevelManager(
+            repository,
+            config.gameGenerator,
+            features.shapeProvider,
+            features.random,
+            config.gameStateDao,
+        )
     internal val transformationState = TransformationState()
     private val removalAnimator = RemovalAnimator(coroutineScope)
     private val entryAnimator = EntryAnimator(coroutineScope)
@@ -92,17 +100,29 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
      * exposed separately since they change at frame rate and do not affect phase.
      */
     val uiState: GameUiState
-        get() = when {
-            isLoading -> GameUiState.Loading(loadingProgress)
-            isGameWon -> GameUiState.Won
-            lives <= 0 -> GameUiState.GameOver
-            else -> GameUiState.Playing(
-                level = level,
-                lives = lives,
-                maxLives = maxLives,
-                totalSnakes = totalSnakesInLevel,
-            )
-        }
+        get() =
+            when {
+                isLoading -> {
+                    GameUiState.Loading(loadingProgress)
+                }
+
+                isGameWon -> {
+                    GameUiState.Won
+                }
+
+                lives <= 0 -> {
+                    GameUiState.GameOver
+                }
+
+                else -> {
+                    GameUiState.Playing(
+                        level = level,
+                        lives = lives,
+                        maxLives = maxLives,
+                        totalSnakes = totalSnakesInLevel,
+                    )
+                }
+            }
 
     init {
         observePreferences()
@@ -115,7 +135,7 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
         coroutineScope.launch {
             repository.isSoundsEnabled.collect {
                 soundManager?.setSoundsEnabled(
-                    it
+                    it,
                 )
             }
         }
@@ -142,21 +162,33 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
         coroutineScope.launch(backgroundDispatcher) {
             levelManager.loadLevel(
                 onSuccess = { initial, current, maxL, currentL ->
-                    initialLevel = initial; level = current; totalSnakesInLevel =
-                    initial.snakes.size
-                    isGameWon = level.snakes.isEmpty(); maxLives = maxL; lives =
-                    currentL; isLoading = false
+                    initialLevel = initial
+                    level = current
+                    totalSnakesInLevel =
+                        initial.snakes.size
+                    isGameWon = level.snakes.isEmpty()
+                    maxLives = maxL
+                    lives =
+                        currentL
+                    isLoading = false
                     animateEntry()
                 },
-                onFailure = { regenerateLevel() }
+                onFailure = { regenerateLevel() },
             )
         }
     }
 
     fun restartLevel() {
         initialLevel?.let {
-            level = it; totalSnakesInLevel = it.snakes.size; isGameWon = false; lives = maxLives
-            transformationState.reset(); tapHandler.clearFlash(); removalAnimator.clear(); entryAnimator.clear(); saveState()
+            level = it
+            totalSnakesInLevel = it.snakes.size
+            isGameWon = false
+            lives = maxLives
+            transformationState.reset()
+            tapHandler.clearFlash()
+            removalAnimator.clear()
+            entryAnimator.clear()
+            saveState()
             animateEntry()
         }
     }
@@ -168,42 +200,61 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
         }
     }
 
-    fun onTransform(pan: Offset, zoom: Float) = transformationState.transform(pan, zoom)
+    fun onTransform(
+        pan: Offset,
+        zoom: Float,
+    ) = transformationState.transform(pan, zoom)
 
     fun addLife() {
         if (lives < maxLives) {
-            lives++; saveState()
+            lives++
+            saveState()
         }
     }
 
-    fun onTap(tapOffset: Offset, containerWidthPx: Float, containerHeightPx: Float) {
+    fun onTap(
+        tapOffset: Offset,
+        containerWidthPx: Float,
+        containerHeightPx: Float,
+    ) {
         if (isLoading || lives <= 0 || isEntryAnimating) return
-        val gridCoords = inputHandler.transformTapToGrid(
-            TapTransformationParams(
-                tapOffset,
-                containerWidthPx,
-                containerHeightPx,
-                level,
-                scale,
-                offsetX,
-                offsetY
+        val gridCoords =
+            inputHandler.transformTapToGrid(
+                TapTransformationParams(
+                    tapOffset,
+                    containerWidthPx,
+                    containerHeightPx,
+                    level,
+                    scale,
+                    offsetX,
+                    offsetY,
+                ),
             )
-        )
-        val tappedSnake = inputHandler.findTappedSnake(gridCoords.x, gridCoords.y, level.snakes) {
-            SolvabilityChecker.isLineOfSightObstructed(
-                level,
-                it,
-                removalAnimator.removalProgress.keys
-            )
-        }
+        val tappedSnake =
+            inputHandler.findTappedSnake(gridCoords.x, gridCoords.y, level.snakes) {
+                SolvabilityChecker.isLineOfSightObstructed(
+                    level,
+                    it,
+                    removalAnimator.removalProgress.keys,
+                )
+            }
         if (tappedSnake != null) {
-            val isObstructed = SolvabilityChecker.isLineOfSightObstructed(
-                level, tappedSnake, removalAnimator.removalProgress.keys
-            )
+            val isObstructed =
+                SolvabilityChecker.isLineOfSightObstructed(
+                    level,
+                    tappedSnake,
+                    removalAnimator.removalProgress.keys,
+                )
             tapHandler.handleSnakeTap(
                 TapParams(
-                    tappedSnake, isVibrationEnabled, isObstructed, lives,
-                    onPenalty = { lives--; saveState() },
+                    tappedSnake,
+                    isVibrationEnabled,
+                    isObstructed,
+                    lives,
+                    onPenalty = {
+                        lives--
+                        saveState()
+                    },
                     onSuccess = {
                         if (!removalProgress.containsKey(tappedSnake.id)) {
                             removalAnimator.animate(
@@ -212,10 +263,11 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
                                 { _, _ -> },
                                 { id ->
                                     onSnakeRemoved(id)
-                                })
+                                },
+                            )
                         }
-                    }
-                )
+                    },
+                ),
             )
         }
     }
@@ -242,24 +294,36 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
     }
 
     fun regenerateLevel() {
-        isLoading = true; loadingProgress = 0f
+        isLoading = true
+        loadingProgress = 0f
         coroutineScope.launch(backgroundDispatcher) {
             levelManager.regenerateLevel(
                 RegenerationParams(
-                    forcedWidth, forcedHeight, forcedLives, forcedShape, isCustomGame,
+                    forcedWidth,
+                    forcedHeight,
+                    forcedLives,
+                    forcedShape,
+                    isCustomGame,
                     onProgress = { loadingProgress = it },
                     onComplete = { newLevel, config ->
-                        initialLevel = newLevel; level = newLevel; totalSnakesInLevel =
-                        newLevel.snakes.size
-                        isGameWon = false; maxLives = config.maxLives; lives = config.maxLives
-                        transformationState.reset(); tapHandler.clearFlash(); removalAnimator.clear(); entryAnimator.clear()
+                        initialLevel = newLevel
+                        level = newLevel
+                        totalSnakesInLevel =
+                            newLevel.snakes.size
+                        isGameWon = false
+                        maxLives = config.maxLives
+                        lives = config.maxLives
+                        transformationState.reset()
+                        tapHandler.clearFlash()
+                        removalAnimator.clear()
+                        entryAnimator.clear()
                         isLoading = false
                         animateEntry()
                         coroutineScope.launch(backgroundDispatcher) {
                             levelManager.saveInitialState(newLevel, lives)
                         }
-                    }
-                )
+                    },
+                ),
             )
         }
     }
@@ -274,7 +338,7 @@ class GameEngine(config: GameEngineConfig, features: GameEngineFeatures = GameEn
 
     class Factory(
         private val config: GameEngineConfig,
-        private val features: GameEngineFeatures = GameEngineFeatures()
+        private val features: GameEngineFeatures = GameEngineFeatures(),
     ) : ViewModelProvider.Factory {
         // Cast is safe: guarded by isAssignableFrom check above.
         // Required boilerplate for manual ViewModelProvider.Factory without a DI framework.

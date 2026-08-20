@@ -12,14 +12,14 @@ import androidx.room.PrimaryKey
             entity = GameBoardEntity::class,
             parentColumns = ["boardId"],
             childColumns = ["boardId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index("boardId")]
+    indices = [Index("boardId")],
 )
 data class SnakeEntity(
     @PrimaryKey(autoGenerate = true) val snakeRowId: Long = 0,
     val boardId: Long,
     val snakeId: Int,
-    val headDirection: String
+    val headDirection: String,
 )

@@ -11,38 +11,47 @@ import kotlinx.coroutines.launch
 
 /** Backs the debug-only board-override menu (DebugMenu, BuildConfig.DRAW_DEBUG_STUFF). */
 class DebugViewModel(
-    private val userPreferencesRepository: IUserPreferencesRepository
+    private val userPreferencesRepository: IUserPreferencesRepository,
 ) : ViewModel() {
-
     enum class DebugOption {
-        WIDTH, HEIGHT, LIVES, SHAPE
+        WIDTH,
+        HEIGHT,
+        LIVES,
+        SHAPE,
     }
 
-    val debugForcedWidth: StateFlow<Int?> = userPreferencesRepository.debugForcedWidth.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
+    val debugForcedWidth: StateFlow<Int?> =
+        userPreferencesRepository.debugForcedWidth.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = null,
+        )
 
-    val debugForcedHeight: StateFlow<Int?> = userPreferencesRepository.debugForcedHeight.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
+    val debugForcedHeight: StateFlow<Int?> =
+        userPreferencesRepository.debugForcedHeight.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = null,
+        )
 
-    val debugForcedLives: StateFlow<Int?> = userPreferencesRepository.debugForcedLives.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
+    val debugForcedLives: StateFlow<Int?> =
+        userPreferencesRepository.debugForcedLives.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = null,
+        )
 
-    val debugForcedShape: StateFlow<String?> = userPreferencesRepository.debugForcedShape.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-        initialValue = null
-    )
+    val debugForcedShape: StateFlow<String?> =
+        userPreferencesRepository.debugForcedShape.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = null,
+        )
 
-    fun saveDebugOption(option: DebugOption, value: Any?) {
+    fun saveDebugOption(
+        option: DebugOption,
+        value: Any?,
+    ) {
         viewModelScope.launch {
             when (option) {
                 DebugOption.WIDTH -> userPreferencesRepository.saveDebugForcedWidth(value as? Int)

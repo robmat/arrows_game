@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,13 +59,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.data.AndroidResourceBoardShapeProvider
 import com.batodev.arrows.data.ShapeRegistry
 import com.batodev.arrows.ui.AppNavigationBar
 import com.batodev.arrows.ui.AppViewModel
-import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.ui.NavigationDestination
 import com.batodev.arrows.ui.ads.BannerAdView
 import com.batodev.arrows.ui.theme.LocalThemeColors
@@ -81,7 +81,7 @@ fun GenerateScreen(
     onStartCustomGame: (CustomGameParams) -> Unit,
     onBack: () -> Unit = {},
     onNavigateHome: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToSettings: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val hasSavedLevel by appViewModel.hasSavedLevel.collectAsState()
@@ -106,17 +106,34 @@ fun GenerateScreen(
         WarningDialog(
             themeColors = themeColors,
             onConfirm = { startCustomGameNavigation(appViewModel, onStartCustomGame, width, selectedShape, height) },
-            onDismiss = { showWarning = false }
+            onDismiss = { showWarning = false },
         )
     }
-    val scaffoldState = GenerateScaffoldState(
-        context, themeColors, levelNumber, width, height, maxSize, shapes, selectedShape, isAdFree,
-        contentReady,
-        { width = it }, { height = it }, { selectedShape = it }, onBack, onNavigateHome, onNavigateToSettings
-    ) {
-        if (hasSavedLevel) showWarning = true
-        else startCustomGameNavigation(appViewModel, onStartCustomGame, width, selectedShape, height)
-    }
+    val scaffoldState =
+        GenerateScaffoldState(
+            context,
+            themeColors,
+            levelNumber,
+            width,
+            height,
+            maxSize,
+            shapes,
+            selectedShape,
+            isAdFree,
+            contentReady,
+            { width = it },
+            { height = it },
+            { selectedShape = it },
+            onBack,
+            onNavigateHome,
+            onNavigateToSettings,
+        ) {
+            if (hasSavedLevel) {
+                showWarning = true
+            } else {
+                startCustomGameNavigation(appViewModel, onStartCustomGame, width, selectedShape, height)
+            }
+        }
     GenerateScaffoldContent(scaffoldState)
 }
 
@@ -137,7 +154,7 @@ private data class GenerateScaffoldState(
     val onBack: () -> Unit,
     val onNavigateHome: () -> Unit,
     val onNavigateToSettings: () -> Unit,
-    val onStartClick: () -> Unit
+    val onStartClick: () -> Unit,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,15 +167,15 @@ private fun GenerateScaffoldContent(state: GenerateScaffoldState) {
                 navigationIcon = {
                     IconButton(
                         onClick = state.onBack,
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = White)
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = White),
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.content_description_back)
+                            contentDescription = stringResource(R.string.content_description_back),
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = state.themeColors.background)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = state.themeColors.background),
             )
         },
         bottomBar = {
@@ -172,21 +189,27 @@ private fun GenerateScaffoldContent(state: GenerateScaffoldState) {
                     themeColors = state.themeColors,
                     onNavigateHome = state.onNavigateHome,
                     onNavigateToGenerate = {},
-                    onNavigateToSettings = state.onNavigateToSettings
+                    onNavigateToSettings = state.onNavigateToSettings,
                 )
             }
         },
-        containerColor = state.themeColors.background
+        containerColor = state.themeColors.background,
     ) { innerPadding ->
         if (state.contentReady) {
-            val contentState = GenerateContentState(
-                innerPadding = innerPadding, width = state.width, height = state.height,
-                maxSize = state.maxSize, shapes = state.shapes, selectedShape = state.selectedShape,
-                themeColors = state.themeColors,
-                onWidthChange = state.onWidthChange, onHeightChange = state.onHeightChange,
-                onShapeSelected = state.onShapeSelected,
-                onStartClick = state.onStartClick
-            )
+            val contentState =
+                GenerateContentState(
+                    innerPadding = innerPadding,
+                    width = state.width,
+                    height = state.height,
+                    maxSize = state.maxSize,
+                    shapes = state.shapes,
+                    selectedShape = state.selectedShape,
+                    themeColors = state.themeColors,
+                    onWidthChange = state.onWidthChange,
+                    onHeightChange = state.onHeightChange,
+                    onShapeSelected = state.onShapeSelected,
+                    onStartClick = state.onStartClick,
+                )
             GenerateContent(contentState)
         } else {
             Box(modifier = Modifier.fillMaxSize().padding(innerPadding))
@@ -199,20 +222,27 @@ private fun startCustomGameNavigation(
     onStartCustomGame: (CustomGameParams) -> Unit,
     width: Float,
     selectedShape: String,
-    height: Float
+    height: Float,
 ) {
     viewModel.regenerateCurrentLevel()
     onStartCustomGame(GenerateScreenLogic.buildCustomGameParams(width, height, selectedShape))
 }
 
 @Composable
-private fun WarningDialog(themeColors: ThemeColors, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+private fun WarningDialog(
+    themeColors: ThemeColors,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.custom_gen_warning_title), color = White) },
         text = { Text(stringResource(R.string.custom_gen_warning_message), color = White) },
         confirmButton = {
-            Button(onClick = { onConfirm(); onDismiss() }) {
+            Button(onClick = {
+                onConfirm()
+                onDismiss()
+            }) {
                 Text(stringResource(R.string.proceed_label))
             }
         },
@@ -221,7 +251,7 @@ private fun WarningDialog(themeColors: ThemeColors, onConfirm: () -> Unit, onDis
                 Text(stringResource(R.string.cancel_label), color = White)
             }
         },
-        containerColor = themeColors.background
+        containerColor = themeColors.background,
     )
 }
 
@@ -236,7 +266,7 @@ private data class GenerateContentState(
     val onWidthChange: (Float) -> Unit,
     val onHeightChange: (Float) -> Unit,
     val onShapeSelected: (String) -> Unit,
-    val onStartClick: () -> Unit
+    val onStartClick: () -> Unit,
 )
 
 @Composable
@@ -250,37 +280,41 @@ private fun GenerateContent(state: GenerateContentState) {
 
     val buttonEntryAlpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
-            delayMillis = BUTTON_STAGGER_INDEX * GameConstants.GENERATOR_STAGGER_DELAY_MS
-        ),
-        label = "button_entry_alpha"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
+                delayMillis = BUTTON_STAGGER_INDEX * GameConstants.GENERATOR_STAGGER_DELAY_MS,
+            ),
+        label = "button_entry_alpha",
     )
     val buttonEntryOffset by animateFloatAsState(
         targetValue = if (visible) 0f else GameConstants.GENERATOR_ENTER_OFFSET_DP,
-        animationSpec = tween(
-            durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
-            delayMillis = BUTTON_STAGGER_INDEX * GameConstants.GENERATOR_STAGGER_DELAY_MS
-        ),
-        label = "button_entry_offset"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
+                delayMillis = BUTTON_STAGGER_INDEX * GameConstants.GENERATOR_STAGGER_DELAY_MS,
+            ),
+        label = "button_entry_offset",
     )
     val infiniteTransition = rememberInfiniteTransition(label = "button_pulse")
     val buttonPulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = GameConstants.GENERATOR_BUTTON_PULSE_SCALE,
-        animationSpec = infiniteRepeatable(
-            animation = tween(GameConstants.GENERATOR_BUTTON_PULSE_DURATION, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "button_pulse_scale"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(GameConstants.GENERATOR_BUTTON_PULSE_DURATION, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "button_pulse_scale",
     )
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(state.innerPadding)
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(state.innerPadding)
+                .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
             Spacer(modifier = Modifier.height(24.dp))
@@ -290,7 +324,7 @@ private fun GenerateContent(state: GenerateContentState) {
                 maxSize = state.maxSize,
                 onValueChange = state.onWidthChange,
                 themeColors = state.themeColors,
-                modifier = widthSliderMod
+                modifier = widthSliderMod,
             )
             Spacer(modifier = Modifier.height(24.dp))
             SizeSlider(
@@ -299,7 +333,7 @@ private fun GenerateContent(state: GenerateContentState) {
                 maxSize = state.maxSize,
                 onValueChange = state.onHeightChange,
                 themeColors = state.themeColors,
-                modifier = heightSliderMod
+                modifier = heightSliderMod,
             )
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -314,7 +348,7 @@ private fun GenerateContent(state: GenerateContentState) {
                         rowIndex = rowIndex,
                         selectedShape = state.selectedShape,
                         themeColors = state.themeColors,
-                        onShapeSelected = state.onShapeSelected
+                        onShapeSelected = state.onShapeSelected,
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -325,24 +359,25 @@ private fun GenerateContent(state: GenerateContentState) {
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 onClick = state.onStartClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .offset { IntOffset(0, buttonEntryOffset.dp.roundToPx()) }
-                    .graphicsLayer {
-                        alpha = buttonEntryAlpha
-                        scaleX = buttonPulseScale
-                        scaleY = buttonPulseScale
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .offset { IntOffset(0, buttonEntryOffset.dp.roundToPx()) }
+                        .graphicsLayer {
+                            alpha = buttonEntryAlpha
+                            scaleX = buttonPulseScale
+                            scaleY = buttonPulseScale
+                        },
                 colors = ButtonDefaults.buttonColors(containerColor = state.themeColors.accent),
-                shape = MaterialTheme.shapes.extraLarge
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 Icon(Icons.Default.AutoAwesome, contentDescription = null)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = stringResource(R.string.generate_start_label),
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -354,22 +389,27 @@ private const val SHAPES_PER_ROW = 4
 private const val BUTTON_STAGGER_INDEX = 3
 
 @Composable
-private fun Modifier.staggeredEntryModifier(visible: Boolean, staggerIndex: Int): Modifier {
+private fun Modifier.staggeredEntryModifier(
+    visible: Boolean,
+    staggerIndex: Int,
+): Modifier {
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
-            delayMillis = staggerIndex * GameConstants.GENERATOR_STAGGER_DELAY_MS
-        ),
-        label = "entry_alpha_$staggerIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
+                delayMillis = staggerIndex * GameConstants.GENERATOR_STAGGER_DELAY_MS,
+            ),
+        label = "entry_alpha_$staggerIndex",
     )
     val offsetDp by animateFloatAsState(
         targetValue = if (visible) 0f else GameConstants.GENERATOR_ENTER_OFFSET_DP,
-        animationSpec = tween(
-            durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
-            delayMillis = staggerIndex * GameConstants.GENERATOR_STAGGER_DELAY_MS
-        ),
-        label = "entry_offset_$staggerIndex"
+        animationSpec =
+            tween(
+                durationMillis = GameConstants.GENERATOR_ENTER_ANIM_DURATION,
+                delayMillis = staggerIndex * GameConstants.GENERATOR_STAGGER_DELAY_MS,
+            ),
+        label = "entry_offset_$staggerIndex",
     )
     return this
         .offset { IntOffset(0, offsetDp.dp.roundToPx()) }
@@ -383,7 +423,7 @@ private fun ShapeSectionHeader() {
         color = White,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -393,11 +433,11 @@ private fun ShapeRow(
     rowIndex: Int,
     selectedShape: String,
     themeColors: ThemeColors,
-    onShapeSelected: (String) -> Unit
+    onShapeSelected: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
     ) {
         shapes.forEachIndexed { indexInRow, shape ->
             ShapeItem(
@@ -405,7 +445,7 @@ private fun ShapeRow(
                 globalIndex = GenerateScreenLogic.shapeFlatIndex(rowIndex, indexInRow, SHAPES_PER_ROW),
                 isSelected = selectedShape == shape,
                 onClick = { onShapeSelected(shape) },
-                themeColors = themeColors
+                themeColors = themeColors,
             )
         }
     }
@@ -418,7 +458,7 @@ private fun SizeSlider(
     maxSize: Float,
     onValueChange: (Float) -> Unit,
     themeColors: ThemeColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val intValue = value.toInt()
     var scaleUp by remember { mutableStateOf(false) }
@@ -429,11 +469,12 @@ private fun SizeSlider(
     }
     val valueTextScale by animateFloatAsState(
         targetValue = if (scaleUp) GameConstants.GENERATOR_VALUE_SCALE_TARGET else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessHigh
-        ),
-        label = "value_scale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessHigh,
+            ),
+        label = "value_scale",
     )
     Column(modifier = modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -444,10 +485,11 @@ private fun SizeSlider(
                 color = themeColors.accent,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                modifier = Modifier.graphicsLayer {
-                    scaleX = valueTextScale
-                    scaleY = valueTextScale
-                }
+                modifier =
+                    Modifier.graphicsLayer {
+                        scaleX = valueTextScale
+                        scaleY = valueTextScale
+                    },
             )
         }
         Slider(
@@ -455,11 +497,12 @@ private fun SizeSlider(
             onValueChange = onValueChange,
             valueRange = GameConstants.GENERATOR_MIN_SIZE..maxSize,
             modifier = Modifier.padding(horizontal = 12.dp),
-            colors = SliderDefaults.colors(
-                thumbColor = themeColors.accent,
-                activeTrackColor = themeColors.accent,
-                inactiveTrackColor = themeColors.topBarButton
-            )
+            colors =
+                SliderDefaults.colors(
+                    thumbColor = themeColors.accent,
+                    activeTrackColor = themeColors.accent,
+                    inactiveTrackColor = themeColors.topBarButton,
+                ),
         )
     }
 }
@@ -470,20 +513,21 @@ private fun ShapeItem(
     globalIndex: Int,
     isSelected: Boolean,
     onClick: () -> Unit,
-    themeColors: ThemeColors
+    themeColors: ThemeColors,
 ) {
     val containerColor by animateColorAsState(
         targetValue = if (isSelected) themeColors.accent else themeColors.topBarButton,
         animationSpec = tween(durationMillis = GameConstants.GENERATOR_COLOR_ANIM_DURATION),
-        label = "shape_color"
+        label = "shape_color",
     )
     val selectionScale by animateFloatAsState(
         targetValue = if (isSelected) GameConstants.GENERATOR_SHAPE_SELECTED_SCALE else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMediumLow
-        ),
-        label = "shape_selection_scale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMediumLow,
+            ),
+        label = "shape_selection_scale",
     )
     var hasPopped by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -492,29 +536,31 @@ private fun ShapeItem(
     }
     val popInScale by animateFloatAsState(
         targetValue = if (hasPopped) 1f else 0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "shape_pop_in_scale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium,
+            ),
+        label = "shape_pop_in_scale",
     )
     Card(
-        modifier = Modifier
-            .graphicsLayer {
-                val combined = popInScale * selectionScale
-                scaleX = combined
-                scaleY = combined
-            }
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = White
-        ),
-        shape = MaterialTheme.shapes.medium
+        modifier =
+            Modifier
+                .graphicsLayer {
+                    val combined = popInScale * selectionScale
+                    scaleX = combined
+                    scaleY = combined
+                }.clickable { onClick() },
+        colors =
+            CardDefaults.cardColors(
+                containerColor = containerColor,
+                contentColor = White,
+            ),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Box(
             modifier = Modifier.padding(12.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             ShapeIcon(name)
         }
@@ -527,7 +573,7 @@ private fun ShapeIcon(name: String) {
         Icon(
             imageVector = Icons.Default.CropSquare,
             contentDescription = stringResource(R.string.shape_rectangular),
-            modifier = Modifier.size(GameConstants.SHAPE_ICON_SIZE.dp)
+            modifier = Modifier.size(GameConstants.SHAPE_ICON_SIZE.dp),
         )
     } else {
         val resId = getShapeResourceId(name)
@@ -535,7 +581,7 @@ private fun ShapeIcon(name: String) {
             Icon(
                 painter = painterResource(id = resId),
                 contentDescription = name,
-                modifier = Modifier.size(GameConstants.SHAPE_ICON_SIZE.dp)
+                modifier = Modifier.size(GameConstants.SHAPE_ICON_SIZE.dp),
             )
         } else {
             Text(text = name.take(1).uppercase())

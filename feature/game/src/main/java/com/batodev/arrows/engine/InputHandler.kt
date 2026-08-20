@@ -7,7 +7,6 @@ import com.batodev.arrows.GameConstants.TAP_AREA_OFFSET_FACTOR
 import kotlin.math.min
 
 class InputHandler {
-    
     fun transformTapToGrid(params: TapTransformationParams): Offset {
         // Inverse graphicsLayer transformation
         val centerX = params.containerWidth / 2
@@ -29,8 +28,13 @@ class InputHandler {
         return Offset(cellX, cellY)
     }
 
-    fun findTappedSnake(cellX: Float, cellY: Float, snakes: List<Snake>, isObstructed: (Snake) -> Boolean): Snake? {
-        return snakes
+    fun findTappedSnake(
+        cellX: Float,
+        cellY: Float,
+        snakes: List<Snake>,
+        isObstructed: (Snake) -> Boolean,
+    ): Snake? =
+        snakes
             .map { snake ->
                 val head = snake.body.first()
                 val cellOffset = GameConstants.CELL_CENTER + snake.headDirection.dx * TAP_AREA_OFFSET_FACTOR
@@ -43,9 +47,7 @@ class InputHandler {
                 val distSq = dx * dx + dy * dy
 
                 Triple(snake, distSq, isObstructed(snake))
-            }
-            .filter { it.second <= DEFAULT_TOLERANCE * DEFAULT_TOLERANCE }
+            }.filter { it.second <= DEFAULT_TOLERANCE * DEFAULT_TOLERANCE }
             .minWithOrNull(compareBy({ it.third }, { it.second }))
             ?.first
-    }
 }

@@ -44,29 +44,32 @@ import com.batodev.arrows.ui.theme.White
 data class HintButtonState(
     val isAdFree: Boolean = false,
     val isAdLoaded: Boolean = false,
-    val isAdLoading: Boolean = false
+    val isAdLoading: Boolean = false,
 )
 
 data class GameTopBarState(
     val lives: Int,
     val maxLives: Int,
-    val hintState: HintButtonState = HintButtonState()
+    val hintState: HintButtonState = HintButtonState(),
 )
 
 data class GameTopBarCallbacks(
     val onRestart: () -> Unit,
     val onHint: () -> Unit,
-    val onBack: () -> Unit
+    val onBack: () -> Unit,
 )
 
 @Composable
-fun GameTopBar(state: GameTopBarState, callbacks: GameTopBarCallbacks) {
+fun GameTopBar(
+    state: GameTopBarState,
+    callbacks: GameTopBarCallbacks,
+) {
     val themeColors = LocalThemeColors.current
 
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         GameControls(callbacks.onBack, callbacks.onRestart, themeColors)
         HeartsDisplay(state.lives, state.maxLives)
@@ -75,33 +78,40 @@ fun GameTopBar(state: GameTopBarState, callbacks: GameTopBarCallbacks) {
 }
 
 @Composable
-private fun GameControls(onBack: () -> Unit, onRestart: () -> Unit, themeColors: ThemeColors) {
+private fun GameControls(
+    onBack: () -> Unit,
+    onRestart: () -> Unit,
+    themeColors: ThemeColors,
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         BackIconButton(onClick = onBack, containerColor = themeColors.topBarButton)
         Spacer(modifier = Modifier.width(8.dp))
         IconButton(
             onClick = onRestart,
             colors = IconButtonDefaults.iconButtonColors(containerColor = themeColors.topBarButton),
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(40.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.Refresh,
                 contentDescription = stringResource(R.string.content_description_restart),
-                tint = White
+                tint = White,
             )
         }
     }
 }
 
 @Composable
-private fun HeartsDisplay(lives: Int, maxLives: Int) {
+private fun HeartsDisplay(
+    lives: Int,
+    maxLives: Int,
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         repeat(maxLives) { index ->
             Icon(
                 imageVector = if (index < lives) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = stringResource(R.string.content_description_life),
                 tint = HeartRed,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
             if (index < maxLives - 1) {
                 Spacer(modifier = Modifier.width(4.dp))
@@ -111,12 +121,17 @@ private fun HeartsDisplay(lives: Int, maxLives: Int) {
 }
 
 @Composable
-private fun HintButton(themeColors: ThemeColors, onClick: () -> Unit, state: HintButtonState) {
-    val buttonText = when {
-        state.isAdFree -> stringResource(R.string.hint_label)
-        state.isAdLoading -> stringResource(R.string.loading_label)
-        else -> stringResource(R.string.hint_label)
-    }
+private fun HintButton(
+    themeColors: ThemeColors,
+    onClick: () -> Unit,
+    state: HintButtonState,
+) {
+    val buttonText =
+        when {
+            state.isAdFree -> stringResource(R.string.hint_label)
+            state.isAdLoading -> stringResource(R.string.loading_label)
+            else -> stringResource(R.string.hint_label)
+        }
     val buttonEnabled = state.isAdFree || !state.isAdLoading
 
     Button(
@@ -125,12 +140,12 @@ private fun HintButton(themeColors: ThemeColors, onClick: () -> Unit, state: Hin
         colors = ButtonDefaults.buttonColors(containerColor = themeColors.topBarButton, contentColor = White),
         shape = RoundedCornerShape(12.dp),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-        modifier = Modifier.height(40.dp)
+        modifier = Modifier.height(40.dp),
     ) {
         Icon(
             imageVector = Icons.Default.VideoLabel,
             contentDescription = stringResource(R.string.content_description_ad),
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = buttonText, fontSize = 12.sp)
@@ -140,7 +155,7 @@ private fun HintButton(themeColors: ThemeColors, onClick: () -> Unit, state: Hin
 @Composable
 fun GameProgressBar(
     totalSnakes: Int,
-    currentSnakes: Int
+    currentSnakes: Int,
 ) {
     val themeColors = LocalThemeColors.current
     val targetProgress = if (totalSnakes > 0) (totalSnakes - currentSnakes).toFloat() / totalSnakes else 0f
@@ -148,7 +163,7 @@ fun GameProgressBar(
     val animatedProgress by animateFloatAsState(
         targetValue = targetProgress,
         animationSpec = tween(durationMillis = GameConstants.PROGRESS_ANIM_DURATION),
-        label = "ProgressBarAnimation"
+        label = "ProgressBarAnimation",
     )
 
     LinearProgressIndicator(
@@ -156,6 +171,6 @@ fun GameProgressBar(
         modifier = Modifier.fillMaxWidth().height(6.dp),
         color = ProgressBarGreen,
         trackColor = themeColors.topBarButton,
-        strokeCap = StrokeCap.Round
+        strokeCap = StrokeCap.Round,
     )
 }

@@ -2,9 +2,9 @@ package com.batodev.arrows.engine
 
 import com.batodev.arrows.data.GameLevelData
 import com.batodev.arrows.data.GameStateDao
+import com.batodev.arrows.data.IUserPreferencesRepository
 import com.batodev.arrows.data.PointData
 import com.batodev.arrows.data.SnakeSaveData
-import com.batodev.arrows.data.IUserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -14,7 +14,7 @@ class LevelManager(
     private val gameGenerator: GameGenerator,
     private val shapeProvider: BoardShapeProvider?,
     private val random: kotlin.random.Random,
-    private val gameStateDao: GameStateDao
+    private val gameStateDao: GameStateDao,
 ) {
     companion object {
         const val STATE_INITIAL = "INITIAL"
@@ -26,7 +26,7 @@ class LevelManager(
             SnakeSaveData(
                 id = snake.id,
                 headDirection = snake.headDirection.name,
-                bodyPoints = snake.body.map { PointData(it.x, it.y) }
+                bodyPoints = snake.body.map { PointData(it.x, it.y) },
             )
         }
 
@@ -34,18 +34,19 @@ class LevelManager(
         GameLevel(
             width = width,
             height = height,
-            snakes = snakes.map { sd ->
-                Snake(
-                    id = sd.id,
-                    body = sd.bodyPoints.map { Point(it.x, it.y) },
-                    headDirection = Direction.valueOf(sd.headDirection)
-                )
-            }
+            snakes =
+                snakes.map { sd ->
+                    Snake(
+                        id = sd.id,
+                        body = sd.bodyPoints.map { Point(it.x, it.y) },
+                        headDirection = Direction.valueOf(sd.headDirection),
+                    )
+                },
         )
 
     suspend fun loadLevel(
         onSuccess: (initial: GameLevel, current: GameLevel, maxLives: Int, currentLives: Int) -> Unit,
-        onFailure: suspend () -> Unit
+        onFailure: suspend () -> Unit,
     ) {
         val initialData = gameStateDao.loadGameLevel(STATE_INITIAL)
         val currentData = gameStateDao.loadGameLevel(STATE_CURRENT)
@@ -59,7 +60,7 @@ class LevelManager(
                     initialData.toDomain(),
                     currentData.toDomain(),
                     config.maxLives,
-                    savedLives ?: config.maxLives
+                    savedLives ?: config.maxLives,
                 )
             } catch (_: Exception) {
                 onFailure()
@@ -73,26 +74,39 @@ class LevelManager(
         val fillBoard = repository.isFillBoardEnabled.firstOrNull() ?: false
         val currentLevelNum = repository.levelNumber.firstOrNull() ?: 1
 
-        val config = LevelProgression.calculateLevelConfiguration(
-            currentLevelNum, params.forcedWidth, params.forcedHeight, params.forcedLives
-        )
+        val config =
+            LevelProgression.calculateLevelConfiguration(
+                currentLevelNum,
+                params.forcedWidth,
+                params.forcedHeight,
+                params.forcedLives,
+            )
 
         val shape = determineShape(config, params.forcedShape, params.isCustomGame)
 
-        val newLevel = gameGenerator.generateSolvableLevel(
-            GenerationParams(
-                width = config.width, height = config.height, maxSnakeLength = config.maxSnakeLength,
-                onProgress = params.onProgress, fillTheBoard = fillBoard, boardShape = shape
+        val newLevel =
+            gameGenerator.generateSolvableLevel(
+                GenerationParams(
+                    width = config.width,
+                    height = config.height,
+                    maxSnakeLength = config.maxSnakeLength,
+                    onProgress = params.onProgress,
+                    fillTheBoard = fillBoard,
+                    boardShape = shape,
+                ),
             )
-        )
 
         withContext(Dispatchers.Main) {
             params.onComplete(newLevel, config)
         }
     }
 
-    private fun determineShape(config: LevelConfiguration, forcedShape: String?, isCustomGame: Boolean): BoardShape? {
-        return if (forcedShape != null) {
+    private fun determineShape(
+        config: LevelConfiguration,
+        forcedShape: String?,
+        isCustomGame: Boolean,
+    ): BoardShape? =
+        if (forcedShape != null) {
             shapeProvider?.getShapeByName(forcedShape)
         } else if (isCustomGame) {
             null
@@ -101,14 +115,19 @@ class LevelManager(
         } else {
             null
         }
-    }
 
-    suspend fun saveState(level: GameLevel, lives: Int) {
+    suspend fun saveState(
+        level: GameLevel,
+        lives: Int,
+    ) {
         gameStateDao.saveGameLevel(STATE_CURRENT, level.width, level.height, level.toSaveData())
         repository.saveCurrentLives(lives)
     }
 
-    suspend fun saveInitialState(initialLevel: GameLevel, lives: Int) {
+    suspend fun saveInitialState(
+        initialLevel: GameLevel,
+        lives: Int,
+    ) {
         val saveData = initialLevel.toSaveData()
         gameStateDao.saveGameLevel(STATE_INITIAL, initialLevel.width, initialLevel.height, saveData)
         gameStateDao.saveGameLevel(STATE_CURRENT, initialLevel.width, initialLevel.height, saveData)

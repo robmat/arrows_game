@@ -11,12 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 
-data class TapAnimationState(val id: Long, val offset: Offset)
+data class TapAnimationState(
+    val id: Long,
+    val offset: Offset,
+)
 
 @Composable
 fun TapRipple(
     offset: Offset,
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
 ) {
     val progress = remember { Animatable(0f) }
 
@@ -34,7 +37,7 @@ fun TapRipple(
         drawCircle(
             color = Color.White.copy(alpha = 1f - value),
             radius = radius,
-            center = offset
+            center = offset,
         )
     }
 }

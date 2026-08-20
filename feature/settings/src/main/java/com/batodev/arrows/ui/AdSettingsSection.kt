@@ -27,23 +27,23 @@ import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.ui.theme.ThemeColors
 import com.batodev.arrows.ui.theme.White
 
-
 @Composable
 private fun AdRemovalRow(
     verticalPadding: Dp,
-    trailingContent: @Composable () -> Unit
+    trailingContent: @Composable () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = verticalPadding),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = verticalPadding),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Block,
             contentDescription = null,
             tint = White.copy(alpha = 0.7f),
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
@@ -51,7 +51,7 @@ private fun AdRemovalRow(
             color = White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         trailingContent()
     }
@@ -64,7 +64,7 @@ fun AdFreeSection(themeColors: ThemeColors) {
             text = stringResource(R.string.ads_removed),
             fontSize = 14.sp,
             color = themeColors.accent,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -77,15 +77,16 @@ fun AdNotFreeSection(state: AdSettingsSectionState) {
                 text = "${state.rewardAdCount} / ${GameConstants.REQUIRED_AD_COUNT_FOR_AD_FREE}",
                 fontSize = 14.sp,
                 color = state.themeColors.accent,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
         LinearProgressIndicator(
             progress = { state.rewardAdCount.toFloat() / GameConstants.REQUIRED_AD_COUNT_FOR_AD_FREE },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            color = state.themeColors.accent
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            color = state.themeColors.accent,
         )
         AdWatchButton(state)
     }
@@ -99,24 +100,26 @@ private fun AdWatchButton(state: AdSettingsSectionState) {
                 state.rewardAdManager.showRewardAd(
                     activity = act,
                     onRewarded = { handleAdReward(state) },
-                    onAdDismissed = { /* No action needed */ }
+                    onAdDismissed = { /* No action needed */ },
                 )
             }
         },
         enabled = state.isAdLoaded && !state.isAdLoading,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = state.themeColors.accent)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = state.themeColors.accent),
     ) {
         Text(
-            text = when {
-                state.isAdLoading -> stringResource(R.string.loading_ad)
-                !state.isAdLoaded -> stringResource(R.string.ad_not_ready)
-                else -> stringResource(R.string.watch_ad_label)
-            },
+            text =
+                when {
+                    state.isAdLoading -> stringResource(R.string.loading_ad)
+                    !state.isAdLoaded -> stringResource(R.string.ad_not_ready)
+                    else -> stringResource(R.string.watch_ad_label)
+                },
             fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }

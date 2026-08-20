@@ -36,11 +36,12 @@ fun IntroFingerOverlay(level: GameLevel) {
     val alpha by transition.animateFloat(
         initialValue = 1f,
         targetValue = 0.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 600),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "fingerAlpha"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 600),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "fingerAlpha",
     )
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -54,19 +55,22 @@ fun IntroFingerOverlay(level: GameLevel) {
         val topOffset = (maxHeight - boardHeight) / 2 + 25.dp
 
         // Arrowhead center, matching TAP_AREA_OFFSET_FACTOR used by the renderer
-        val arrowHeadX: Dp = leftOffset + cellSize * head.x + cellSize / 2 +
+        val arrowHeadX: Dp =
+            leftOffset + cellSize * head.x + cellSize / 2 +
                 cellSize * snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR
-        val arrowHeadY: Dp = topOffset + cellSize * head.y + cellSize / 2 +
+        val arrowHeadY: Dp =
+            topOffset + cellSize * head.y + cellSize / 2 +
                 cellSize * snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR
 
         Icon(
             imageVector = Icons.Filled.TouchApp,
             contentDescription = null,
             tint = Color.White,
-            modifier = Modifier
-                .size(FINGER_SIZE)
-                .offset(x = arrowHeadX - FINGER_SIZE / 2, y = arrowHeadY - FINGER_SIZE / 2)
-                .graphicsLayer { this.alpha = alpha }
+            modifier =
+                Modifier
+                    .size(FINGER_SIZE)
+                    .offset(x = arrowHeadX - FINGER_SIZE / 2, y = arrowHeadY - FINGER_SIZE / 2)
+                    .graphicsLayer { this.alpha = alpha },
         )
     }
 }

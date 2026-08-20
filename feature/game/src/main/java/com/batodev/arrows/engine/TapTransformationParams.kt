@@ -9,5 +9,5 @@ data class TapTransformationParams(
     val level: GameLevel,
     val scale: Float,
     val offsetX: Float,
-    val offsetY: Float
+    val offsetY: Float,
 )

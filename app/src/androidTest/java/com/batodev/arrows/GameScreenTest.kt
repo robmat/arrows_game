@@ -24,7 +24,6 @@ import org.junit.runner.RunWith
 // a real generated level rather than asserting around the board.
 @RunWith(AndroidJUnit4::class)
 class GameScreenTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
@@ -38,7 +37,9 @@ class GameScreenTest {
         // for the already-showing Home screen to reactively pick the reset DB state up
         // (Play, not a leftover Continue from a previous test) before clicking it.
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodesWithText(context.getString(R.string.play_label)).fetchSemanticsNodes()
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.play_label))
+                .fetchSemanticsNodes()
                 .isNotEmpty()
         }
         composeTestRule.onNodeWithText(context.getString(R.string.play_label)).performClick()
@@ -55,14 +56,17 @@ class GameScreenTest {
             composeTestRule.onAllNodesWithTag(GAME_AREA_TEST_TAG).fetchSemanticsNodes().isEmpty()
         }
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodesWithText(context.getString(R.string.level_label, 2)).fetchSemanticsNodes()
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.level_label, 2))
+                .fetchSemanticsNodes()
                 .isNotEmpty()
         }
     }
 
     @Test
     fun backButtonDuringGameplayReturnsHome() {
-        composeTestRule.onNodeWithContentDescription(context.getString(R.string.content_description_back))
+        composeTestRule
+            .onNodeWithContentDescription(context.getString(R.string.content_description_back))
             .performClick()
 
         // Not play_label: GameEngine already persisted this level to Room the moment it
@@ -74,7 +78,8 @@ class GameScreenTest {
 
     @Test
     fun restartButtonKeepsPlayingTheSameBoard() {
-        composeTestRule.onNodeWithContentDescription(context.getString(R.string.content_description_restart))
+        composeTestRule
+            .onNodeWithContentDescription(context.getString(R.string.content_description_restart))
             .performClick()
 
         composeTestRule.onNodeWithTag(GAME_AREA_TEST_TAG).assertExists()

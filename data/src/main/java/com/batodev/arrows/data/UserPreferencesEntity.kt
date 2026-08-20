@@ -22,5 +22,5 @@ data class UserPreferencesEntity(
     val rewardAdCount: Int = 0,
     val gamesCompleted: Int = 0,
     val introCompleted: Boolean = false,
-    val isWinVideosEnabled: Boolean = false
+    val isWinVideosEnabled: Boolean = false,
 )

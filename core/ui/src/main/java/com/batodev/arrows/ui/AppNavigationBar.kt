@@ -28,26 +28,26 @@ fun AppNavigationBar(
     themeColors: ThemeColors,
     onNavigateHome: () -> Unit = {},
     onNavigateToGenerate: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToSettings: () -> Unit = {},
 ) {
     val isGeneratorUnlocked = levelNumber >= GameConstants.GENERATOR_UNLOCK_LEVEL
 
     NavigationBar(
         containerColor = themeColors.bottomBar,
-        contentColor = White
+        contentColor = White,
     ) {
         GeneratorNavigationItem(
             isUnlocked = isGeneratorUnlocked,
             selected = selectedDestination == NavigationDestination.GENERATOR,
-            onNavigate = onNavigateToGenerate
+            onNavigate = onNavigateToGenerate,
         )
         HomeNavigationItem(
             selected = selectedDestination == NavigationDestination.HOME,
-            onNavigate = onNavigateHome
+            onNavigate = onNavigateHome,
         )
         SettingsNavigationItem(
             selected = selectedDestination == NavigationDestination.SETTINGS,
-            onNavigate = onNavigateToSettings
+            onNavigate = onNavigateToSettings,
         )
     }
 }
@@ -57,13 +57,13 @@ private fun RowScope.SimpleNavigationItem(
     icon: ImageVector,
     label: String,
     selected: Boolean,
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
 ) {
     NavigationBarItem(
         icon = {
             Icon(
                 icon,
-                contentDescription = label
+                contentDescription = label,
             )
         },
         label = { Text(label) },
@@ -73,41 +73,56 @@ private fun RowScope.SimpleNavigationItem(
                 onNavigate()
             }
         },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = White,
-            indicatorColor = NavigationIndicator,
-            selectedTextColor = White,
-            unselectedIconColor = InactiveIcon,
-            unselectedTextColor = InactiveIcon
-        )
+        colors =
+            NavigationBarItemDefaults.colors(
+                selectedIconColor = White,
+                indicatorColor = NavigationIndicator,
+                selectedTextColor = White,
+                unselectedIconColor = InactiveIcon,
+                unselectedTextColor = InactiveIcon,
+            ),
     )
 }
 
 @Composable
-fun RowScope.HomeNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
+fun RowScope.HomeNavigationItem(
+    selected: Boolean,
+    onNavigate: () -> Unit,
+) {
     SimpleNavigationItem(
         icon = Icons.Default.Home,
         label = stringResource(R.string.home_label),
         selected = selected,
-        onNavigate = onNavigate
+        onNavigate = onNavigate,
     )
 }
 
 @Composable
-fun RowScope.SettingsNavigationItem(selected: Boolean, onNavigate: () -> Unit) {
+fun RowScope.SettingsNavigationItem(
+    selected: Boolean,
+    onNavigate: () -> Unit,
+) {
     SimpleNavigationItem(
         icon = Icons.Default.Settings,
         label = stringResource(R.string.settings_label),
         selected = selected,
-        onNavigate = onNavigate
+        onNavigate = onNavigate,
     )
 }
 
 @Composable
-fun RowScope.GeneratorNavigationItem(isUnlocked: Boolean, selected: Boolean = false, onNavigate: () -> Unit) {
+fun RowScope.GeneratorNavigationItem(
+    isUnlocked: Boolean,
+    selected: Boolean = false,
+    onNavigate: () -> Unit,
+) {
     val icon = if (isUnlocked) Icons.Default.AutoAwesome else Icons.Default.Lock
-    val label = if (isUnlocked) stringResource(R.string.custom_gen_title)
-    else stringResource(R.string.level_label, GameConstants.GENERATOR_UNLOCK_LEVEL)
+    val label =
+        if (isUnlocked) {
+            stringResource(R.string.custom_gen_title)
+        } else {
+            stringResource(R.string.level_label, GameConstants.GENERATOR_UNLOCK_LEVEL)
+        }
 
     NavigationBarItem(
         icon = { Icon(icon, contentDescription = stringResource(R.string.content_description_generate)) },
@@ -118,12 +133,13 @@ fun RowScope.GeneratorNavigationItem(isUnlocked: Boolean, selected: Boolean = fa
                 onNavigate()
             }
         },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = White,
-            unselectedIconColor = InactiveIcon,
-            selectedTextColor = White,
-            unselectedTextColor = InactiveIcon,
-            indicatorColor = NavigationIndicator
-        )
+        colors =
+            NavigationBarItemDefaults.colors(
+                selectedIconColor = White,
+                unselectedIconColor = InactiveIcon,
+                selectedTextColor = White,
+                unselectedTextColor = InactiveIcon,
+                indicatorColor = NavigationIndicator,
+            ),
     )
 }

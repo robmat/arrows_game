@@ -19,9 +19,9 @@ class SettingsNode(
     private val appViewModel: AppViewModel,
     private val debugViewModel: DebugViewModel,
     private val onNavigateHome: () -> Unit,
-    private val onNavigateToGenerate: () -> Unit
-) : Node(buildContext), KoinComponent {
-
+    private val onNavigateToGenerate: () -> Unit,
+) : Node(buildContext),
+    KoinComponent {
     private val rewardAdManager: RewardAdManager by inject()
     private val consentManager: ConsentManager by inject()
 
@@ -35,7 +35,7 @@ class SettingsNode(
             rewardAdManager = rewardAdManager,
             consentManager = consentManager,
             onNavigateHome = onNavigateHome,
-            onNavigateToGenerate = onNavigateToGenerate
+            onNavigateToGenerate = onNavigateToGenerate,
         )
     }
 }

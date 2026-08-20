@@ -39,7 +39,7 @@ data class GameWonStateParams(
     val activity: Activity,
     val interstitialAdManager: InterstitialAdManager,
     val isAdFree: Boolean,
-    val onFinish: () -> Unit = {}
+    val onFinish: () -> Unit = {},
 )
 
 data class GameAreaParams(
@@ -54,7 +54,7 @@ data class GameAreaParams(
     val isAdFree: Boolean,
     val onToggleGuidance: () -> Unit,
     val showIntro: Boolean,
-    val onDismissIntro: () -> Unit
+    val onDismissIntro: () -> Unit,
 )
 
 data class GameScreenContentParams(
@@ -76,7 +76,7 @@ data class GameScreenContentParams(
     val onCelebrationComplete: () -> Unit,
     val showIntro: Boolean,
     val onDismissIntro: () -> Unit,
-    val onBack: () -> Unit = {}
+    val onBack: () -> Unit = {},
 )
 
 data class HintHandlerParams(
@@ -85,69 +85,80 @@ data class HintHandlerParams(
     val isAdLoaded: Boolean,
     val engine: GameEngine,
     val activity: Activity?,
-    val rewardAdManager: RewardAdManager
+    val rewardAdManager: RewardAdManager,
 )
 
-fun buildHintHandler(params: HintHandlerParams): () -> Unit = {
-    when {
-        params.isAdFree -> params.engine.showHint()
-        params.isAdLoading -> { /* Do nothing while ad is loading */ }
-        !params.isAdLoaded -> params.engine.showHint() // Ad failed to load
-        else -> {
-            var wasRewarded = false
-            params.activity?.let { act ->
-                params.rewardAdManager.showRewardAd(
-                    activity = act,
-                    onRewarded = { wasRewarded = true },
-                    onAdDismissed = { if (wasRewarded) params.engine.showHint() }
-                )
+fun buildHintHandler(params: HintHandlerParams): () -> Unit =
+    {
+        when {
+            params.isAdFree -> {
+                params.engine.showHint()
+            }
+
+            params.isAdLoading -> { /* Do nothing while ad is loading */ }
+
+            !params.isAdLoaded -> {
+                params.engine.showHint()
+            }
+
+            // Ad failed to load
+            else -> {
+                var wasRewarded = false
+                params.activity?.let { act ->
+                    params.rewardAdManager.showRewardAd(
+                        activity = act,
+                        onRewarded = { wasRewarded = true },
+                        onAdDismissed = { if (wasRewarded) params.engine.showHint() },
+                    )
+                }
             }
         }
     }
-}
 
 fun createGameEngineFactory(
     view: android.view.View,
     context: Context,
     repository: UserPreferencesRepository,
     gameStateDao: GameStateDao,
-    customParams: CustomGameParams
-): GameEngine.Factory {
-    return GameEngine.Factory(
-        config = GameEngineConfig(
-            repository = repository,
-            gameStateDao = gameStateDao,
-            isCustomGame = customParams.isCustom
-        ),
-        features = GameEngineFeatures(
-            onVibrate = { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) },
-            soundManager = SoundManager(context),
-            shapeProvider = AndroidResourceBoardShapeProvider(context),
-            forcedWidth = customParams.customWidth,
-            forcedHeight = customParams.customHeight,
-            forcedShape = customParams.customShape
-        )
+    customParams: CustomGameParams,
+): GameEngine.Factory =
+    GameEngine.Factory(
+        config =
+            GameEngineConfig(
+                repository = repository,
+                gameStateDao = gameStateDao,
+                isCustomGame = customParams.isCustom,
+            ),
+        features =
+            GameEngineFeatures(
+                onVibrate = { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) },
+                soundManager = SoundManager(context),
+                shapeProvider = AndroidResourceBoardShapeProvider(context),
+                forcedWidth = customParams.customWidth,
+                forcedHeight = customParams.customHeight,
+                forcedShape = customParams.customShape,
+            ),
     )
-}
 
 @Composable
 fun BoxScope.GuidanceToggleButton(
     showGuidanceLines: Boolean,
     themeColors: ThemeColors,
-    onToggleGuidance: () -> Unit
+    onToggleGuidance: () -> Unit,
 ) {
     IconButton(
         onClick = onToggleGuidance,
         modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp).size(48.dp),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = if (showGuidanceLines) themeColors.accent else themeColors.topBarButton,
-            contentColor = White
-        )
+        colors =
+            IconButtonDefaults.iconButtonColors(
+                containerColor = if (showGuidanceLines) themeColors.accent else themeColors.topBarButton,
+                contentColor = White,
+            ),
     ) {
         Icon(
             imageVector = Icons.Default.Grid4x4,
             contentDescription = stringResource(R.string.content_description_guidance_lines),
-            tint = White
+            tint = White,
         )
     }
 }
@@ -155,29 +166,34 @@ fun BoxScope.GuidanceToggleButton(
 @Composable
 fun BoxScope.ResetViewButton(
     themeColors: ThemeColors,
-    onResetView: () -> Unit
+    onResetView: () -> Unit,
 ) {
     IconButton(
         onClick = onResetView,
         modifier = Modifier.align(Alignment.BottomStart).padding(8.dp).size(48.dp),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = themeColors.topBarButton,
-            contentColor = White
-        )
+        colors =
+            IconButtonDefaults.iconButtonColors(
+                containerColor = themeColors.topBarButton,
+                contentColor = White,
+            ),
     ) {
         Icon(
             imageVector = Icons.Default.CenterFocusWeak,
             contentDescription = stringResource(R.string.content_description_reset_view),
-            tint = White
+            tint = White,
         )
     }
 }
 
-fun shouldShowInterstitialAd(isAdFree: Boolean, gamesCompleted: Int): Boolean {
-    return !isAdFree && gamesCompleted > 0 && gamesCompleted % GameConstants.GAMES_BETWEEN_INTERSTITIALS == 0
-}
+fun shouldShowInterstitialAd(
+    isAdFree: Boolean,
+    gamesCompleted: Int,
+): Boolean = !isAdFree && gamesCompleted > 0 && gamesCompleted % GameConstants.GAMES_BETWEEN_INTERSTITIALS == 0
 
-suspend fun finishGameAfterCelebration(params: GameWonStateParams, waitForConfetti: Boolean) {
+suspend fun finishGameAfterCelebration(
+    params: GameWonStateParams,
+    waitForConfetti: Boolean,
+) {
     if (waitForConfetti) {
         delay(GameConstants.GAME_WON_EXIT_DELAY)
     }

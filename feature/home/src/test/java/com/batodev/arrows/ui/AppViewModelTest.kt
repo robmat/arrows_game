@@ -16,11 +16,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
-
 class AppViewModelTest {
-
     private val repository = FakeUserPreferencesRepository()
     private val gameStateDao = FakeGameStateDao()
     private lateinit var viewModel: AppViewModel
@@ -37,37 +34,42 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `test initial theme is Dark`() = runTest {
-        assertEquals("Dark", viewModel.theme.value)
-    }
-
-    @Test
-    fun `test saveTheme updates state`() = runTest {
-        val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.theme.collect {}
+    fun `test initial theme is Dark`() =
+        runTest {
+            assertEquals("Dark", viewModel.theme.value)
         }
 
-        viewModel.saveTheme("Light")
-        assertEquals("Light", repository.themeFlow.value)
-        assertEquals("Light", viewModel.theme.value)
-
-        collectJob.cancel()
-    }
-
     @Test
-    fun `test regenerateCurrentLevel clears saved level`() = runTest {
-        val collectJob = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.hasSavedLevel.collect {}
+    fun `test saveTheme updates state`() =
+        runTest {
+            val collectJob =
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.theme.collect {}
+                }
+
+            viewModel.saveTheme("Light")
+            assertEquals("Light", repository.themeFlow.value)
+            assertEquals("Light", viewModel.theme.value)
+
+            collectJob.cancel()
         }
 
-        gameStateDao.saveGameLevel("INITIAL", 5, 5, emptyList())
-        gameStateDao.saveGameLevel("CURRENT", 5, 5, emptyList())
-        assertTrue(viewModel.hasSavedLevel.value)
+    @Test
+    fun `test regenerateCurrentLevel clears saved level`() =
+        runTest {
+            val collectJob =
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.hasSavedLevel.collect {}
+                }
 
-        viewModel.regenerateCurrentLevel()
+            gameStateDao.saveGameLevel("INITIAL", 5, 5, emptyList())
+            gameStateDao.saveGameLevel("CURRENT", 5, 5, emptyList())
+            assertTrue(viewModel.hasSavedLevel.value)
 
-        assertFalse(viewModel.hasSavedLevel.value)
+            viewModel.regenerateCurrentLevel()
 
-        collectJob.cancel()
-    }
+            assertFalse(viewModel.hasSavedLevel.value)
+
+            collectJob.cancel()
+        }
 }

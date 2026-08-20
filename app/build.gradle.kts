@@ -46,7 +46,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["admobAppId"] = "ca-app-pub-9667420067790140~5728073317"
@@ -91,33 +91,40 @@ tasks.register<JacocoReport>("testDebugUnitTestCoverage") {
         html.required.set(true)
     }
 
-    val excludes = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "**/data/models/*"
-    )
+    val excludes =
+        listOf(
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*",
+            "**/data/models/*",
+        )
 
-    val javaClasses = fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug/compileDebugJavaWithJavac/classes") {
-        exclude(excludes)
-    }
-    val kotlinClasses = fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes") {
-        exclude(excludes)
-    }
+    val javaClasses =
+        fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug/compileDebugJavaWithJavac/classes") {
+            exclude(excludes)
+        }
+    val kotlinClasses =
+        fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes") {
+            exclude(excludes)
+        }
 
     classDirectories.setFrom(files(javaClasses, kotlinClasses))
 
-    sourceDirectories.setFrom(files(
-        "$projectDir/src/main/java",
-        "$projectDir/src/main/kotlin"
-    ))
+    sourceDirectories.setFrom(
+        files(
+            "$projectDir/src/main/java",
+            "$projectDir/src/main/kotlin",
+        ),
+    )
 
-    executionData.setFrom(fileTree("${project.layout.buildDirectory.get().asFile}/outputs/unit_test_code_coverage/debugUnitTest") {
-        include("*.exec")
-    })
+    executionData.setFrom(
+        fileTree("${project.layout.buildDirectory.get().asFile}/outputs/unit_test_code_coverage/debugUnitTest") {
+            include("*.exec")
+        },
+    )
 }
 
 configurations.all {

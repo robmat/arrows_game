@@ -10,7 +10,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.batodev.arrows.feature.game.BuildConfig
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -25,6 +24,7 @@ import com.batodev.arrows.engine.Direction
 import com.batodev.arrows.engine.GameLevel
 import com.batodev.arrows.engine.Point
 import com.batodev.arrows.engine.Snake
+import com.batodev.arrows.feature.game.BuildConfig
 import com.batodev.arrows.ui.theme.FlashingRed
 import com.batodev.arrows.ui.theme.LightGray
 import com.batodev.arrows.ui.theme.LocalThemeColors
@@ -67,14 +67,16 @@ object ArrowsBoardRenderer {
         val flashPulseAlpha by infiniteTransition.animateFloat(
             initialValue = 1f,
             targetValue = GameConstants.FLASH_MIN_ALPHA,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = GameConstants.FLASH_PULSE_DURATION,
-                    easing = LinearEasing
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = GameConstants.FLASH_PULSE_DURATION,
+                            easing = LinearEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
                 ),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "flashAlpha"
+            label = "flashAlpha",
         )
 
         Canvas(modifier = modifier) {
@@ -90,14 +92,15 @@ object ArrowsBoardRenderer {
             drawContext.canvas.translate(leftOffset, topOffset)
 
             if (guidanceAlpha > 0f) {
-                val guidanceConfig = GuidanceLineConfig(
-                    guidanceAlpha = guidanceAlpha,
-                    accentColor = themeColors.accent,
-                    totalWidth = size.width,
-                    totalHeight = size.height,
-                    leftOffset = leftOffset,
-                    topOffset = topOffset
-                )
+                val guidanceConfig =
+                    GuidanceLineConfig(
+                        guidanceAlpha = guidanceAlpha,
+                        accentColor = themeColors.accent,
+                        totalWidth = size.width,
+                        totalHeight = size.height,
+                        leftOffset = leftOffset,
+                        topOffset = topOffset,
+                    )
                 drawGuidanceLines(level, metrics, removalProgress, entryProgress, guidanceConfig)
             }
 
@@ -105,22 +108,26 @@ object ArrowsBoardRenderer {
                 drawDebugTapAreas(level, metrics)
             }
 
-            val drawingParams = SnakeDrawingParams(
-                level = level,
-                metrics = metrics,
-                removalProgress = removalProgress,
-                entryProgress = entryProgress,
-                flashingSnakeId = flashingSnakeId,
-                flashPulseAlpha = flashPulseAlpha,
-                themeColors = themeColors
-            )
+            val drawingParams =
+                SnakeDrawingParams(
+                    level = level,
+                    metrics = metrics,
+                    removalProgress = removalProgress,
+                    entryProgress = entryProgress,
+                    flashingSnakeId = flashingSnakeId,
+                    flashPulseAlpha = flashPulseAlpha,
+                    themeColors = themeColors,
+                )
             drawSnakes(drawingParams)
 
             drawContext.canvas.restore()
         }
     }
 
-    private fun calculateBoardMetrics(level: GameLevel, canvasSize: Size): BoardMetrics {
+    private fun calculateBoardMetrics(
+        level: GameLevel,
+        canvasSize: Size,
+    ): BoardMetrics {
         val cellSize = min(canvasSize.width / level.width, canvasSize.height / level.height)
         val boardWidth = cellSize * level.width
         val boardHeight = cellSize * level.height
@@ -131,12 +138,13 @@ object ArrowsBoardRenderer {
             strokeWidth = cellSize * GameConstants.BOARD_STROKE_WIDTH_FACTOR,
             cornerRadius = cellSize * GameConstants.BOARD_CORNER_RADIUS_FACTOR,
             arrowHeadSize = cellSize * GameConstants.ARROW_HEAD_SIZE_FACTOR,
-            moveDist = max(
-                canvasSize.width,
-                canvasSize.height
-            ) * GameConstants.SNAKE_MOVE_DIST_FACTOR,
+            moveDist =
+                max(
+                    canvasSize.width,
+                    canvasSize.height,
+                ) * GameConstants.SNAKE_MOVE_DIST_FACTOR,
             boardWidth = boardWidth,
-            boardHeight = boardHeight
+            boardHeight = boardHeight,
         )
     }
 
@@ -149,7 +157,7 @@ object ArrowsBoardRenderer {
             color = Color.Gray,
             topLeft = Offset(leftOffset, topOffset),
             size = Size(metrics.boardWidth, metrics.boardHeight),
-            style = Stroke(width = GameConstants.BOARD_BORDER_WIDTH)
+            style = Stroke(width = GameConstants.BOARD_BORDER_WIDTH),
         )
     }
 
@@ -167,24 +175,36 @@ object ArrowsBoardRenderer {
             val headCx = head.x * metrics.cellWidth + metrics.cellWidth / 2
             val headCy = head.y * metrics.cellHeight + metrics.cellHeight / 2
 
-            val fullEndPoint = when (snake.headDirection) {
-                Direction.UP -> Offset(headCx, -config.topOffset)
-                Direction.DOWN -> Offset(
-                    headCx,
-                    metrics.boardHeight + (config.totalHeight - metrics.boardHeight - config.topOffset)
-                )
+            val fullEndPoint =
+                when (snake.headDirection) {
+                    Direction.UP -> {
+                        Offset(headCx, -config.topOffset)
+                    }
 
-                Direction.LEFT -> Offset(-config.leftOffset, headCy)
-                Direction.RIGHT -> Offset(
-                    metrics.boardWidth + (config.totalWidth - metrics.boardWidth - config.leftOffset),
-                    headCy
-                )
-            }
+                    Direction.DOWN -> {
+                        Offset(
+                            headCx,
+                            metrics.boardHeight + (config.totalHeight - metrics.boardHeight - config.topOffset),
+                        )
+                    }
 
-            val endPoint = Offset(
-                x = headCx + (fullEndPoint.x - headCx) * config.guidanceAlpha,
-                y = headCy + (fullEndPoint.y - headCy) * config.guidanceAlpha
-            )
+                    Direction.LEFT -> {
+                        Offset(-config.leftOffset, headCy)
+                    }
+
+                    Direction.RIGHT -> {
+                        Offset(
+                            metrics.boardWidth + (config.totalWidth - metrics.boardWidth - config.leftOffset),
+                            headCy,
+                        )
+                    }
+                }
+
+            val endPoint =
+                Offset(
+                    x = headCx + (fullEndPoint.x - headCx) * config.guidanceAlpha,
+                    y = headCy + (fullEndPoint.y - headCy) * config.guidanceAlpha,
+                )
 
             val alphaFactor = GameConstants.GUIDANCE_LINE_ALPHA_FACTOR * config.guidanceAlpha
             drawLine(
@@ -193,10 +213,11 @@ object ArrowsBoardRenderer {
                 end = endPoint,
                 strokeWidth = 2.dp.toPx(),
                 cap = StrokeCap.Round,
-                pathEffect = PathEffect.dashPathEffect(
-                    floatArrayOf(GameConstants.GUIDANCE_DASH_ON, GameConstants.GUIDANCE_DASH_OFF),
-                    0f
-                )
+                pathEffect =
+                    PathEffect.dashPathEffect(
+                        floatArrayOf(GameConstants.GUIDANCE_DASH_ON, GameConstants.GUIDANCE_DASH_OFF),
+                        0f,
+                    ),
             )
         }
     }
@@ -219,7 +240,7 @@ object ArrowsBoardRenderer {
             drawCircle(
                 color = LightGray.copy(alpha = GameConstants.TAP_AREA_ALPHA),
                 radius = tapRadius,
-                center = Offset(tapOffsetX, tapOffsetY)
+                center = Offset(tapOffsetX, tapOffsetY),
             )
         }
     }
@@ -264,14 +285,15 @@ object ArrowsBoardRenderer {
             val baseLineEndY0 = headCy0 + snake.headDirection.dy * params.metrics.cornerRadius
 
             if (snake.body.size > 1) {
-                val headCoords = SnakeHeadCoordinates(
-                    headCx0 = headCx0,
-                    headCy0 = headCy0,
-                    baseLineEndX0 = baseLineEndX0,
-                    baseLineEndY0 = baseLineEndY0,
-                    lineEndX = lineEndX,
-                    lineEndY = lineEndY
-                )
+                val headCoords =
+                    SnakeHeadCoordinates(
+                        headCx0 = headCx0,
+                        headCy0 = headCy0,
+                        baseLineEndX0 = baseLineEndX0,
+                        baseLineEndY0 = baseLineEndY0,
+                        lineEndX = lineEndX,
+                        lineEndY = lineEndY,
+                    )
                 drawSnakeBody(snake, p, params.metrics, headCoords, snakeColor)
             }
 
@@ -281,9 +303,11 @@ object ArrowsBoardRenderer {
 
             // Draw arrow head
             if (entryP == null) {
-                val triangleCenterX = lineEndX + snake.headDirection.dx *
+                val triangleCenterX =
+                    lineEndX + snake.headDirection.dx *
                         (params.metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
-                val triangleCenterY = lineEndY + snake.headDirection.dy *
+                val triangleCenterY =
+                    lineEndY + snake.headDirection.dy *
                         (params.metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
 
                 drawArrowHead(
@@ -291,7 +315,7 @@ object ArrowsBoardRenderer {
                     centerY = triangleCenterY,
                     direction = snake.headDirection,
                     arrowHeadSize = params.metrics.arrowHeadSize,
-                    color = snakeColor
+                    color = snakeColor,
                 )
             }
         }
@@ -321,11 +345,12 @@ object ArrowsBoardRenderer {
 
         // When the tail tip sits within an interior segment (fractional offset), include
         // body[tailFullIndex] in the curve loop so the path bends correctly through it.
-        val loopStart = if (tailFraction > TAIL_FRACTION_EPSILON && tailFullIndex in 1 until body.size - 1) {
-            tailFullIndex
-        } else {
-            tailFullIndex - 1
-        }
+        val loopStart =
+            if (tailFraction > TAIL_FRACTION_EPSILON && tailFullIndex in 1 until body.size - 1) {
+                tailFullIndex
+            } else {
+                tailFullIndex - 1
+            }
 
         path.appendBodyCurves(body, loopStart, metrics)
 
@@ -341,7 +366,7 @@ object ArrowsBoardRenderer {
             headCoords.headCx0,
             headCoords.headCy0,
             headCoords.baseLineEndX0,
-            headCoords.baseLineEndY0
+            headCoords.baseLineEndY0,
         )
 
         // If removing (head is shifting), extend line to shifted head position
@@ -352,11 +377,12 @@ object ArrowsBoardRenderer {
         drawPath(
             path = path,
             color = snakeColor,
-            style = Stroke(
-                width = metrics.strokeWidth,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
+            style =
+                Stroke(
+                    width = metrics.strokeWidth,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                ),
         )
     }
 
@@ -365,12 +391,12 @@ object ArrowsBoardRenderer {
         tailFullIndex: Int,
         tailFraction: Float,
         metrics: BoardMetrics,
-    ): Offset {
-        return if (tailFraction < TAIL_FRACTION_EPSILON || tailFullIndex >= body.size - 1) {
+    ): Offset =
+        if (tailFraction < TAIL_FRACTION_EPSILON || tailFullIndex >= body.size - 1) {
             val cell = body[tailFullIndex]
             Offset(
                 cell.x * metrics.cellWidth + metrics.cellWidth / 2,
-                cell.y * metrics.cellHeight + metrics.cellHeight / 2
+                cell.y * metrics.cellHeight + metrics.cellHeight / 2,
             )
         } else {
             val fromCell = body[tailFullIndex]
@@ -381,12 +407,15 @@ object ArrowsBoardRenderer {
             val toCy = toCell.y * metrics.cellHeight + metrics.cellHeight / 2
             Offset(
                 fromCx + (toCx - fromCx) * tailFraction,
-                fromCy + (toCy - fromCy) * tailFraction
+                fromCy + (toCy - fromCy) * tailFraction,
             )
         }
-    }
 
-    private fun Path.appendBodyCurves(body: List<Point>, loopStart: Int, metrics: BoardMetrics) {
+    private fun Path.appendBodyCurves(
+        body: List<Point>,
+        loopStart: Int,
+        metrics: BoardMetrics,
+    ) {
         for (i in loopStart downTo 1) {
             val prev = body[i + 1]
             val current = body[i]
@@ -422,7 +451,7 @@ object ArrowsBoardRenderer {
             start = Offset(tailStartX, tailStartY),
             end = Offset(lineEndX, lineEndY),
             strokeWidth = metrics.strokeWidth,
-            cap = StrokeCap.Round
+            cap = StrokeCap.Round,
         )
     }
 
@@ -485,32 +514,34 @@ object ArrowsBoardRenderer {
         color: Color,
     ) {
         // Convert direction to angle in radians (0° = RIGHT, 90° = DOWN, etc.)
-        val angle = when (direction) {
-            Direction.UP -> GameConstants.ANGLE_UP
-            Direction.DOWN -> GameConstants.ANGLE_DOWN
-            Direction.LEFT -> GameConstants.ANGLE_LEFT
-            Direction.RIGHT -> GameConstants.ANGLE_RIGHT
-        } * GameConstants.DEG_TO_RAD
+        val angle =
+            when (direction) {
+                Direction.UP -> GameConstants.ANGLE_UP
+                Direction.DOWN -> GameConstants.ANGLE_DOWN
+                Direction.LEFT -> GameConstants.ANGLE_LEFT
+                Direction.RIGHT -> GameConstants.ANGLE_RIGHT
+            } * GameConstants.DEG_TO_RAD
 
         // Create triangular path with three vertices equally spaced around the center
-        val path = Path().apply {
-            // First vertex (points in the arrow direction)
-            moveTo(
-                centerX + (arrowHeadSize * cos(angle)).toFloat(),
-                centerY + (arrowHeadSize * sin(angle)).toFloat()
-            )
-            // Second vertex (120 degrees clockwise)
-            lineTo(
-                centerX + (arrowHeadSize * cos(angle + GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
-                centerY + (arrowHeadSize * sin(angle + GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat()
-            )
-            // Third vertex (120 degrees counter-clockwise)
-            lineTo(
-                centerX + (arrowHeadSize * cos(angle - GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
-                centerY + (arrowHeadSize * sin(angle - GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat()
-            )
-            close()
-        }
+        val path =
+            Path().apply {
+                // First vertex (points in the arrow direction)
+                moveTo(
+                    centerX + (arrowHeadSize * cos(angle)).toFloat(),
+                    centerY + (arrowHeadSize * sin(angle)).toFloat(),
+                )
+                // Second vertex (120 degrees clockwise)
+                lineTo(
+                    centerX + (arrowHeadSize * cos(angle + GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
+                    centerY + (arrowHeadSize * sin(angle + GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
+                )
+                // Third vertex (120 degrees counter-clockwise)
+                lineTo(
+                    centerX + (arrowHeadSize * cos(angle - GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
+                    centerY + (arrowHeadSize * sin(angle - GameConstants.ANGLE_TRIANGLE_OFFSET)).toFloat(),
+                )
+                close()
+            }
 
         // Draw filled triangle
         drawPath(path, color)
@@ -519,11 +550,12 @@ object ArrowsBoardRenderer {
         drawPath(
             path = path,
             color = color,
-            style = Stroke(
-                width = arrowHeadSize * GameConstants.ARROW_HEAD_STROKE_WIDTH_FACTOR,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
+            style =
+                Stroke(
+                    width = arrowHeadSize * GameConstants.ARROW_HEAD_STROKE_WIDTH_FACTOR,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                ),
         )
     }
 }

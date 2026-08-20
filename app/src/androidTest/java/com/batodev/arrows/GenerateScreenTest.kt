@@ -22,7 +22,6 @@ import org.junit.runner.RunWith
 // repository the app itself reads, then everything from there on is real navigation.
 @RunWith(AndroidJUnit4::class)
 class GenerateScreenTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
@@ -36,7 +35,9 @@ class GenerateScreenTest {
         // the already-showing Home screen to reactively pick up levelNumber=20 (unlocked,
         // showing "Generator" instead of the locked "Level 20") before clicking it.
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodesWithText(context.getString(R.string.custom_gen_title)).fetchSemanticsNodes()
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.custom_gen_title))
+                .fetchSemanticsNodes()
                 .isNotEmpty()
         }
         composeTestRule.onNodeWithText(context.getString(R.string.custom_gen_title)).performClick()
@@ -62,7 +63,8 @@ class GenerateScreenTest {
 
     @Test
     fun backButtonFromGeneratorReturnsHome() {
-        composeTestRule.onNodeWithContentDescription(context.getString(R.string.content_description_back))
+        composeTestRule
+            .onNodeWithContentDescription(context.getString(R.string.content_description_back))
             .performClick()
 
         composeTestRule.onNodeWithText(context.getString(R.string.play_label)).assertExists()

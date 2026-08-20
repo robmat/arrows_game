@@ -58,21 +58,71 @@ class FakeUserPreferencesRepository : IUserPreferencesRepository {
     val winVideosEnabledFlow = MutableStateFlow(true)
     override val isWinVideosEnabled: Flow<Boolean> = winVideosEnabledFlow
 
-    override suspend fun saveThemePreference(theme: String) { themeFlow.value = theme }
-    override suspend fun saveVibrationPreference(enabled: Boolean) { vibrationFlow.value = enabled }
-    override suspend fun saveSoundsPreference(enabled: Boolean) { soundsFlow.value = enabled }
-    override suspend fun saveFillBoardPreference(enabled: Boolean) { fillBoardFlow.value = enabled }
-    override suspend fun saveAnimationSpeed(speed: String) { animationSpeedFlow.value = speed }
-    override suspend fun saveLevelNumber(level: Int) { levelNumberFlow.value = level }
-    override suspend fun saveCurrentLives(lives: Int) { currentLivesFlow.value = lives }
-    override suspend fun saveDebugForcedWidth(width: Int?) { debugForcedWidthFlow.value = width }
-    override suspend fun saveDebugForcedHeight(height: Int?) { debugForcedHeightFlow.value = height }
-    override suspend fun saveDebugForcedLives(lives: Int?) { debugForcedLivesFlow.value = lives }
-    override suspend fun saveDebugForcedShape(shape: String?) { debugForcedShapeFlow.value = shape }
-    override suspend fun saveIsAdFree(isAdFree: Boolean) { isAdFreeFlow.value = isAdFree }
-    override suspend fun incrementRewardAdCount() { rewardAdCountFlow.value += 1 }
-    override suspend fun resetRewardAdCount() { rewardAdCountFlow.value = 0 }
-    override suspend fun incrementGamesCompleted() { gamesCompletedFlow.value += 1 }
-    override suspend fun saveIntroCompleted(completed: Boolean) { introCompletedFlow.value = completed }
-    override suspend fun saveWinVideosEnabled(enabled: Boolean) { winVideosEnabledFlow.value = enabled }
+    override suspend fun saveThemePreference(theme: String) {
+        themeFlow.value = theme
+    }
+
+    override suspend fun saveVibrationPreference(enabled: Boolean) {
+        vibrationFlow.value = enabled
+    }
+
+    override suspend fun saveSoundsPreference(enabled: Boolean) {
+        soundsFlow.value = enabled
+    }
+
+    override suspend fun saveFillBoardPreference(enabled: Boolean) {
+        fillBoardFlow.value = enabled
+    }
+
+    override suspend fun saveAnimationSpeed(speed: String) {
+        animationSpeedFlow.value = speed
+    }
+
+    override suspend fun saveLevelNumber(level: Int) {
+        levelNumberFlow.value = level
+    }
+
+    override suspend fun saveCurrentLives(lives: Int) {
+        currentLivesFlow.value = lives
+    }
+
+    override suspend fun saveDebugForcedWidth(width: Int?) {
+        debugForcedWidthFlow.value = width
+    }
+
+    override suspend fun saveDebugForcedHeight(height: Int?) {
+        debugForcedHeightFlow.value = height
+    }
+
+    override suspend fun saveDebugForcedLives(lives: Int?) {
+        debugForcedLivesFlow.value = lives
+    }
+
+    override suspend fun saveDebugForcedShape(shape: String?) {
+        debugForcedShapeFlow.value = shape
+    }
+
+    override suspend fun saveIsAdFree(isAdFree: Boolean) {
+        isAdFreeFlow.value = isAdFree
+    }
+
+    override suspend fun incrementRewardAdCount() {
+        rewardAdCountFlow.value += 1
+    }
+
+    override suspend fun resetRewardAdCount() {
+        rewardAdCountFlow.value = 0
+    }
+
+    override suspend fun incrementGamesCompleted() {
+        gamesCompletedFlow.value += 1
+    }
+
+    override suspend fun saveIntroCompleted(completed: Boolean) {
+        introCompletedFlow.value = completed
+    }
+
+    override suspend fun saveWinVideosEnabled(enabled: Boolean) {
+        winVideosEnabledFlow.value = enabled
+    }
 }

@@ -13,7 +13,7 @@ sealed class NavTarget : Parcelable {
         val isCustom: Boolean = false,
         val customWidth: Int? = null,
         val customHeight: Int? = null,
-        val customShape: String? = null
+        val customShape: String? = null,
     ) : NavTarget()
 
     @Parcelize
@@ -23,11 +23,10 @@ sealed class NavTarget : Parcelable {
     object Settings : NavTarget()
 }
 
-fun NavTarget.Game.toCustomGameParams(): CustomGameParams {
-    return CustomGameParams(
+fun NavTarget.Game.toCustomGameParams(): CustomGameParams =
+    CustomGameParams(
         isCustom = isCustom,
         customWidth = customWidth,
         customHeight = customHeight,
-        customShape = customShape
+        customShape = customShape,
     )
-}

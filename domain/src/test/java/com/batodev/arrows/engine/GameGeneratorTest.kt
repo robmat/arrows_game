@@ -20,96 +20,102 @@ private const val SIMULATIONS_OCCUPIED = 10
 private const val SIMULATIONS_SOLVABLE = 50
 
 class GameGeneratorTest {
-
     @get:Rule
     val timeout: Timeout = Timeout(180, TimeUnit.SECONDS)
 
     @Test
-    fun testEverySpotOccupiedAfterGenerationParallel() = runBlocking {
-        val generator = GameGenerator()
-        val failures = AtomicInteger(0)
-        val dispatcher = Dispatchers.Default.limitedParallelism(
-            Runtime.getRuntime().availableProcessors()
-        )
+    fun testEverySpotOccupiedAfterGenerationParallel() =
+        runBlocking {
+            val generator = GameGenerator()
+            val failures = AtomicInteger(0)
+            val dispatcher =
+                Dispatchers.Default.limitedParallelism(
+                    Runtime.getRuntime().availableProcessors(),
+                )
 
-        (1..SIMULATIONS_OCCUPIED).map { _ ->
-            async(dispatcher) {
-                val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN, true)
-                val level = generator.generateSolvableLevel(params)
-                val occupiedCount = level.snakes.sumOf { it.body.size }
+            (1..SIMULATIONS_OCCUPIED)
+                .map { _ ->
+                    async(dispatcher) {
+                        val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN, true)
+                        val level = generator.generateSolvableLevel(params)
+                        val occupiedCount = level.snakes.sumOf { it.body.size }
 
-                if (occupiedCount != TEST_WIDTH * TEST_HEIGHT) {
-                    failures.incrementAndGet()
-                }
-            }
-        }.awaitAll()
+                        if (occupiedCount != TEST_WIDTH * TEST_HEIGHT) {
+                            failures.incrementAndGet()
+                        }
+                    }
+                }.awaitAll()
 
-        assertEquals("Some simulations failed: Not all spots occupied", 0, failures.get())
-    }
-
-    @Test
-    fun testEveryPuzzleIsSolvable() = runBlocking {
-        val generator = GameGenerator()
-        val failures = AtomicInteger(0)
-        val dispatcher = Dispatchers.Default.limitedParallelism(
-            Runtime.getRuntime().availableProcessors()
-        )
-
-        (1..SIMULATIONS_SOLVABLE).map { _ ->
-            async(dispatcher) {
-                val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN)
-                val level = generator.generateSolvableLevel(params)
-                if (!SolvabilityChecker.isResolvable(level)) {
-                    failures.incrementAndGet()
-                }
-            }
-        }.awaitAll()
-
-        assertEquals("Some puzzles were not solvable", 0, failures.get())
-    }
-
-    @Test
-    fun testSequentialGenerationWithRandomShapesAndTiming() = runBlocking {
-        val generator = GameGenerator()
-        val shapeProvider = TestBoardShapeProvider()
-        val numLevels = 10
-        val levels = mutableListOf<GameLevel>()
-        val times = mutableListOf<Long>()
-
-        // Generate 10 levels one by one
-        for (i in 1..numLevels) {
-            val randomShape = shapeProvider.getRandomShape()
-            val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN, true, randomShape)
-
-            val startTime = System.nanoTime()
-            val level = generator.generateSolvableLevel(params)
-            val endTime = System.nanoTime()
-
-            val durationMs = (endTime - startTime) / 1_000_000
-            times.add(durationMs)
-            levels.add(level)
-
-            println("Level $i generated in $durationMs ms")
+            assertEquals("Some simulations failed: Not all spots occupied", 0, failures.get())
         }
 
-        // Calculate mean time
-        val meanTime = times.average()
-        println("Mean generation time: ${"%.2f".format(meanTime)} ms")
+    @Test
+    fun testEveryPuzzleIsSolvable() =
+        runBlocking {
+            val generator = GameGenerator()
+            val failures = AtomicInteger(0)
+            val dispatcher =
+                Dispatchers.Default.limitedParallelism(
+                    Runtime.getRuntime().availableProcessors(),
+                )
 
-        // Check each level for solvability
-        var solvableCount = 0
-        levels.forEachIndexed { index, level ->
-            if (SolvabilityChecker.isResolvable(level)) {
-                solvableCount++
-            } else {
-                println("Level ${index + 1} is NOT solvable")
-            }
+            (1..SIMULATIONS_SOLVABLE)
+                .map { _ ->
+                    async(dispatcher) {
+                        val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN)
+                        val level = generator.generateSolvableLevel(params)
+                        if (!SolvabilityChecker.isResolvable(level)) {
+                            failures.incrementAndGet()
+                        }
+                    }
+                }.awaitAll()
+
+            assertEquals("Some puzzles were not solvable", 0, failures.get())
         }
 
-        println("$solvableCount out of $numLevels levels are solvable")
-        assertEquals("All levels should be solvable", numLevels, solvableCount)
-        assertTrue("Mean generation time should be reasonable (< 10 seconds)", meanTime < 10_000)
-    }
+    @Test
+    fun testSequentialGenerationWithRandomShapesAndTiming() =
+        runBlocking {
+            val generator = GameGenerator()
+            val shapeProvider = TestBoardShapeProvider()
+            val numLevels = 10
+            val levels = mutableListOf<GameLevel>()
+            val times = mutableListOf<Long>()
+
+            // Generate 10 levels one by one
+            for (i in 1..numLevels) {
+                val randomShape = shapeProvider.getRandomShape()
+                val params = GenerationParams(TEST_WIDTH, TEST_HEIGHT, TEST_SNAKE_LEN, true, randomShape)
+
+                val startTime = System.nanoTime()
+                val level = generator.generateSolvableLevel(params)
+                val endTime = System.nanoTime()
+
+                val durationMs = (endTime - startTime) / 1_000_000
+                times.add(durationMs)
+                levels.add(level)
+
+                println("Level $i generated in $durationMs ms")
+            }
+
+            // Calculate mean time
+            val meanTime = times.average()
+            println("Mean generation time: ${"%.2f".format(meanTime)} ms")
+
+            // Check each level for solvability
+            var solvableCount = 0
+            levels.forEachIndexed { index, level ->
+                if (SolvabilityChecker.isResolvable(level)) {
+                    solvableCount++
+                } else {
+                    println("Level ${index + 1} is NOT solvable")
+                }
+            }
+
+            println("$solvableCount out of $numLevels levels are solvable")
+            assertEquals("All levels should be solvable", numLevels, solvableCount)
+            assertTrue("Mean generation time should be reasonable (< 10 seconds)", meanTime < 10_000)
+        }
 }
 
 /**
@@ -127,9 +133,10 @@ private class TestBoardShapeProvider : BoardShapeProvider {
             3 -> CrossShape()
             else -> null // null means no walls (square board)
         } ?: object : BoardShape {
-            override fun getWalls(targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
-                return Array(targetWidth) { BooleanArray(targetHeight) { false } }
-            }
+            override fun getWalls(
+                targetWidth: Int,
+                targetHeight: Int,
+            ): Array<BooleanArray> = Array(targetWidth) { BooleanArray(targetHeight) { false } }
         }
     }
 
@@ -139,7 +146,10 @@ private class TestBoardShapeProvider : BoardShapeProvider {
 
     // Circle shape
     private class CircleShape : BoardShape {
-        override fun getWalls(targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
+        override fun getWalls(
+            targetWidth: Int,
+            targetHeight: Int,
+        ): Array<BooleanArray> {
             val walls = Array(targetWidth) { BooleanArray(targetHeight) { false } }
             val centerX = targetWidth / 2.0
             val centerY = targetHeight / 2.0
@@ -160,7 +170,10 @@ private class TestBoardShapeProvider : BoardShapeProvider {
 
     // Diamond shape
     private class DiamondShape : BoardShape {
-        override fun getWalls(targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
+        override fun getWalls(
+            targetWidth: Int,
+            targetHeight: Int,
+        ): Array<BooleanArray> {
             val walls = Array(targetWidth) { BooleanArray(targetHeight) { false } }
             val centerX = targetWidth / 2.0
             val centerY = targetHeight / 2.0
@@ -180,7 +193,10 @@ private class TestBoardShapeProvider : BoardShapeProvider {
 
     // Rectangle shape (leaves border as walls)
     private class RectangleShape : BoardShape {
-        override fun getWalls(targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
+        override fun getWalls(
+            targetWidth: Int,
+            targetHeight: Int,
+        ): Array<BooleanArray> {
             val walls = Array(targetWidth) { BooleanArray(targetHeight) { false } }
             val border = 2
 
@@ -199,7 +215,10 @@ private class TestBoardShapeProvider : BoardShapeProvider {
 
     // Cross shape
     private class CrossShape : BoardShape {
-        override fun getWalls(targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
+        override fun getWalls(
+            targetWidth: Int,
+            targetHeight: Int,
+        ): Array<BooleanArray> {
             val walls = Array(targetWidth) { BooleanArray(targetHeight) { true } }
             val centerX = targetWidth / 2
             val centerY = targetHeight / 2

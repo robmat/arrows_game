@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class RewardAdManager(private val context: Context) {
+class RewardAdManager(
+    private val context: Context,
+) {
     private var rewardedAd: RewardedAd? = null
     private val _isAdLoaded = MutableStateFlow(false)
     val isAdLoaded: StateFlow<Boolean> = _isAdLoaded.asStateFlow()
@@ -41,14 +43,14 @@ class RewardAdManager(private val context: Context) {
                     _isAdLoaded.value = false
                     _isAdLoading.value = false
                 }
-            }
+            },
         )
     }
 
     fun showRewardAd(
         activity: Activity,
         onRewarded: () -> Unit,
-        onAdDismissed: () -> Unit
+        onAdDismissed: () -> Unit,
     ) {
         rewardedAd?.let { ad ->
             ad.show(activity) { _ ->
@@ -57,20 +59,21 @@ class RewardAdManager(private val context: Context) {
                 rewardedAd = null
                 loadRewardAd()
             }
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    onAdDismissed()
-                    _isAdLoaded.value = false
-                    rewardedAd = null
-                    loadRewardAd()
-                }
+            ad.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        onAdDismissed()
+                        _isAdLoaded.value = false
+                        rewardedAd = null
+                        loadRewardAd()
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
-                    onAdDismissed()
-                    _isAdLoaded.value = false
-                    rewardedAd = null
+                    override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
+                        onAdDismissed()
+                        _isAdLoaded.value = false
+                        rewardedAd = null
+                    }
                 }
-            }
         } ?: run {
             loadRewardAd()
             onAdDismissed()

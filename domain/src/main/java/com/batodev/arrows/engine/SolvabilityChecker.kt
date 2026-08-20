@@ -12,10 +12,11 @@ object SolvabilityChecker {
 
         while (remaining.isNotEmpty() && iter < maxIter) {
             iter++
-            val removable = remaining.firstOrNull { sId ->
-                val s = snakeMap[sId]!!
-                hasCleanLoS(LoSParams(s.body.first(), s.headDirection, sId, grid, level.width, level.height))
-            } ?: return false
+            val removable =
+                remaining.firstOrNull { sId ->
+                    val s = snakeMap[sId]!!
+                    hasCleanLoS(LoSParams(s.body.first(), s.headDirection, sId, grid, level.width, level.height))
+                } ?: return false
 
             snakeMap[removable]!!.body.forEach { grid[it.x][it.y] = 0 }
             remaining.remove(removable)
@@ -25,20 +26,26 @@ object SolvabilityChecker {
 
     fun findRemovableSnake(level: GameLevel): Int? {
         val grid = createGrid(level)
-        return level.snakes.firstOrNull { s ->
-            hasCleanLoS(LoSParams(s.body.first(), s.headDirection, s.id, grid, level.width, level.height))
-        }?.id
+        return level.snakes
+            .firstOrNull { s ->
+                hasCleanLoS(LoSParams(s.body.first(), s.headDirection, s.id, grid, level.width, level.height))
+            }?.id
     }
 
-    fun isLineOfSightObstructed(level: GameLevel, snake: Snake, ignoreIds: Set<Int> = emptySet()): Boolean {
+    fun isLineOfSightObstructed(
+        level: GameLevel,
+        snake: Snake,
+        ignoreIds: Set<Int> = emptySet(),
+    ): Boolean {
         val head = snake.body.first()
         val direction = snake.headDirection
         var current = head + direction
-        
+
         while (isInside(current, level.width, level.height)) {
-            val isOccupied = level.snakes.any { other -> 
-                other.id !in ignoreIds && other.body.contains(current) 
-            }
+            val isOccupied =
+                level.snakes.any { other ->
+                    other.id !in ignoreIds && other.body.contains(current)
+                }
             if (isOccupied) return true
             current += direction
         }
@@ -60,5 +67,9 @@ object SolvabilityChecker {
         return true
     }
 
-    private fun isInside(p: Point, w: Int, h: Int) = p.x in 0 until w && p.y in 0 until h
+    private fun isInside(
+        p: Point,
+        w: Int,
+        h: Int,
+    ) = p.x in 0 until w && p.y in 0 until h
 }

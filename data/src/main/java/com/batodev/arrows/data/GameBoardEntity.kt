@@ -8,5 +8,5 @@ data class GameBoardEntity(
     @PrimaryKey(autoGenerate = true) val boardId: Long = 0,
     val stateType: String,
     val width: Int,
-    val height: Int
+    val height: Int,
 )

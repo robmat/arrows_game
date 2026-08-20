@@ -3,8 +3,11 @@ package com.batodev.arrows.engine
 import com.batodev.arrows.GameConstants
 
 class BoardImageProcessor {
-
-    fun createWallsFromImage(original: NativeImage, targetWidth: Int, targetHeight: Int): Array<BooleanArray> {
+    fun createWallsFromImage(
+        original: NativeImage,
+        targetWidth: Int,
+        targetHeight: Int,
+    ): Array<BooleanArray> {
         val clipped = clipToBlackContent(original)
         val scaled = clipped.scale(targetWidth, targetHeight)
         val walls = Array(targetWidth) { BooleanArray(targetHeight) }
@@ -47,10 +50,10 @@ class BoardImageProcessor {
         val red = (pixel shr GameConstants.RED_SHIFT) and GameConstants.COLOR_MASK
         val green = (pixel shr GameConstants.GREEN_SHIFT) and GameConstants.COLOR_MASK
         val blue = pixel and GameConstants.COLOR_MASK
-        
+
         return alpha > GameConstants.COLOR_THRESHOLD &&
-                red < GameConstants.COLOR_THRESHOLD &&
-                green < GameConstants.COLOR_THRESHOLD &&
-                blue < GameConstants.COLOR_THRESHOLD
+            red < GameConstants.COLOR_THRESHOLD &&
+            green < GameConstants.COLOR_THRESHOLD &&
+            blue < GameConstants.COLOR_THRESHOLD
     }
 }

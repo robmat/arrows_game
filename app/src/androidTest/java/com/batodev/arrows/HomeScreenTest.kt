@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class HomeScreenTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
@@ -30,11 +29,15 @@ class HomeScreenTest {
         // even runs) picks the DB write up reactively through Room's Flow, which can
         // lag a beat behind the write completing.
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodesWithText(context.getString(R.string.play_label)).fetchSemanticsNodes()
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.play_label))
+                .fetchSemanticsNodes()
                 .isNotEmpty()
         }
         composeTestRule.waitUntil(5_000) {
-            composeTestRule.onAllNodesWithText(context.getString(R.string.level_label, 1)).fetchSemanticsNodes()
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.level_label, 1))
+                .fetchSemanticsNodes()
                 .isNotEmpty()
         }
     }

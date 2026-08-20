@@ -58,19 +58,20 @@ fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(themeColors.background)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(themeColors.background),
         ) {
             LicensesTopBar(onDismiss, themeColors)
             if (error != null) {
                 Text(
                     text = error ?: "",
                     modifier = Modifier.padding(16.dp),
-                    color = themeColors.snake
+                    color = themeColors.snake,
                 )
             }
             LicensesList(libraries, themeColors)
@@ -79,13 +80,17 @@ fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun LicensesTopBar(onDismiss: () -> Unit, themeColors: ThemeColors) {
+private fun LicensesTopBar(
+    onDismiss: () -> Unit,
+    themeColors: ThemeColors,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(themeColors.topBarButton)
-            .padding(horizontal = 8.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(themeColors.topBarButton)
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         BackIconButton(onClick = onDismiss, containerColor = themeColors.bottomBar)
         Spacer(modifier = Modifier.width(12.dp))
@@ -93,24 +98,28 @@ private fun LicensesTopBar(onDismiss: () -> Unit, themeColors: ThemeColors) {
             text = stringResource(R.string.third_party_licenses_label),
             color = White,
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
 
 @Composable
-private fun LicensesList(libraries: List<Library>, themeColors: ThemeColors) {
+private fun LicensesList(
+    libraries: List<Library>,
+    themeColors: ThemeColors,
+) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
     ) {
         items(libraries, key = { it.uniqueId }) { library ->
             LibraryItem(library)
             HorizontalDivider(
                 color = themeColors.topBarButton,
                 thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 4.dp),
             )
         }
     }
@@ -121,11 +130,12 @@ private fun LibraryItem(library: Library) {
     val themeColors = LocalThemeColors.current
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(themeColors.topBarButton)
-            .padding(12.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(themeColors.topBarButton)
+                .padding(12.dp),
     ) {
         LibraryHeader(library)
         LibraryDevelopers(library)
@@ -138,20 +148,20 @@ private fun LibraryItem(library: Library) {
 private fun LibraryHeader(library: Library) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = library.name,
             color = White,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         if (library.artifactVersion != null) {
             Text(
                 text = library.artifactVersion!!,
                 color = White.copy(alpha = 0.6f),
-                fontSize = 12.sp
+                fontSize = 12.sp,
             )
         }
     }
@@ -165,13 +175,16 @@ private fun LibraryDevelopers(library: Library) {
         Text(
             text = developers,
             color = White.copy(alpha = 0.7f),
-            fontSize = 13.sp
+            fontSize = 13.sp,
         )
     }
 }
 
 @Composable
-private fun LibraryLicense(library: Library, themeColors: ThemeColors) {
+private fun LibraryLicense(
+    library: Library,
+    themeColors: ThemeColors,
+) {
     val licenses = library.licenses.joinToString(", ") { it.name }
     if (licenses.isNotEmpty()) {
         Spacer(modifier = Modifier.height(4.dp))
@@ -179,29 +192,33 @@ private fun LibraryLicense(library: Library, themeColors: ThemeColors) {
             text = licenses,
             color = themeColors.accent,
             fontSize = 13.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
 
 @Composable
-private fun LibraryUrl(library: Library, themeColors: ThemeColors) {
+private fun LibraryUrl(
+    library: Library,
+    themeColors: ThemeColors,
+) {
     val uriHandler = LocalUriHandler.current
     val url = library.website ?: library.scm?.url ?: return
     Spacer(modifier = Modifier.height(4.dp))
-    val annotated = buildAnnotatedString {
-        withStyle(
-            SpanStyle(
-                color = themeColors.accent.copy(alpha = 0.8f),
-                textDecoration = TextDecoration.Underline,
-                fontSize = 12.sp
-            )
-        ) {
-            append(url)
+    val annotated =
+        buildAnnotatedString {
+            withStyle(
+                SpanStyle(
+                    color = themeColors.accent.copy(alpha = 0.8f),
+                    textDecoration = TextDecoration.Underline,
+                    fontSize = 12.sp,
+                ),
+            ) {
+                append(url)
+            }
         }
-    }
     Text(
         text = annotated,
-        modifier = Modifier.clickable { uriHandler.openUri(url) }
+        modifier = Modifier.clickable { uriHandler.openUri(url) },
     )
 }

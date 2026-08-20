@@ -3,10 +3,7 @@ package com.batodev.arrows.engine
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-
-
 class LevelProgressionTest {
-
     @Test
     fun testLevelProgressionRules() {
         // Test L1: Base 5x5, Step 0. Reduction 0. Expected 5x5, 5 lives.
@@ -25,7 +22,12 @@ class LevelProgressionTest {
         verifyLevel(50, expectedW = 15, expectedH = 14, expectedLives = 1)
     }
 
-    private fun verifyLevel(levelNum: Int, expectedW: Int, expectedH: Int, expectedLives: Int) {
+    private fun verifyLevel(
+        levelNum: Int,
+        expectedW: Int,
+        expectedH: Int,
+        expectedLives: Int,
+    ) {
         val config = LevelProgression.calculateLevelConfiguration(levelNum)
 
         assertEquals("Level $levelNum Width mismatch", expectedW, config.width)

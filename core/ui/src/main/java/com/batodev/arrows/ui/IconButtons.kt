@@ -21,17 +21,17 @@ import com.batodev.arrows.ui.theme.White
 fun BackIconButton(
     onClick: () -> Unit,
     containerColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(containerColor = containerColor),
-        modifier = modifier.size(40.dp)
+        modifier = modifier.size(40.dp),
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(R.string.content_description_back),
-            tint = White
+            tint = White,
         )
     }
 }

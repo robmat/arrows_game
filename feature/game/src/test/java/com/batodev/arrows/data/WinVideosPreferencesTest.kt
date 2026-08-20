@@ -10,26 +10,28 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WinVideosPreferencesTest {
+    @Test
+    fun `test default winVideosEnabled is true`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            assertTrue(repo.isWinVideosEnabled.first())
+        }
 
     @Test
-    fun `test default winVideosEnabled is true`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        assertTrue(repo.isWinVideosEnabled.first())
-    }
+    fun `test saveWinVideosEnabled disables videos`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            repo.saveWinVideosEnabled(false)
+            assertFalse(repo.isWinVideosEnabled.first())
+        }
 
     @Test
-    fun `test saveWinVideosEnabled disables videos`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        repo.saveWinVideosEnabled(false)
-        assertFalse(repo.isWinVideosEnabled.first())
-    }
-
-    @Test
-    fun `test saveWinVideosEnabled re-enables videos`() = runTest {
-        val repo = FakeUserPreferencesRepository()
-        repo.saveWinVideosEnabled(false)
-        assertFalse(repo.isWinVideosEnabled.first())
-        repo.saveWinVideosEnabled(true)
-        assertTrue(repo.isWinVideosEnabled.first())
-    }
+    fun `test saveWinVideosEnabled re-enables videos`() =
+        runTest {
+            val repo = FakeUserPreferencesRepository()
+            repo.saveWinVideosEnabled(false)
+            assertFalse(repo.isWinVideosEnabled.first())
+            repo.saveWinVideosEnabled(true)
+            assertTrue(repo.isWinVideosEnabled.first())
+        }
 }

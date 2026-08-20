@@ -1,8 +1,8 @@
 package com.batodev.arrows.engine.usecase
 
+import com.batodev.arrows.data.GameLevelData
 import com.batodev.arrows.data.IGameStateRepository
 import com.batodev.arrows.data.IUserPreferencesRepository
-import com.batodev.arrows.data.GameLevelData
 import com.batodev.arrows.engine.LevelProgression
 import kotlinx.coroutines.flow.firstOrNull
 

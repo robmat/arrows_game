@@ -15,10 +15,17 @@ interface Criterion {
 }
 
 class NextToExistingSnakeCriterion : Criterion {
-    private val allDirections = listOf(
-        Pair(-1, -1), Pair(0, -1), Pair(1, -1), Pair(-1, 0),
-        Pair(1, 0), Pair(-1, 1), Pair(0, 1), Pair(1, 1)
-    )
+    private val allDirections =
+        listOf(
+            Pair(-1, -1),
+            Pair(0, -1),
+            Pair(1, -1),
+            Pair(-1, 0),
+            Pair(1, 0),
+            Pair(-1, 1),
+            Pair(0, 1),
+            Pair(1, 1),
+        )
 
     override fun isSatisfied(params: CriterionParams): Boolean {
         for ((dx, dy) in allDirections) {

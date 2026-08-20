@@ -19,6 +19,6 @@ fun BannerAdView(modifier: Modifier = Modifier) {
                 setAdSize(AdSize.BANNER)
                 loadAd(AdRequest.Builder().build())
             }
-        }
+        },
     )
 }

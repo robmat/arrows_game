@@ -37,8 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.batodev.arrows.GameConstants
-import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.ads.RewardAdManager
+import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.ui.theme.InactiveIcon
 import com.batodev.arrows.ui.theme.LocalThemeColors
 import com.batodev.arrows.ui.theme.ThemeColors
@@ -53,35 +53,47 @@ fun PreferencesSection(params: PreferencesParams) {
 
     SettingsGroup(params.themeColors.topBarButton) {
         SettingsSwitchItem(
-            Icons.Default.Vibration, stringResource(R.string.vibrations_label),
-            isVibrationEnabled, params.themeColors.accent
+            Icons.Default.Vibration,
+            stringResource(R.string.vibrations_label),
+            isVibrationEnabled,
+            params.themeColors.accent,
         ) { params.viewModel.saveVibration(it) }
         SettingsSwitchItem(
-            Icons.AutoMirrored.Filled.VolumeUp, stringResource(R.string.sounds_label),
-            isSoundsEnabled, params.themeColors.accent
+            Icons.AutoMirrored.Filled.VolumeUp,
+            stringResource(R.string.sounds_label),
+            isSoundsEnabled,
+            params.themeColors.accent,
         ) { params.viewModel.saveSounds(it) }
         SettingsSwitchItem(
-            Icons.Default.VideoLibrary, stringResource(R.string.win_videos_label),
-            isWinVideosEnabled, params.themeColors.accent
+            Icons.Default.VideoLibrary,
+            stringResource(R.string.win_videos_label),
+            isWinVideosEnabled,
+            params.themeColors.accent,
         ) { params.viewModel.saveWinVideosEnabled(it) }
         SettingsSwitchItem(
-            Icons.Default.Grid4x4, stringResource(R.string.fill_board_label),
-            isFillBoardEnabled, params.themeColors.accent
+            Icons.Default.Grid4x4,
+            stringResource(R.string.fill_board_label),
+            isFillBoardEnabled,
+            params.themeColors.accent,
         ) { params.viewModel.saveFillBoard(it) }
         SettingsClickableItem(
-            Icons.Default.Palette, stringResource(R.string.theme_label),
-            getLocalizedThemeName(params.currentTheme), params.onThemeClick
+            Icons.Default.Palette,
+            stringResource(R.string.theme_label),
+            getLocalizedThemeName(params.currentTheme),
+            params.onThemeClick,
         )
         SettingsClickableItem(
-            Icons.Default.Speed, stringResource(R.string.animation_speed_label),
-            getLocalizedSpeedName(params.currentSpeed), params.onSpeedClick
+            Icons.Default.Speed,
+            stringResource(R.string.animation_speed_label),
+            getLocalizedSpeedName(params.currentSpeed),
+            params.onSpeedClick,
         )
     }
 }
 
 @Composable
-private fun getLocalizedThemeName(theme: String): String {
-    return when (theme) {
+private fun getLocalizedThemeName(theme: String): String =
+    when (theme) {
         "Dark" -> stringResource(R.string.theme_dark)
         "Green" -> stringResource(R.string.theme_green)
         "Red" -> stringResource(R.string.theme_red)
@@ -90,20 +102,21 @@ private fun getLocalizedThemeName(theme: String): String {
         "Black and White" -> stringResource(R.string.theme_bw)
         else -> theme
     }
-}
 
 @Composable
-private fun getLocalizedSpeedName(speed: String): String {
-    return when (speed) {
+private fun getLocalizedSpeedName(speed: String): String =
+    when (speed) {
         "High" -> stringResource(R.string.speed_high)
         "Medium" -> stringResource(R.string.speed_medium)
         "Low" -> stringResource(R.string.speed_low)
         else -> speed
     }
-}
 
 @Composable
-fun FeedbackSection(context: Context, themeColors: ThemeColors) {
+fun FeedbackSection(
+    context: Context,
+    themeColors: ThemeColors,
+) {
     SettingsGroup(themeColors.topBarButton) {
         SettingsClickableItem(Icons.Default.Star, stringResource(R.string.rate_us_label)) {
             SettingsUtils.launchReviewFlow(context)
@@ -114,7 +127,7 @@ fun FeedbackSection(context: Context, themeColors: ThemeColors) {
         SettingsClickableItem(Icons.Default.Apps, stringResource(R.string.more_games_label)) {
             SettingsUtils.launchBrowser(
                 context,
-                "https://play.google.com/store/apps/dev?id=8228670503574649511"
+                "https://play.google.com/store/apps/dev?id=8228670503574649511",
             )
         }
         SettingsClickableItem(Icons.Default.Code, stringResource(R.string.source_code_label)) {
@@ -127,7 +140,7 @@ fun FeedbackSection(context: Context, themeColors: ThemeColors) {
 fun PurchasesSection(
     viewModel: AppViewModel,
     rewardAdManager: RewardAdManager,
-    themeColors: ThemeColors
+    themeColors: ThemeColors,
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
@@ -143,14 +156,18 @@ fun PurchasesSection(
         } else {
             AdNotFreeSection(
                 AdSettingsSectionState(
-                    viewModel, rewardAdManager, themeColors, activity,
-                    rewardAdCount, isAdLoaded, isAdLoading
-                )
+                    viewModel,
+                    rewardAdManager,
+                    themeColors,
+                    activity,
+                    rewardAdCount,
+                    isAdLoaded,
+                    isAdLoading,
+                ),
             )
         }
     }
 }
-
 
 @Composable
 fun LegalSection(
@@ -158,7 +175,7 @@ fun LegalSection(
     themeColors: ThemeColors,
     onLicensesClick: () -> Unit,
     showPrivacyOptions: Boolean = false,
-    onPrivacyOptionsClick: () -> Unit = {}
+    onPrivacyOptionsClick: () -> Unit = {},
 ) {
     SettingsGroup(themeColors.topBarButton) {
         SettingsClickableItem(Icons.Default.Description, stringResource(R.string.privacy_label)) {
@@ -167,7 +184,7 @@ fun LegalSection(
         if (showPrivacyOptions) {
             SettingsClickableItem(
                 Icons.Default.Description,
-                stringResource(R.string.manage_consent_label)
+                stringResource(R.string.manage_consent_label),
             ) {
                 onPrivacyOptionsClick()
             }
@@ -179,33 +196,42 @@ fun LegalSection(
 }
 
 @Composable
-fun ThemeSelectionDialog(currentTheme: String, onDismiss: () -> Unit, onThemeSelected: (String) -> Unit) {
+fun ThemeSelectionDialog(
+    currentTheme: String,
+    onDismiss: () -> Unit,
+    onThemeSelected: (String) -> Unit,
+) {
     val themeColors = LocalThemeColors.current
     val themes = listOf("Dark", "Green", "Red", "Yellow", "Orange", "Black and White")
     AlertDialog(
-        onDismissRequest = onDismiss, containerColor = themeColors.bottomBar,
+        onDismissRequest = onDismiss,
+        containerColor = themeColors.bottomBar,
         title = {
             Text(
                 text = stringResource(R.string.choose_theme_title),
                 color = White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         },
         text = {
             Column {
                 themes.forEach { theme ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onThemeSelected(theme) }
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onThemeSelected(theme) }
+                                .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
-                            selected = theme == currentTheme, onClick = { onThemeSelected(theme) },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = themeColors.accent, unselectedColor = InactiveIcon
-                            )
+                            selected = theme == currentTheme,
+                            onClick = { onThemeSelected(theme) },
+                            colors =
+                                RadioButtonDefaults.colors(
+                                    selectedColor = themeColors.accent,
+                                    unselectedColor = InactiveIcon,
+                                ),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = getLocalizedThemeName(theme), color = White, fontSize = 16.sp)
@@ -217,38 +243,47 @@ fun ThemeSelectionDialog(currentTheme: String, onDismiss: () -> Unit, onThemeSel
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel_label), color = themeColors.accent)
             }
-        }
+        },
     )
 }
 
 @Composable
-fun AnimationSpeedSelectionDialog(currentSpeed: String, onDismiss: () -> Unit, onSpeedSelected: (String) -> Unit) {
+fun AnimationSpeedSelectionDialog(
+    currentSpeed: String,
+    onDismiss: () -> Unit,
+    onSpeedSelected: (String) -> Unit,
+) {
     val themeColors = LocalThemeColors.current
     val speeds = listOf("High", "Medium", "Low")
     AlertDialog(
-        onDismissRequest = onDismiss, containerColor = themeColors.bottomBar,
+        onDismissRequest = onDismiss,
+        containerColor = themeColors.bottomBar,
         title = {
             Text(
                 text = stringResource(R.string.animation_speed_label),
                 color = White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         },
         text = {
             Column {
                 speeds.forEach { speed ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSpeedSelected(speed) }
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onSpeedSelected(speed) }
+                                .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
-                            selected = speed == currentSpeed, onClick = { onSpeedSelected(speed) },
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = themeColors.accent, unselectedColor = InactiveIcon
-                            )
+                            selected = speed == currentSpeed,
+                            onClick = { onSpeedSelected(speed) },
+                            colors =
+                                RadioButtonDefaults.colors(
+                                    selectedColor = themeColors.accent,
+                                    unselectedColor = InactiveIcon,
+                                ),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = getLocalizedSpeedName(speed), color = White, fontSize = 16.sp)
@@ -260,7 +295,7 @@ fun AnimationSpeedSelectionDialog(currentSpeed: String, onDismiss: () -> Unit, o
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel_label), color = themeColors.accent)
             }
-        }
+        },
     )
 }
 
@@ -270,5 +305,5 @@ data class PreferencesParams(
     val currentTheme: String,
     val currentSpeed: String,
     val onThemeClick: () -> Unit,
-    val onSpeedClick: () -> Unit
+    val onSpeedClick: () -> Unit,
 )

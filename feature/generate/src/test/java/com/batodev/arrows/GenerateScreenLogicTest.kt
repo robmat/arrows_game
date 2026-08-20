@@ -7,7 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GenerateScreenLogicTest {
-
     // resolveMaxSize
 
     @Test
@@ -23,7 +22,7 @@ class GenerateScreenLogicTest {
     @Test
     fun `resolveMaxSize fill board max is smaller than regular max`() {
         assertTrue(
-            GenerateScreenLogic.resolveMaxSize(true) < GenerateScreenLogic.resolveMaxSize(false)
+            GenerateScreenLogic.resolveMaxSize(true) < GenerateScreenLogic.resolveMaxSize(false),
         )
     }
 

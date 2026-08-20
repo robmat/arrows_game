@@ -7,7 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NavigationBarTest {
-
     @Test
     fun `test generator locked below unlock level`() {
         val levelNumber = GameConstants.GENERATOR_UNLOCK_LEVEL - 1
@@ -52,17 +51,17 @@ class NavigationBarTest {
         assertEquals(
             "HOME should equal HOME",
             NavigationDestination.HOME,
-            NavigationDestination.HOME
+            NavigationDestination.HOME,
         )
         assertEquals(
             "GENERATOR should equal GENERATOR",
             NavigationDestination.GENERATOR,
-            NavigationDestination.GENERATOR
+            NavigationDestination.GENERATOR,
         )
         assertEquals(
             "SETTINGS should equal SETTINGS",
             NavigationDestination.SETTINGS,
-            NavigationDestination.SETTINGS
+            NavigationDestination.SETTINGS,
         )
     }
 
@@ -70,25 +69,26 @@ class NavigationBarTest {
     fun `test navigation destination enum inequality`() {
         assertTrue(
             "HOME should not equal GENERATOR",
-            NavigationDestination.HOME != NavigationDestination.GENERATOR
+            NavigationDestination.HOME != NavigationDestination.GENERATOR,
         )
         assertTrue(
             "HOME should not equal SETTINGS",
-            NavigationDestination.HOME != NavigationDestination.SETTINGS
+            NavigationDestination.HOME != NavigationDestination.SETTINGS,
         )
         assertTrue(
             "GENERATOR should not equal SETTINGS",
-            NavigationDestination.GENERATOR != NavigationDestination.SETTINGS
+            NavigationDestination.GENERATOR != NavigationDestination.SETTINGS,
         )
     }
 
     @Test
     fun `test all navigation destinations are unique`() {
-        val destinations = listOf(
-            NavigationDestination.HOME,
-            NavigationDestination.GENERATOR,
-            NavigationDestination.SETTINGS
-        )
+        val destinations =
+            listOf(
+                NavigationDestination.HOME,
+                NavigationDestination.GENERATOR,
+                NavigationDestination.SETTINGS,
+            )
         assertEquals("Should have 3 destinations", 3, destinations.size)
         assertEquals("All destinations should be unique", 3, destinations.toSet().size)
     }

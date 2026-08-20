@@ -17,7 +17,10 @@ class TransformationState {
         offsetY = 0f
     }
 
-    fun transform(pan: Offset, zoom: Float) {
+    fun transform(
+        pan: Offset,
+        zoom: Float,
+    ) {
         scale = (scale * zoom).coerceIn(GameConstants.MIN_SCALE, GameConstants.MAX_SCALE)
         offsetX += pan.x
         offsetY += pan.y
