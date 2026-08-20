@@ -12,6 +12,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.batodev.arrows.GameConstants
@@ -26,6 +27,7 @@ fun AppNavigationBar(
     selectedDestination: NavigationDestination,
     levelNumber: Int,
     themeColors: ThemeColors,
+    modifier: Modifier = Modifier,
     onNavigateHome: () -> Unit = {},
     onNavigateToGenerate: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
@@ -35,6 +37,7 @@ fun AppNavigationBar(
     NavigationBar(
         containerColor = themeColors.bottomBar,
         contentColor = White,
+        modifier = modifier,
     ) {
         GeneratorNavigationItem(
             isUnlocked = isGeneratorUnlocked,
@@ -113,8 +116,9 @@ fun RowScope.SettingsNavigationItem(
 @Composable
 fun RowScope.GeneratorNavigationItem(
     isUnlocked: Boolean,
-    selected: Boolean = false,
     onNavigate: () -> Unit,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
 ) {
     val icon = if (isUnlocked) Icons.Default.AutoAwesome else Icons.Default.Lock
     val label =
@@ -133,6 +137,7 @@ fun RowScope.GeneratorNavigationItem(
                 onNavigate()
             }
         },
+        modifier = modifier,
         colors =
             NavigationBarItemDefaults.colors(
                 selectedIconColor = White,

@@ -171,12 +171,14 @@ private fun LibraryHeader(library: Library) {
 private fun LibraryDevelopers(library: Library) {
     val developers = library.developers.mapNotNull { it.name }.joinToString(", ")
     if (developers.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = developers,
-            color = White.copy(alpha = 0.7f),
-            fontSize = 13.sp,
-        )
+        Column {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = developers,
+                color = White.copy(alpha = 0.7f),
+                fontSize = 13.sp,
+            )
+        }
     }
 }
 
@@ -187,13 +189,15 @@ private fun LibraryLicense(
 ) {
     val licenses = library.licenses.joinToString(", ") { it.name }
     if (licenses.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = licenses,
-            color = themeColors.accent,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-        )
+        Column {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = licenses,
+                color = themeColors.accent,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }
 
@@ -204,7 +208,6 @@ private fun LibraryUrl(
 ) {
     val uriHandler = LocalUriHandler.current
     val url = library.website ?: library.scm?.url ?: return
-    Spacer(modifier = Modifier.height(4.dp))
     val annotated =
         buildAnnotatedString {
             withStyle(
@@ -217,8 +220,11 @@ private fun LibraryUrl(
                 append(url)
             }
         }
-    Text(
-        text = annotated,
-        modifier = Modifier.clickable { uriHandler.openUri(url) },
-    )
+    Column {
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = annotated,
+            modifier = Modifier.clickable { uriHandler.openUri(url) },
+        )
+    }
 }

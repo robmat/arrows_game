@@ -77,16 +77,16 @@ fun PreferencesSection(params: PreferencesParams) {
             params.themeColors.accent,
         ) { params.viewModel.saveFillBoard(it) }
         SettingsClickableItem(
-            Icons.Default.Palette,
-            stringResource(R.string.theme_label),
-            getLocalizedThemeName(params.currentTheme),
-            params.onThemeClick,
+            icon = Icons.Default.Palette,
+            title = stringResource(R.string.theme_label),
+            valueText = getLocalizedThemeName(params.currentTheme),
+            onClick = params.onThemeClick,
         )
         SettingsClickableItem(
-            Icons.Default.Speed,
-            stringResource(R.string.animation_speed_label),
-            getLocalizedSpeedName(params.currentSpeed),
-            params.onSpeedClick,
+            icon = Icons.Default.Speed,
+            title = stringResource(R.string.animation_speed_label),
+            valueText = getLocalizedSpeedName(params.currentSpeed),
+            onClick = params.onSpeedClick,
         )
     }
 }
@@ -118,21 +118,31 @@ fun FeedbackSection(
     themeColors: ThemeColors,
 ) {
     SettingsGroup(themeColors.topBarButton) {
-        SettingsClickableItem(Icons.Default.Star, stringResource(R.string.rate_us_label)) {
-            SettingsUtils.launchReviewFlow(context)
-        }
-        SettingsClickableItem(Icons.Default.Edit, stringResource(R.string.write_us_label)) {
-            SettingsUtils.launchEmail(context)
-        }
-        SettingsClickableItem(Icons.Default.Apps, stringResource(R.string.more_games_label)) {
-            SettingsUtils.launchBrowser(
-                context,
-                "https://play.google.com/store/apps/dev?id=8228670503574649511",
-            )
-        }
-        SettingsClickableItem(Icons.Default.Code, stringResource(R.string.source_code_label)) {
-            SettingsUtils.launchBrowser(context, GameConstants.GITHUB_REPO_URL)
-        }
+        SettingsClickableItem(
+            icon = Icons.Default.Star,
+            title = stringResource(R.string.rate_us_label),
+            onClick = { SettingsUtils.launchReviewFlow(context) },
+        )
+        SettingsClickableItem(
+            icon = Icons.Default.Edit,
+            title = stringResource(R.string.write_us_label),
+            onClick = { SettingsUtils.launchEmail(context) },
+        )
+        SettingsClickableItem(
+            icon = Icons.Default.Apps,
+            title = stringResource(R.string.more_games_label),
+            onClick = {
+                SettingsUtils.launchBrowser(
+                    context,
+                    "https://play.google.com/store/apps/dev?id=8228670503574649511",
+                )
+            },
+        )
+        SettingsClickableItem(
+            icon = Icons.Default.Code,
+            title = stringResource(R.string.source_code_label),
+            onClick = { SettingsUtils.launchBrowser(context, GameConstants.GITHUB_REPO_URL) },
+        )
     }
 }
 
@@ -156,13 +166,13 @@ fun PurchasesSection(
         } else {
             AdNotFreeSection(
                 AdSettingsSectionState(
-                    viewModel,
-                    rewardAdManager,
-                    themeColors,
-                    activity,
-                    rewardAdCount,
-                    isAdLoaded,
-                    isAdLoading,
+                    onRewardedAdWatched = viewModel::handleRewardedAdWatched,
+                    rewardAdManager = rewardAdManager,
+                    themeColors = themeColors,
+                    activity = activity,
+                    rewardAdCount = rewardAdCount,
+                    isAdLoaded = isAdLoaded,
+                    isAdLoading = isAdLoading,
                 ),
             )
         }
@@ -178,20 +188,23 @@ fun LegalSection(
     onPrivacyOptionsClick: () -> Unit = {},
 ) {
     SettingsGroup(themeColors.topBarButton) {
-        SettingsClickableItem(Icons.Default.Description, stringResource(R.string.privacy_label)) {
-            SettingsUtils.launchBrowser(context, "https://robmat.github.io/privacy_policy.html")
-        }
+        SettingsClickableItem(
+            icon = Icons.Default.Description,
+            title = stringResource(R.string.privacy_label),
+            onClick = { SettingsUtils.launchBrowser(context, "https://robmat.github.io/privacy_policy.html") },
+        )
         if (showPrivacyOptions) {
             SettingsClickableItem(
-                Icons.Default.Description,
-                stringResource(R.string.manage_consent_label),
-            ) {
-                onPrivacyOptionsClick()
-            }
+                icon = Icons.Default.Description,
+                title = stringResource(R.string.manage_consent_label),
+                onClick = { onPrivacyOptionsClick() },
+            )
         }
-        SettingsClickableItem(Icons.Default.Description, stringResource(R.string.third_party_licenses_label)) {
-            onLicensesClick()
-        }
+        SettingsClickableItem(
+            icon = Icons.Default.Description,
+            title = stringResource(R.string.third_party_licenses_label),
+            onClick = { onLicensesClick() },
+        )
     }
 }
 
@@ -199,7 +212,7 @@ fun LegalSection(
 fun ThemeSelectionDialog(
     currentTheme: String,
     onDismiss: () -> Unit,
-    onThemeSelected: (String) -> Unit,
+    onThemeSelect: (String) -> Unit,
 ) {
     val themeColors = LocalThemeColors.current
     val themes = listOf("Dark", "Green", "Red", "Yellow", "Orange", "Black and White")
@@ -220,13 +233,13 @@ fun ThemeSelectionDialog(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onThemeSelected(theme) }
+                                .clickable { onThemeSelect(theme) }
                                 .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = theme == currentTheme,
-                            onClick = { onThemeSelected(theme) },
+                            onClick = { onThemeSelect(theme) },
                             colors =
                                 RadioButtonDefaults.colors(
                                     selectedColor = themeColors.accent,
@@ -251,7 +264,7 @@ fun ThemeSelectionDialog(
 fun AnimationSpeedSelectionDialog(
     currentSpeed: String,
     onDismiss: () -> Unit,
-    onSpeedSelected: (String) -> Unit,
+    onSpeedSelect: (String) -> Unit,
 ) {
     val themeColors = LocalThemeColors.current
     val speeds = listOf("High", "Medium", "Low")
@@ -272,13 +285,13 @@ fun AnimationSpeedSelectionDialog(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onSpeedSelected(speed) }
+                                .clickable { onSpeedSelect(speed) }
                                 .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = speed == currentSpeed,
-                            onClick = { onSpeedSelected(speed) },
+                            onClick = { onSpeedSelect(speed) },
                             colors =
                                 RadioButtonDefaults.colors(
                                     selectedColor = themeColors.accent,

@@ -80,29 +80,28 @@ fun SettingsScreen(
     }
 
     SettingsScaffold(
-        SettingsScaffoldParams(
-            viewModel,
-            debugViewModel,
-            rewardAdManager,
-            consentManager,
-            context,
-            themeColors,
-            levelNumber,
-            isAdFree,
-            currentTheme,
-            currentSpeed,
-            { showThemeDialog = true },
-            { showSpeedDialog = true },
-            { showLicensesDialog = true },
-            onNavigateHome,
-            onNavigateToGenerate,
-        ),
+        viewModel = viewModel,
+        debugViewModel = debugViewModel,
+        params =
+            SettingsScaffoldParams(
+                rewardAdManager,
+                consentManager,
+                context,
+                themeColors,
+                levelNumber,
+                isAdFree,
+                currentTheme,
+                currentSpeed,
+                { showThemeDialog = true },
+                { showSpeedDialog = true },
+                { showLicensesDialog = true },
+                onNavigateHome,
+                onNavigateToGenerate,
+            ),
     )
 }
 
 private data class SettingsScaffoldParams(
-    val viewModel: AppViewModel,
-    val debugViewModel: DebugViewModel,
     val rewardAdManager: RewardAdManager,
     val consentManager: ConsentManager,
     val context: android.content.Context,
@@ -148,7 +147,11 @@ private fun Modifier.settingsEntryModifier(
 }
 
 @Composable
-private fun SettingsScaffold(params: SettingsScaffoldParams) {
+private fun SettingsScaffold(
+    viewModel: AppViewModel,
+    debugViewModel: DebugViewModel,
+    params: SettingsScaffoldParams,
+) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
 
@@ -183,7 +186,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 0)) {
                 PreferencesSection(
                     PreferencesParams(
-                        params.viewModel,
+                        viewModel,
                         params.themeColors,
                         params.currentTheme,
                         params.currentSpeed,
@@ -197,7 +200,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
             }
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 2)) {
                 PurchasesSection(
-                    viewModel = params.viewModel,
+                    viewModel = viewModel,
                     rewardAdManager = params.rewardAdManager,
                     themeColors = params.themeColors,
                 )
@@ -215,7 +218,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
                     },
                 )
             }
-            if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(params.viewModel, params.debugViewModel)
+            if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(viewModel, debugViewModel)
         }
     }
 }

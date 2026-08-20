@@ -38,11 +38,12 @@ import com.batodev.arrows.ui.theme.White
 @Composable
 fun SettingsGroup(
     backgroundColor: Color,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .background(backgroundColor)
@@ -56,14 +57,14 @@ fun SettingsGroup(
 private fun SettingsItemRow(
     icon: ImageVector,
     title: String,
-    rowModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     trailingContent: @Composable () -> Unit,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .then(rowModifier)
+                .then(modifier)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -91,11 +92,12 @@ fun SettingsSwitchItem(
     title: String,
     initialValue: Boolean,
     accentColor: Color,
+    modifier: Modifier = Modifier,
     onCheckedChange: ((Boolean) -> Unit)? = null,
 ) {
     var checked by remember { mutableStateOf(initialValue) }
     LaunchedEffect(initialValue) { checked = initialValue }
-    SettingsItemRow(icon = icon, title = title) {
+    SettingsItemRow(icon = icon, title = title, modifier = modifier) {
         Switch(
             checked = checked,
             onCheckedChange = {
@@ -117,10 +119,11 @@ fun SettingsSwitchItem(
 fun SettingsClickableItem(
     icon: ImageVector,
     title: String,
-    valueText: String? = null,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    valueText: String? = null,
 ) {
-    SettingsItemRow(icon = icon, title = title, rowModifier = Modifier.clickable(onClick = onClick)) {
+    SettingsItemRow(icon = icon, title = title, modifier = modifier.clickable(onClick = onClick)) {
         if (valueText != null) {
             Text(
                 text = valueText,

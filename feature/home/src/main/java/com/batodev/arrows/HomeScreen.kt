@@ -50,6 +50,7 @@ import com.batodev.arrows.ui.theme.White
 fun MainScreen(
     appViewModel: AppViewModel,
     onPlay: () -> Unit,
+    modifier: Modifier = Modifier,
     onNavigateToGenerate: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
 ) {
@@ -61,6 +62,7 @@ fun MainScreen(
     LaunchedEffect(Unit) { visible = true }
 
     Scaffold(
+        modifier = modifier,
         containerColor = themeColors.background,
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -235,8 +237,8 @@ private fun PlayButton(
 
 @Composable
 fun TriangleIcon(
-    modifier: Modifier = Modifier,
     color: Color,
+    modifier: Modifier = Modifier,
 ) {
     androidx.compose.foundation.Canvas(modifier = modifier) {
         val path =

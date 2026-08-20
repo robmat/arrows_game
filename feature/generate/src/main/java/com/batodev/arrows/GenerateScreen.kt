@@ -348,7 +348,7 @@ private fun GenerateContent(state: GenerateContentState) {
                         rowIndex = rowIndex,
                         selectedShape = state.selectedShape,
                         themeColors = state.themeColors,
-                        onShapeSelected = state.onShapeSelected,
+                        onShapeSelect = state.onShapeSelected,
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -433,7 +433,7 @@ private fun ShapeRow(
     rowIndex: Int,
     selectedShape: String,
     themeColors: ThemeColors,
-    onShapeSelected: (String) -> Unit,
+    onShapeSelect: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -444,7 +444,7 @@ private fun ShapeRow(
                 name = shape,
                 globalIndex = GenerateScreenLogic.shapeFlatIndex(rowIndex, indexInRow, SHAPES_PER_ROW),
                 isSelected = selectedShape == shape,
-                onClick = { onShapeSelected(shape) },
+                onClick = { onShapeSelect(shape) },
                 themeColors = themeColors,
             )
         }

@@ -5,7 +5,7 @@ import com.batodev.arrows.ads.RewardAdManager
 import com.batodev.arrows.ui.theme.ThemeColors
 
 data class AdSettingsSectionState(
-    val viewModel: AppViewModel,
+    val onRewardedAdWatched: () -> Unit,
     val rewardAdManager: RewardAdManager,
     val themeColors: ThemeColors,
     val activity: Activity?,

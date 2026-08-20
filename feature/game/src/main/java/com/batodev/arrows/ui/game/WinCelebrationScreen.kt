@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,14 +64,17 @@ private fun PlayCelebrationTimeline(
     onFadeOutStart: () -> Unit,
     onComplete: () -> Unit,
 ) {
+    val currentOnFadeInStart by rememberUpdatedState(onFadeInStart)
+    val currentOnFadeOutStart by rememberUpdatedState(onFadeOutStart)
+    val currentOnComplete by rememberUpdatedState(onComplete)
     LaunchedEffect(Unit) {
         delay(GameConstants.VIDEO_PREPARATION_DELAY)
-        onFadeInStart()
+        currentOnFadeInStart()
         delay(GameConstants.VIDEO_FADE_IN_DURATION.toLong())
         delay(GameConstants.VIDEO_DISPLAY_DURATION.toLong())
-        onFadeOutStart()
+        currentOnFadeOutStart()
         delay(GameConstants.VIDEO_FADE_OUT_DURATION.toLong())
-        onComplete()
+        currentOnComplete()
     }
 }
 

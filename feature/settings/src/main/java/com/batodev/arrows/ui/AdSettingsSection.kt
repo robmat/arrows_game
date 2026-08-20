@@ -30,11 +30,12 @@ import com.batodev.arrows.ui.theme.White
 @Composable
 private fun AdRemovalRow(
     verticalPadding: Dp,
+    modifier: Modifier = Modifier,
     trailingContent: @Composable () -> Unit,
 ) {
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
@@ -58,8 +59,11 @@ private fun AdRemovalRow(
 }
 
 @Composable
-fun AdFreeSection(themeColors: ThemeColors) {
-    AdRemovalRow(verticalPadding = 12.dp) {
+fun AdFreeSection(
+    themeColors: ThemeColors,
+    modifier: Modifier = Modifier,
+) {
+    AdRemovalRow(verticalPadding = 12.dp, modifier = modifier) {
         Text(
             text = stringResource(R.string.ads_removed),
             fontSize = 14.sp,
@@ -70,8 +74,11 @@ fun AdFreeSection(themeColors: ThemeColors) {
 }
 
 @Composable
-fun AdNotFreeSection(state: AdSettingsSectionState) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun AdNotFreeSection(
+    state: AdSettingsSectionState,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
         AdRemovalRow(verticalPadding = 8.dp) {
             Text(
                 text = "${state.rewardAdCount} / ${GameConstants.REQUIRED_AD_COUNT_FOR_AD_FREE}",
@@ -99,7 +106,7 @@ private fun AdWatchButton(state: AdSettingsSectionState) {
             state.activity?.let { act ->
                 state.rewardAdManager.showRewardAd(
                     activity = act,
-                    onRewarded = { handleAdReward(state) },
+                    onRewarded = state.onRewardedAdWatched,
                     onAdDismissed = { /* No action needed */ },
                 )
             }
@@ -122,8 +129,4 @@ private fun AdWatchButton(state: AdSettingsSectionState) {
             fontWeight = FontWeight.Bold,
         )
     }
-}
-
-private fun handleAdReward(state: AdSettingsSectionState) {
-    state.viewModel.handleRewardedAdWatched()
 }

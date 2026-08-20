@@ -63,11 +63,12 @@ data class GameTopBarCallbacks(
 fun GameTopBar(
     state: GameTopBarState,
     callbacks: GameTopBarCallbacks,
+    modifier: Modifier = Modifier,
 ) {
     val themeColors = LocalThemeColors.current
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = modifier.fillMaxWidth().padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -156,6 +157,7 @@ private fun HintButton(
 fun GameProgressBar(
     totalSnakes: Int,
     currentSnakes: Int,
+    modifier: Modifier = Modifier,
 ) {
     val themeColors = LocalThemeColors.current
     val targetProgress = if (totalSnakes > 0) (totalSnakes - currentSnakes).toFloat() / totalSnakes else 0f
@@ -168,7 +170,7 @@ fun GameProgressBar(
 
     LinearProgressIndicator(
         progress = { animatedProgress },
-        modifier = Modifier.fillMaxWidth().height(6.dp),
+        modifier = modifier.fillMaxWidth().height(6.dp),
         color = ProgressBarGreen,
         trackColor = themeColors.topBarButton,
         strokeCap = StrokeCap.Round,

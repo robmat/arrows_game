@@ -39,6 +39,7 @@ import com.batodev.arrows.ui.theme.White
 fun DebugMenu(
     viewModel: AppViewModel,
     debugViewModel: DebugViewModel,
+    modifier: Modifier = Modifier,
 ) {
     val themeColors = LocalThemeColors.current
     val levelNumber by viewModel.levelNumber.collectAsState()
@@ -49,64 +50,79 @@ fun DebugMenu(
 
     var dialogToShow by remember { mutableStateOf<String?>(null) }
 
-    Text(
-        stringResource(R.string.debug_menu_title),
-        color = themeColors.accent,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
-        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-    )
+    Column(modifier = modifier) {
+        Text(
+            stringResource(R.string.debug_menu_title),
+            color = themeColors.accent,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+        )
 
-    SettingsGroup(themeColors.topBarButton) {
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.current_level_label),
-            levelNumber.toString(),
-        ) { dialogToShow = "level" }
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.forced_width_label),
-            forcedWidth?.toString() ?: stringResource(R.string.auto_label),
-        ) { dialogToShow = "width" }
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.forced_height_label),
-            forcedHeight?.toString() ?: stringResource(R.string.auto_label),
-        ) { dialogToShow = "height" }
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.forced_lives_label),
-            forcedLives?.toString() ?: stringResource(R.string.auto_label),
-        ) { dialogToShow = "lives" }
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.forced_shape_label),
-            forcedShape ?: stringResource(R.string.none_label),
-        ) { dialogToShow = "shape" }
-        SettingsClickableItem(
-            Icons.Default.Settings,
-            stringResource(R.string.regenerate_level_label),
-        ) { viewModel.regenerateCurrentLevel() }
+        SettingsGroup(themeColors.topBarButton) {
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.current_level_label),
+                valueText = levelNumber.toString(),
+                onClick = { dialogToShow = "level" },
+            )
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.forced_width_label),
+                valueText = forcedWidth?.toString() ?: stringResource(R.string.auto_label),
+                onClick = { dialogToShow = "width" },
+            )
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.forced_height_label),
+                valueText = forcedHeight?.toString() ?: stringResource(R.string.auto_label),
+                onClick = { dialogToShow = "height" },
+            )
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.forced_lives_label),
+                valueText = forcedLives?.toString() ?: stringResource(R.string.auto_label),
+                onClick = { dialogToShow = "lives" },
+            )
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.forced_shape_label),
+                valueText = forcedShape ?: stringResource(R.string.none_label),
+                onClick = { dialogToShow = "shape" },
+            )
+            SettingsClickableItem(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.regenerate_level_label),
+                onClick = { viewModel.regenerateCurrentLevel() },
+            )
+        }
     }
 
     DebugDialogs(
-        DebugDialogParams(
-            dialogToShow,
-            viewModel,
-            debugViewModel,
-            levelNumber,
-            forcedWidth,
-            forcedHeight,
-            forcedLives,
-            forcedShape,
-        ) {
-            dialogToShow = null
-        },
+        shapes = listOf(null) + (viewModel.shapeProvider?.getAllShapeNames() ?: emptyList()),
+        onSaveLevelNumber = viewModel::saveLevelNumber,
+        onSaveDebugOption = debugViewModel::saveDebugOption,
+        params =
+            DebugDialogParams(
+                dialogToShow,
+                levelNumber,
+                forcedWidth,
+                forcedHeight,
+                forcedLives,
+                forcedShape,
+            ) {
+                dialogToShow = null
+            },
     )
 }
 
 @Composable
-private fun DebugDialogs(params: DebugDialogParams) {
+private fun DebugDialogs(
+    shapes: List<String?>,
+    onSaveLevelNumber: (Int) -> Unit,
+    onSaveDebugOption: (DebugViewModel.DebugOption, Any?) -> Unit,
+    params: DebugDialogParams,
+) {
     when (params.dialogToShow) {
         "level" -> {
             NumberInputDialog(
@@ -114,7 +130,7 @@ private fun DebugDialogs(params: DebugDialogParams) {
                 params.levelNumber,
                 params.onDismiss,
             ) {
-                params.viewModel.saveLevelNumber(it)
+                onSaveLevelNumber(it)
             }
         }
 
@@ -124,7 +140,7 @@ private fun DebugDialogs(params: DebugDialogParams) {
                 params.forcedWidth ?: 0,
                 params.onDismiss,
             ) {
-                params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.WIDTH, if (it > 0) it else null)
+                onSaveDebugOption(DebugViewModel.DebugOption.WIDTH, if (it > 0) it else null)
             }
         }
 
@@ -134,7 +150,7 @@ private fun DebugDialogs(params: DebugDialogParams) {
                 params.forcedHeight ?: 0,
                 params.onDismiss,
             ) {
-                params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.HEIGHT, if (it > 0) it else null)
+                onSaveDebugOption(DebugViewModel.DebugOption.HEIGHT, if (it > 0) it else null)
             }
         }
 
@@ -144,13 +160,13 @@ private fun DebugDialogs(params: DebugDialogParams) {
                 params.forcedLives ?: 0,
                 params.onDismiss,
             ) {
-                params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.LIVES, if (it > 0) it else null)
+                onSaveDebugOption(DebugViewModel.DebugOption.LIVES, if (it > 0) it else null)
             }
         }
 
         "shape" -> {
-            ShapeSelectionDialog(params.viewModel, params.forcedShape, params.onDismiss) {
-                params.debugViewModel.saveDebugOption(DebugViewModel.DebugOption.SHAPE, it)
+            ShapeSelectionDialog(shapes, params.forcedShape, params.onDismiss) {
+                onSaveDebugOption(DebugViewModel.DebugOption.SHAPE, it)
             }
         }
     }
@@ -204,13 +220,12 @@ fun NumberInputDialog(
 
 @Composable
 fun ShapeSelectionDialog(
-    viewModel: AppViewModel,
+    shapes: List<String?>,
     currentShape: String?,
     onDismiss: () -> Unit,
-    onShapeSelected: (String?) -> Unit,
+    onShapeSelect: (String?) -> Unit,
 ) {
     val themeColors = LocalThemeColors.current
-    val shapes = listOf(null) + (viewModel.shapeProvider?.getAllShapeNames() ?: emptyList())
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = themeColors.bottomBar,
@@ -223,7 +238,7 @@ fun ShapeSelectionDialog(
                             Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    onShapeSelected(shape)
+                                    onShapeSelect(shape)
                                     onDismiss()
                                 }.padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -231,7 +246,7 @@ fun ShapeSelectionDialog(
                         RadioButton(
                             selected = shape == currentShape,
                             onClick = {
-                                onShapeSelected(shape)
+                                onShapeSelect(shape)
                                 onDismiss()
                             },
                             colors =

@@ -26,7 +26,10 @@ import com.batodev.arrows.engine.SolvabilityChecker
 private val FINGER_SIZE: Dp = 120.dp
 
 @Composable
-fun IntroFingerOverlay(level: GameLevel) {
+fun IntroFingerOverlay(
+    level: GameLevel,
+    modifier: Modifier = Modifier,
+) {
     val removableId = SolvabilityChecker.findRemovableSnake(level)
     val snake = level.snakes.firstOrNull { it.id == removableId }
     val head = snake?.body?.firstOrNull()
@@ -44,7 +47,7 @@ fun IntroFingerOverlay(level: GameLevel) {
         label = "fingerAlpha",
     )
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val cellSizeW = maxWidth / level.width
         val cellSizeH = maxHeight / level.height
         val cellSize: Dp = if (cellSizeW < cellSizeH) cellSizeW else cellSizeH

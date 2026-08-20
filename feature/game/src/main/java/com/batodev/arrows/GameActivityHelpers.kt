@@ -35,7 +35,8 @@ import kotlinx.coroutines.delay
 
 data class GameWonStateParams(
     val engine: GameEngine,
-    val viewModel: AppViewModel,
+    val incrementGamesCompleted: () -> Unit,
+    val gamesCompletedProvider: () -> Int,
     val activity: Activity,
     val interstitialAdManager: InterstitialAdManager,
     val isAdFree: Boolean,
@@ -55,6 +56,7 @@ data class GameAreaParams(
     val onToggleGuidance: () -> Unit,
     val showIntro: Boolean,
     val onDismissIntro: () -> Unit,
+    val celebrationParams: CelebrationParams,
 )
 
 data class GameScreenContentParams(
@@ -76,6 +78,7 @@ data class GameScreenContentParams(
     val onCelebrationComplete: () -> Unit,
     val showIntro: Boolean,
     val onDismissIntro: () -> Unit,
+    val celebrationParams: CelebrationParams,
     val onBack: () -> Unit = {},
 )
 
@@ -145,10 +148,11 @@ fun BoxScope.GuidanceToggleButton(
     showGuidanceLines: Boolean,
     themeColors: ThemeColors,
     onToggleGuidance: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onToggleGuidance,
-        modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp).size(48.dp),
+        modifier = modifier.align(Alignment.BottomEnd).padding(8.dp).size(48.dp),
         colors =
             IconButtonDefaults.iconButtonColors(
                 containerColor = if (showGuidanceLines) themeColors.accent else themeColors.topBarButton,
@@ -167,10 +171,11 @@ fun BoxScope.GuidanceToggleButton(
 fun BoxScope.ResetViewButton(
     themeColors: ThemeColors,
     onResetView: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onResetView,
-        modifier = Modifier.align(Alignment.BottomStart).padding(8.dp).size(48.dp),
+        modifier = modifier.align(Alignment.BottomStart).padding(8.dp).size(48.dp),
         colors =
             IconButtonDefaults.iconButtonColors(
                 containerColor = themeColors.topBarButton,
@@ -197,8 +202,8 @@ suspend fun finishGameAfterCelebration(
     if (waitForConfetti) {
         delay(GameConstants.GAME_WON_EXIT_DELAY)
     }
-    params.viewModel.incrementGamesCompleted()
-    val gamesCompleted = params.viewModel.gamesCompleted.value
+    params.incrementGamesCompleted()
+    val gamesCompleted = params.gamesCompletedProvider()
     if (shouldShowInterstitialAd(params.isAdFree, gamesCompleted)) {
         params.interstitialAdManager.showInterstitialAd(params.activity) {
             params.onFinish()

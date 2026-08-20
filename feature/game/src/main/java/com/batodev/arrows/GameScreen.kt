@@ -28,15 +28,14 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -82,11 +81,6 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-private val LocalCelebrationParams =
-    compositionLocalOf<CelebrationParams> {
-        error("CelebrationParams not provided")
-    }
-
 private val CONFETTI_COLORS =
     listOf(
         GameConstants.CONFETTI_COLOR_1,
@@ -131,10 +125,23 @@ fun ArrowsGameView(
     val themeColors = LocalThemeColors.current
     val gameWonParams =
         remember(activity, interstitialAdManager, isAdFree) {
-            GameWonStateParams(engine, appViewModel, activity ?: return@remember null, interstitialAdManager, isAdFree, onFinish = onBack)
+            GameWonStateParams(
+                engine = engine,
+                incrementGamesCompleted = appViewModel::incrementGamesCompleted,
+                gamesCompletedProvider = { appViewModel.gamesCompleted.value },
+                activity = activity ?: return@remember null,
+                interstitialAdManager = interstitialAdManager,
+                isAdFree = isAdFree,
+                onFinish = onBack,
+            )
         }
     if (gameWonParams != null) {
-        HandleGameWonState(uiState, gameWonParams, isWinVideosEnabled) { showCelebrationVideo = true }
+        HandleGameWonState(
+            uiState = uiState,
+            isWinVideosEnabled = isWinVideosEnabled,
+            onShowCelebration = { showCelebrationVideo = true },
+            onFinishWithoutCelebration = { finishGameAfterCelebration(gameWonParams, waitForConfetti = true) },
+        )
     }
     confettiState = updateConfettiState(uiState, confettiState)
     val handleHint =
@@ -153,47 +160,48 @@ fun ArrowsGameView(
             showCelebration = showCelebrationVideo && uiState is GameUiState.Won,
             onCelebrationComplete = onCelebrationComplete,
         )
-    CompositionLocalProvider(LocalCelebrationParams provides celebrationParams) {
-        GameScreenContent(
-            GameScreenContentParams(
-                engine,
-                uiState,
-                activity,
-                context,
-                tapAnimations,
-                guidanceAlpha,
-                showGuidanceLines,
-                themeColors,
-                rewardAdManager,
-                isAdFree,
-                isAdLoaded,
-                isAdLoading,
-                handleHint,
-                { showGuidanceLines = !showGuidanceLines },
-                showCelebrationVideo,
-                onCelebrationComplete,
-                introState.showIntro,
-                introState.onDismiss,
-                onBack,
-            ),
-        )
-    }
+    GameScreenContent(
+        GameScreenContentParams(
+            engine,
+            uiState,
+            activity,
+            context,
+            tapAnimations,
+            guidanceAlpha,
+            showGuidanceLines,
+            themeColors,
+            rewardAdManager,
+            isAdFree,
+            isAdLoaded,
+            isAdLoading,
+            handleHint,
+            { showGuidanceLines = !showGuidanceLines },
+            showCelebrationVideo,
+            onCelebrationComplete,
+            introState.showIntro,
+            introState.onDismiss,
+            celebrationParams,
+            onBack,
+        ),
+    )
 }
 
 @Composable
 private fun HandleGameWonState(
     uiState: GameUiState,
-    params: GameWonStateParams,
     isWinVideosEnabled: Boolean,
     onShowCelebration: () -> Unit,
+    onFinishWithoutCelebration: suspend () -> Unit,
 ) {
     val isWon = uiState is GameUiState.Won
+    val currentOnShowCelebration by rememberUpdatedState(onShowCelebration)
+    val currentOnFinishWithoutCelebration by rememberUpdatedState(onFinishWithoutCelebration)
     LaunchedEffect(isWon) {
         if (isWon) {
             if (isWinVideosEnabled) {
-                onShowCelebration()
+                currentOnShowCelebration()
             } else {
-                finishGameAfterCelebration(params, waitForConfetti = true)
+                currentOnFinishWithoutCelebration()
             }
         }
     }
@@ -250,7 +258,10 @@ private fun ColumnScope.GameArea(params: GameAreaParams) {
                 },
     ) {
         BoardLayer(params.engine, params.uiState, params.guidanceAlpha)
-        ResetViewButton(params.themeColors) { params.engine.transformationState.reset() }
+        ResetViewButton(
+            themeColors = params.themeColors,
+            onResetView = { params.engine.transformationState.reset() },
+        )
         GuidanceToggleButton(params.showGuidanceLines, params.themeColors, params.onToggleGuidance)
         if (BuildConfig.DRAW_DEBUG_STUFF) DebugOverlay(params.tapAnimations)
         TapAnimationsLayer(params.tapAnimations)
@@ -260,9 +271,8 @@ private fun ColumnScope.GameArea(params: GameAreaParams) {
             }
 
             is GameUiState.Won -> {
-                val celebrationParams = LocalCelebrationParams.current
-                if (celebrationParams.showCelebration) {
-                    WinCelebrationScreen(onCelebrationComplete = celebrationParams.onCelebrationComplete)
+                if (params.celebrationParams.showCelebration) {
+                    WinCelebrationScreen(onCelebrationComplete = params.celebrationParams.onCelebrationComplete)
                 }
                 KonfettiView(
                     modifier = Modifier.fillMaxSize(),
@@ -325,6 +335,7 @@ private fun GameScreenContent(params: GameScreenContentParams) {
                 params.onToggleGuidance,
                 params.showIntro,
                 params.onDismissIntro,
+                params.celebrationParams,
             ),
         )
         if (!params.isAdFree) {
@@ -388,7 +399,7 @@ private fun DebugOverlay(tapAnimations: SnapshotStateList<TapAnimationState>) {
 private fun TapAnimationsLayer(tapAnimations: SnapshotStateList<TapAnimationState>) {
     tapAnimations.forEach { anim ->
         key(anim.id) {
-            TapRipple(offset = anim.offset, onFinished = { tapAnimations.remove(anim) })
+            TapRipple(offset = anim.offset, onFinish = { tapAnimations.remove(anim) })
         }
     }
 }
