@@ -17,7 +17,6 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,18 +34,24 @@ import com.batodev.arrows.ui.theme.InactiveIcon
 import com.batodev.arrows.ui.theme.LocalThemeColors
 import com.batodev.arrows.ui.theme.White
 
+data class DebugMenuState(
+    val levelNumber: Int,
+    val forcedWidth: Int?,
+    val forcedHeight: Int?,
+    val forcedLives: Int?,
+    val forcedShape: String?,
+    val shapes: List<String?>,
+    val onRegenerateLevel: () -> Unit,
+    val onSaveLevelNumber: (Int) -> Unit,
+    val onSaveDebugOption: (DebugViewModel.DebugOption, Any?) -> Unit,
+)
+
 @Composable
 fun DebugMenu(
-    viewModel: AppViewModel,
-    debugViewModel: DebugViewModel,
+    state: DebugMenuState,
     modifier: Modifier = Modifier,
 ) {
     val themeColors = LocalThemeColors.current
-    val levelNumber by viewModel.levelNumber.collectAsState()
-    val forcedWidth by debugViewModel.debugForcedWidth.collectAsState()
-    val forcedHeight by debugViewModel.debugForcedHeight.collectAsState()
-    val forcedLives by debugViewModel.debugForcedLives.collectAsState()
-    val forcedShape by debugViewModel.debugForcedShape.collectAsState()
 
     var dialogToShow by remember { mutableStateOf<String?>(null) }
 
@@ -63,53 +68,53 @@ fun DebugMenu(
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.current_level_label),
-                valueText = levelNumber.toString(),
+                valueText = state.levelNumber.toString(),
                 onClick = { dialogToShow = "level" },
             )
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.forced_width_label),
-                valueText = forcedWidth?.toString() ?: stringResource(R.string.auto_label),
+                valueText = state.forcedWidth?.toString() ?: stringResource(R.string.auto_label),
                 onClick = { dialogToShow = "width" },
             )
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.forced_height_label),
-                valueText = forcedHeight?.toString() ?: stringResource(R.string.auto_label),
+                valueText = state.forcedHeight?.toString() ?: stringResource(R.string.auto_label),
                 onClick = { dialogToShow = "height" },
             )
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.forced_lives_label),
-                valueText = forcedLives?.toString() ?: stringResource(R.string.auto_label),
+                valueText = state.forcedLives?.toString() ?: stringResource(R.string.auto_label),
                 onClick = { dialogToShow = "lives" },
             )
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.forced_shape_label),
-                valueText = forcedShape ?: stringResource(R.string.none_label),
+                valueText = state.forcedShape ?: stringResource(R.string.none_label),
                 onClick = { dialogToShow = "shape" },
             )
             SettingsClickableItem(
                 icon = Icons.Default.Settings,
                 title = stringResource(R.string.regenerate_level_label),
-                onClick = { viewModel.regenerateCurrentLevel() },
+                onClick = { state.onRegenerateLevel() },
             )
         }
     }
 
     DebugDialogs(
-        shapes = listOf(null) + (viewModel.shapeProvider?.getAllShapeNames() ?: emptyList()),
-        onSaveLevelNumber = viewModel::saveLevelNumber,
-        onSaveDebugOption = debugViewModel::saveDebugOption,
+        shapes = state.shapes,
+        onSaveLevelNumber = state.onSaveLevelNumber,
+        onSaveDebugOption = state.onSaveDebugOption,
         params =
             DebugDialogParams(
                 dialogToShow,
-                levelNumber,
-                forcedWidth,
-                forcedHeight,
-                forcedLives,
-                forcedShape,
+                state.levelNumber,
+                state.forcedWidth,
+                state.forcedHeight,
+                state.forcedLives,
+                state.forcedShape,
             ) {
                 dialogToShow = null
             },

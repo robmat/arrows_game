@@ -46,36 +46,31 @@ import com.batodev.arrows.ui.theme.White
 
 @Composable
 fun PreferencesSection(params: PreferencesParams) {
-    val isVibrationEnabled by params.viewModel.isVibrationEnabled.collectAsState()
-    val isSoundsEnabled by params.viewModel.isSoundsEnabled.collectAsState()
-    val isFillBoardEnabled by params.viewModel.isFillBoardEnabled.collectAsState()
-    val isWinVideosEnabled by params.viewModel.isWinVideosEnabled.collectAsState()
-
     SettingsGroup(params.themeColors.topBarButton) {
         SettingsSwitchItem(
             Icons.Default.Vibration,
             stringResource(R.string.vibrations_label),
-            isVibrationEnabled,
+            params.isVibrationEnabled,
             params.themeColors.accent,
-        ) { params.viewModel.saveVibration(it) }
+        ) { params.onVibrationChange(it) }
         SettingsSwitchItem(
             Icons.AutoMirrored.Filled.VolumeUp,
             stringResource(R.string.sounds_label),
-            isSoundsEnabled,
+            params.isSoundsEnabled,
             params.themeColors.accent,
-        ) { params.viewModel.saveSounds(it) }
+        ) { params.onSoundsChange(it) }
         SettingsSwitchItem(
             Icons.Default.VideoLibrary,
             stringResource(R.string.win_videos_label),
-            isWinVideosEnabled,
+            params.isWinVideosEnabled,
             params.themeColors.accent,
-        ) { params.viewModel.saveWinVideosEnabled(it) }
+        ) { params.onWinVideosChange(it) }
         SettingsSwitchItem(
             Icons.Default.Grid4x4,
             stringResource(R.string.fill_board_label),
-            isFillBoardEnabled,
+            params.isFillBoardEnabled,
             params.themeColors.accent,
-        ) { params.viewModel.saveFillBoard(it) }
+        ) { params.onFillBoardChange(it) }
         SettingsClickableItem(
             icon = Icons.Default.Palette,
             title = stringResource(R.string.theme_label),
@@ -148,15 +143,15 @@ fun FeedbackSection(
 
 @Composable
 fun PurchasesSection(
-    viewModel: AppViewModel,
+    isAdFree: Boolean,
+    rewardAdCount: Int,
+    onRewardedAdWatch: () -> Unit,
     rewardAdManager: RewardAdManager,
     themeColors: ThemeColors,
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val isAdFree by viewModel.isAdFree.collectAsState()
-    val rewardAdCount by viewModel.rewardAdCount.collectAsState()
     val isAdLoaded by rewardAdManager.isAdLoaded.collectAsState()
     val isAdLoading by rewardAdManager.isAdLoading.collectAsState()
 
@@ -166,7 +161,7 @@ fun PurchasesSection(
         } else {
             AdNotFreeSection(
                 AdSettingsSectionState(
-                    onRewardedAdWatched = viewModel::handleRewardedAdWatched,
+                    onRewardedAdWatched = onRewardedAdWatch,
                     rewardAdManager = rewardAdManager,
                     themeColors = themeColors,
                     activity = activity,
@@ -313,10 +308,17 @@ fun AnimationSpeedSelectionDialog(
 }
 
 data class PreferencesParams(
-    val viewModel: AppViewModel,
     val themeColors: ThemeColors,
+    val isVibrationEnabled: Boolean,
+    val isSoundsEnabled: Boolean,
+    val isWinVideosEnabled: Boolean,
+    val isFillBoardEnabled: Boolean,
     val currentTheme: String,
     val currentSpeed: String,
+    val onVibrationChange: (Boolean) -> Unit,
+    val onSoundsChange: (Boolean) -> Unit,
+    val onWinVideosChange: (Boolean) -> Unit,
+    val onFillBoardChange: (Boolean) -> Unit,
     val onThemeClick: () -> Unit,
     val onSpeedClick: () -> Unit,
 )

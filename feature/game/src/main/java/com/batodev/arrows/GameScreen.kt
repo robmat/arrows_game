@@ -99,17 +99,27 @@ fun ArrowsGameView(
     gameStateDao: GameStateDao,
     customParams: CustomGameParams = CustomGameParams(false, null, null, null),
     onBack: () -> Unit = {},
+    // Acquired in a default parameter (not the body) so the ViewModel is an
+    // explicit, overridable dependency - what compose-rules' vm-injection-check
+    // asks for. LocalView/LocalContext are read here since default-arg
+    // expressions of a @Composable still run in composition scope.
+    engine: GameEngine =
+        viewModel(
+            factory =
+                createGameEngineFactory(
+                    LocalView.current,
+                    LocalContext.current,
+                    userPreferencesRepository,
+                    gameStateDao,
+                    customParams,
+                ),
+        ),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val view = LocalView.current
     val context = LocalContext.current
     val activity = context as? Activity
     val isAdLoaded by rewardAdManager.isAdLoaded.collectAsState()
     val isAdLoading by rewardAdManager.isAdLoading.collectAsState()
-    val engine: GameEngine =
-        viewModel(
-            factory = createGameEngineFactory(view, context, userPreferencesRepository, gameStateDao, customParams),
-        )
     val uiState = engine.uiState
     val introState = rememberIntroState(appViewModel, uiState is GameUiState.Loading, engine.level.snakes.size)
     val isWinVideosEnabled by appViewModel.isWinVideosEnabled.collectAsState()

@@ -32,6 +32,7 @@ import com.batodev.arrows.ui.AnimationSpeedSelectionDialog
 import com.batodev.arrows.ui.AppNavigationBar
 import com.batodev.arrows.ui.AppViewModel
 import com.batodev.arrows.ui.DebugMenu
+import com.batodev.arrows.ui.DebugMenuState
 import com.batodev.arrows.ui.DebugViewModel
 import com.batodev.arrows.ui.FeedbackSection
 import com.batodev.arrows.ui.LegalSection
@@ -56,6 +57,11 @@ fun SettingsScreen(
     val context = LocalContext.current
     val levelNumber by viewModel.levelNumber.collectAsState()
     val isAdFree by viewModel.isAdFree.collectAsState()
+    val rewardAdCount by viewModel.rewardAdCount.collectAsState()
+    val isVibrationEnabled by viewModel.isVibrationEnabled.collectAsState()
+    val isSoundsEnabled by viewModel.isSoundsEnabled.collectAsState()
+    val isWinVideosEnabled by viewModel.isWinVideosEnabled.collectAsState()
+    val isFillBoardEnabled by viewModel.isFillBoardEnabled.collectAsState()
     val themeColors = LocalThemeColors.current
     var showThemeDialog by remember { mutableStateOf(false) }
     var showSpeedDialog by remember { mutableStateOf(false) }
@@ -79,24 +85,58 @@ fun SettingsScreen(
         ThirdPartyLicensesDialog(onDismiss = { showLicensesDialog = false })
     }
 
+    val debugMenuState: DebugMenuState? =
+        if (BuildConfig.DRAW_DEBUG_STUFF) {
+            val forcedWidth by debugViewModel.debugForcedWidth.collectAsState()
+            val forcedHeight by debugViewModel.debugForcedHeight.collectAsState()
+            val forcedLives by debugViewModel.debugForcedLives.collectAsState()
+            val forcedShape by debugViewModel.debugForcedShape.collectAsState()
+            DebugMenuState(
+                levelNumber = levelNumber,
+                forcedWidth = forcedWidth,
+                forcedHeight = forcedHeight,
+                forcedLives = forcedLives,
+                forcedShape = forcedShape,
+                shapes = listOf(null) + (viewModel.shapeProvider?.getAllShapeNames() ?: emptyList()),
+                onRegenerateLevel = viewModel::regenerateCurrentLevel,
+                onSaveLevelNumber = viewModel::saveLevelNumber,
+                onSaveDebugOption = debugViewModel::saveDebugOption,
+            )
+        } else {
+            null
+        }
+
     SettingsScaffold(
-        viewModel = viewModel,
-        debugViewModel = debugViewModel,
         params =
             SettingsScaffoldParams(
-                rewardAdManager,
-                consentManager,
-                context,
-                themeColors,
-                levelNumber,
-                isAdFree,
-                currentTheme,
-                currentSpeed,
-                { showThemeDialog = true },
-                { showSpeedDialog = true },
-                { showLicensesDialog = true },
-                onNavigateHome,
-                onNavigateToGenerate,
+                rewardAdManager = rewardAdManager,
+                consentManager = consentManager,
+                context = context,
+                themeColors = themeColors,
+                levelNumber = levelNumber,
+                isAdFree = isAdFree,
+                rewardAdCount = rewardAdCount,
+                preferencesParams =
+                    PreferencesParams(
+                        themeColors = themeColors,
+                        isVibrationEnabled = isVibrationEnabled,
+                        isSoundsEnabled = isSoundsEnabled,
+                        isWinVideosEnabled = isWinVideosEnabled,
+                        isFillBoardEnabled = isFillBoardEnabled,
+                        currentTheme = currentTheme,
+                        currentSpeed = currentSpeed,
+                        onVibrationChange = viewModel::saveVibration,
+                        onSoundsChange = viewModel::saveSounds,
+                        onWinVideosChange = viewModel::saveWinVideosEnabled,
+                        onFillBoardChange = viewModel::saveFillBoard,
+                        onThemeClick = { showThemeDialog = true },
+                        onSpeedClick = { showSpeedDialog = true },
+                    ),
+                debugMenuState = debugMenuState,
+                onRewardedAdWatch = viewModel::handleRewardedAdWatched,
+                onLicensesClick = { showLicensesDialog = true },
+                onNavigateHome = onNavigateHome,
+                onNavigateToGenerate = onNavigateToGenerate,
             ),
     )
 }
@@ -108,10 +148,10 @@ private data class SettingsScaffoldParams(
     val themeColors: com.batodev.arrows.ui.theme.ThemeColors,
     val levelNumber: Int,
     val isAdFree: Boolean,
-    val currentTheme: String,
-    val currentSpeed: String,
-    val onThemeClick: () -> Unit,
-    val onSpeedClick: () -> Unit,
+    val rewardAdCount: Int,
+    val preferencesParams: PreferencesParams,
+    val debugMenuState: DebugMenuState?,
+    val onRewardedAdWatch: () -> Unit,
     val onLicensesClick: () -> Unit,
     val onNavigateHome: () -> Unit,
     val onNavigateToGenerate: () -> Unit,
@@ -147,11 +187,7 @@ private fun Modifier.settingsEntryModifier(
 }
 
 @Composable
-private fun SettingsScaffold(
-    viewModel: AppViewModel,
-    debugViewModel: DebugViewModel,
-    params: SettingsScaffoldParams,
-) {
+private fun SettingsScaffold(params: SettingsScaffoldParams) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
 
@@ -184,23 +220,16 @@ private fun SettingsScaffold(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 0)) {
-                PreferencesSection(
-                    PreferencesParams(
-                        viewModel,
-                        params.themeColors,
-                        params.currentTheme,
-                        params.currentSpeed,
-                        params.onThemeClick,
-                        params.onSpeedClick,
-                    ),
-                )
+                PreferencesSection(params.preferencesParams)
             }
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 1)) {
                 FeedbackSection(params.context, params.themeColors)
             }
             Box(modifier = Modifier.settingsEntryModifier(visible, sectionIndex = 2)) {
                 PurchasesSection(
-                    viewModel = viewModel,
+                    isAdFree = params.isAdFree,
+                    rewardAdCount = params.rewardAdCount,
+                    onRewardedAdWatch = params.onRewardedAdWatch,
                     rewardAdManager = params.rewardAdManager,
                     themeColors = params.themeColors,
                 )
@@ -218,7 +247,7 @@ private fun SettingsScaffold(
                     },
                 )
             }
-            if (BuildConfig.DRAW_DEBUG_STUFF) DebugMenu(viewModel, debugViewModel)
+            if (BuildConfig.DRAW_DEBUG_STUFF) params.debugMenuState?.let { state -> DebugMenu(state) }
         }
     }
 }
