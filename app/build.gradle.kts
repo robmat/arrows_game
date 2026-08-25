@@ -103,11 +103,15 @@ tasks.register<JacocoReport>("testDebugUnitTestCoverage") {
         )
 
     val javaClasses =
-        fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug/compileDebugJavaWithJavac/classes") {
+        fileTree(
+            "${project.layout.buildDirectory.get().asFile}/intermediates/javac/debug/compileDebugJavaWithJavac/classes",
+        ) {
             exclude(excludes)
         }
     val kotlinClasses =
-        fileTree("${project.layout.buildDirectory.get().asFile}/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes") {
+        fileTree(
+            "${project.layout.buildDirectory.get().asFile}/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes",
+        ) {
             exclude(excludes)
         }
 

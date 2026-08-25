@@ -44,7 +44,8 @@ class FakeGameStateDao : GameStateDao() {
         }
     }
 
-    override suspend fun getBoard(stateType: String): GameBoardEntity? = boards.values.find { it.stateType == stateType }
+    override suspend fun getBoard(stateType: String): GameBoardEntity? =
+        boards.values.find { it.stateType == stateType }
 
     override suspend fun getSnakes(boardId: Long): List<SnakeEntity> = snakes.values.filter { it.boardId == boardId }
 

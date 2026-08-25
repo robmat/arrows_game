@@ -3,6 +3,7 @@ package com.batodev.arrows.engine
 import com.batodev.arrows.core.testing.FakeGameStateDao
 import com.batodev.arrows.core.testing.FakeUserPreferencesRepository
 import com.batodev.arrows.core.testing.MainDispatcherRule
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -145,40 +146,52 @@ class CustomGameShapeTest {
             verify(shapeProvider, never()).getRandomShape()
         }
 
+    private fun buildEngine(
+        testDispatcher: CoroutineDispatcher,
+        repo: FakeUserPreferencesRepository,
+        isCustomGame: Boolean,
+        shapeProvider: BoardShapeProvider,
+        forcedSize: Pair<Int, Int>? = null,
+    ): GameEngine {
+        val generator =
+            mock<GameGenerator> {
+                on { generateSolvableLevel(any()) } doReturn GameLevel(30, 30, emptyList())
+            }
+        return GameEngine(
+            config =
+                GameEngineConfig(
+                    coroutineScopeOverride = CoroutineScope(testDispatcher),
+                    repository = repo,
+                    gameStateDao = FakeGameStateDao(),
+                    isCustomGame = isCustomGame,
+                    gameGenerator = generator,
+                    autoLoad = false,
+                    backgroundDispatcher = testDispatcher,
+                ),
+            features =
+                GameEngineFeatures(
+                    shapeProvider = shapeProvider,
+                    forcedWidth = forcedSize?.first,
+                    forcedHeight = forcedSize?.second,
+                ),
+        )
+    }
+
     @Test
     fun `test that custom game rectangular and regular game no shape are different code paths`() =
         runTest {
             val testDispatcher = UnconfinedTestDispatcher(testScheduler)
 
             // Custom game with rectangular
-            val customRepo = FakeUserPreferencesRepository()
             val customShapeProvider = mock<BoardShapeProvider>()
-            val customGenerator =
-                mock<GameGenerator> {
-                    on { generateSolvableLevel(any()) } doReturn GameLevel(30, 30, emptyList())
-                }
-
             val customEngine =
-                GameEngine(
-                    config =
-                        GameEngineConfig(
-                            coroutineScopeOverride = CoroutineScope(testDispatcher),
-                            repository = customRepo,
-                            gameStateDao = FakeGameStateDao(),
-                            isCustomGame = true,
-                            gameGenerator = customGenerator,
-                            autoLoad = false,
-                            backgroundDispatcher = testDispatcher,
-                        ),
-                    features =
-                        GameEngineFeatures(
-                            shapeProvider = customShapeProvider,
-                            forcedWidth = 30,
-                            forcedHeight = 30,
-                            forcedShape = null,
-                        ),
+                buildEngine(
+                    testDispatcher,
+                    FakeUserPreferencesRepository(),
+                    isCustomGame = true,
+                    shapeProvider = customShapeProvider,
+                    forcedSize = 30 to 30,
                 )
-
             customEngine.loadOrRegenerateLevel()
             runCurrent()
 
@@ -188,31 +201,9 @@ class CustomGameShapeTest {
             // Regular game with same board size SHOULD apply random shapes
             val regularRepo = FakeUserPreferencesRepository()
             regularRepo.saveLevelNumber(50) // Make sure level is high enough for shape probability
-
             val regularShapeProvider = mock<BoardShapeProvider>()
-            val regularGenerator =
-                mock<GameGenerator> {
-                    on { generateSolvableLevel(any()) } doReturn GameLevel(30, 30, emptyList())
-                }
-
             val regularEngine =
-                GameEngine(
-                    config =
-                        GameEngineConfig(
-                            coroutineScopeOverride = CoroutineScope(testDispatcher),
-                            repository = regularRepo,
-                            gameStateDao = FakeGameStateDao(),
-                            isCustomGame = false,
-                            gameGenerator = regularGenerator,
-                            autoLoad = false,
-                            backgroundDispatcher = testDispatcher,
-                        ),
-                    features =
-                        GameEngineFeatures(
-                            shapeProvider = regularShapeProvider,
-                        ),
-                )
-
+                buildEngine(testDispatcher, regularRepo, isCustomGame = false, shapeProvider = regularShapeProvider)
             regularEngine.loadOrRegenerateLevel()
             runCurrent()
 

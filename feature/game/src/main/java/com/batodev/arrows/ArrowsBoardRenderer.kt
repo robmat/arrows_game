@@ -34,6 +34,10 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
+// Snake drawing is split into several small, named steps (anim state, head geometry, arrow
+// head, body) rather than a few long functions, which is what keeps each function under the
+// LongMethod threshold; that naturally pushes the function count over TooManyFunctions.
+@Suppress("TooManyFunctions")
 object ArrowsBoardRenderer {
     private const val TAIL_FRACTION_EPSILON = 0.001f
     private const val ENTRY_FADE_IN_MULTIPLIER = 2.5f
@@ -245,80 +249,102 @@ object ArrowsBoardRenderer {
         }
     }
 
-    private fun DrawScope.drawSnakes(params: SnakeDrawingParams) {
-        params.level.snakes.forEach { snake ->
-            val removalP = (params.removalProgress[snake.id] ?: 0f).coerceIn(0f, 1f)
-            val entryP = params.entryProgress[snake.id]
+    private data class SnakeAnimState(
+        val p: Float,
+        val shift: Float,
+        val alpha: Float,
+    )
 
-            val p: Float
-            val shift: Float
-            var alpha: Float
-
-            if (entryP != null) {
-                // Entry: body unfurls from head outward, head stays in place
-                p = 1f - entryP.coerceIn(0f, 1f)
-                shift = 0f
-                alpha = min(entryP * ENTRY_FADE_IN_MULTIPLIER, 1f) // Quick fade-in
-            } else {
-                // Normal / removal
-                p = removalP
-                shift = params.metrics.moveDist * p
-                alpha = 1f - p
-            }
-
-            val isFlashing = snake.id == params.flashingSnakeId
-            val baseColor = if (isFlashing) FlashingRed else params.themeColors.snake
-            val animatedAlpha = if (isFlashing) alpha * params.flashPulseAlpha else alpha
-            val snakeColor = baseColor.copy(alpha = animatedAlpha)
-
-            val head = snake.body.first()
-            val headCx0 = head.x * params.metrics.cellWidth + params.metrics.cellWidth / 2
-            val headCy0 = head.y * params.metrics.cellHeight + params.metrics.cellHeight / 2
-
-            val headCx = headCx0 + snake.headDirection.dx * shift
-            val headCy = headCy0 + snake.headDirection.dy * shift
-
-            val lineEndX = headCx + snake.headDirection.dx * params.metrics.cornerRadius
-            val lineEndY = headCy + snake.headDirection.dy * params.metrics.cornerRadius
-
-            val baseLineEndX0 = headCx0 + snake.headDirection.dx * params.metrics.cornerRadius
-            val baseLineEndY0 = headCy0 + snake.headDirection.dy * params.metrics.cornerRadius
-
-            if (snake.body.size > 1) {
-                val headCoords =
-                    SnakeHeadCoordinates(
-                        headCx0 = headCx0,
-                        headCy0 = headCy0,
-                        baseLineEndX0 = baseLineEndX0,
-                        baseLineEndY0 = baseLineEndY0,
-                        lineEndX = lineEndX,
-                        lineEndY = lineEndY,
-                    )
-                drawSnakeBody(snake, p, params.metrics, headCoords, snakeColor)
-            }
-
-            if (snake.body.size == 1) {
-                drawSingleBlockSnakeTail(snake, params.metrics, lineEndX, lineEndY, snakeColor)
-            }
-
-            // Draw arrow head
-            if (entryP == null) {
-                val triangleCenterX =
-                    lineEndX + snake.headDirection.dx *
-                        (params.metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
-                val triangleCenterY =
-                    lineEndY + snake.headDirection.dy *
-                        (params.metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
-
-                drawArrowHead(
-                    centerX = triangleCenterX,
-                    centerY = triangleCenterY,
-                    direction = snake.headDirection,
-                    arrowHeadSize = params.metrics.arrowHeadSize,
-                    color = snakeColor,
-                )
-            }
+    private fun snakeAnimState(
+        snake: Snake,
+        params: SnakeDrawingParams,
+    ): SnakeAnimState {
+        val entryP = params.entryProgress[snake.id]
+        if (entryP != null) {
+            // Entry: body unfurls from head outward, head stays in place
+            return SnakeAnimState(
+                p = 1f - entryP.coerceIn(0f, 1f),
+                shift = 0f,
+                alpha = min(entryP * ENTRY_FADE_IN_MULTIPLIER, 1f), // Quick fade-in
+            )
         }
+        // Normal / removal
+        val removalP = (params.removalProgress[snake.id] ?: 0f).coerceIn(0f, 1f)
+        return SnakeAnimState(p = removalP, shift = params.metrics.moveDist * removalP, alpha = 1f - removalP)
+    }
+
+    private fun snakeHeadCoordinates(
+        snake: Snake,
+        metrics: BoardMetrics,
+        shift: Float,
+    ): SnakeHeadCoordinates {
+        val head = snake.body.first()
+        val headCx0 = head.x * metrics.cellWidth + metrics.cellWidth / 2
+        val headCy0 = head.y * metrics.cellHeight + metrics.cellHeight / 2
+        val headCx = headCx0 + snake.headDirection.dx * shift
+        val headCy = headCy0 + snake.headDirection.dy * shift
+        return SnakeHeadCoordinates(
+            headCx0 = headCx0,
+            headCy0 = headCy0,
+            baseLineEndX0 = headCx0 + snake.headDirection.dx * metrics.cornerRadius,
+            baseLineEndY0 = headCy0 + snake.headDirection.dy * metrics.cornerRadius,
+            lineEndX = headCx + snake.headDirection.dx * metrics.cornerRadius,
+            lineEndY = headCy + snake.headDirection.dy * metrics.cornerRadius,
+        )
+    }
+
+    private fun DrawScope.drawSnakeArrowHead(
+        snake: Snake,
+        metrics: BoardMetrics,
+        headCoords: SnakeHeadCoordinates,
+        snakeColor: Color,
+    ) {
+        val triangleCenterX =
+            headCoords.lineEndX + snake.headDirection.dx *
+                (metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
+        val triangleCenterY =
+            headCoords.lineEndY + snake.headDirection.dy *
+                (metrics.arrowHeadSize * GameConstants.ARROW_HEAD_CENTER_FACTOR)
+
+        drawArrowHead(
+            centerX = triangleCenterX,
+            centerY = triangleCenterY,
+            direction = snake.headDirection,
+            arrowHeadSize = metrics.arrowHeadSize,
+            color = snakeColor,
+        )
+    }
+
+    private fun DrawScope.drawSnake(
+        snake: Snake,
+        params: SnakeDrawingParams,
+    ) {
+        val entryP = params.entryProgress[snake.id]
+        val anim = snakeAnimState(snake, params)
+
+        val isFlashing = snake.id == params.flashingSnakeId
+        val baseColor = if (isFlashing) FlashingRed else params.themeColors.snake
+        val animatedAlpha = if (isFlashing) anim.alpha * params.flashPulseAlpha else anim.alpha
+        val snakeColor = baseColor.copy(alpha = animatedAlpha)
+
+        val headCoords = snakeHeadCoordinates(snake, params.metrics, anim.shift)
+
+        if (snake.body.size > 1) {
+            drawSnakeBody(snake, anim.p, params.metrics, headCoords, snakeColor)
+        }
+
+        if (snake.body.size == 1) {
+            drawSingleBlockSnakeTail(snake, params.metrics, headCoords.lineEndX, headCoords.lineEndY, snakeColor)
+        }
+
+        // Draw arrow head
+        if (entryP == null) {
+            drawSnakeArrowHead(snake, params.metrics, headCoords, snakeColor)
+        }
+    }
+
+    private fun DrawScope.drawSnakes(params: SnakeDrawingParams) {
+        params.level.snakes.forEach { snake -> drawSnake(snake, params) }
     }
 
     private fun DrawScope.drawSnakeBody(

@@ -27,7 +27,8 @@ internal object GenerateScreenLogic {
         )
     }
 
-    fun buildShapeList(allShapeNames: List<String>): List<String> = listOf(GameConstants.SHAPE_TYPE_RECTANGULAR) + allShapeNames
+    fun buildShapeList(allShapeNames: List<String>): List<String> =
+        listOf(GameConstants.SHAPE_TYPE_RECTANGULAR) + allShapeNames
 
     fun shapeFlatIndex(
         rowIndex: Int,
