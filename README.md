@@ -59,7 +59,7 @@ This project is an experiment in board generation: the main goal is to create a 
 
 ## Screenshots
 
-![Screenshot 1](Screenshot_20260206_114049.png) ![Screenshot 2](Screenshot_20260206_114104.png) ![Screenshot 3](Screenshot_20260206_114121.png) ![Screenshot 4](Screenshot_20260206_114249.png)
+![Screenshot 1](Screenshot_20260827_163522.png) ![Screenshot 2](Screenshot_20260827_163629.png) ![Screenshot 3](Screenshot_20260827_172821.png) ![Screenshot 4](Screenshot_20260827_172837.png)
 
 ---
 
