@@ -38,7 +38,7 @@ import kotlin.math.sin
 // head, body) rather than a few long functions, which is what keeps each function under the
 // LongMethod threshold; that naturally pushes the function count over TooManyFunctions.
 @Suppress("TooManyFunctions")
-object ArrowsBoardRenderer {
+object SkeinBoardRenderer {
     private const val TAIL_FRACTION_EPSILON = 0.001f
     private const val ENTRY_FADE_IN_MULTIPLIER = 2.5f
 

@@ -4,7 +4,7 @@
     <string name="add_life_label">Füge Leben hinzu</string>
     <string name="ads_removed">Werbung entfernt!</string>
     <string name="animation_speed_label">Animationsgeschwindigkeit</string>
-    <string name="app_name">Pfeile</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">Auto</string>
     <string name="cancel_label">Stornieren</string>
     <string name="choose_forced_shape_title">Erzwungene Form auswählen</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">Fortschritt verwerfen?</string>
     <string name="debug_menu_title">DEBUG-MENÜ</string>
     <string name="email_body_template">\n\n\n---\nApp-Version: %1$s\nGerät: %2$s</string>
-    <string name="email_subject">Arrows-Spielunterstützung</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Der Überprüfungsprozess konnte nicht gestartet werden.</string>
     <string name="error_could_not_open_browser">Browser konnte nicht geöffnet werden</string>
     <string name="error_could_not_open_email">E-Mail-App konnte nicht geöffnet werden</string>

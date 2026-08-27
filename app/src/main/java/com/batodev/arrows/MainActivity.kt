@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import com.batodev.arrows.navigation.RootNode
 import com.batodev.arrows.ui.AppViewModel
 import com.batodev.arrows.ui.DebugViewModel
-import com.batodev.arrows.ui.theme.ArrowsTheme
+import com.batodev.arrows.ui.theme.SkeinTheme
 import com.bumble.appyx.core.integration.NodeHost
 import com.bumble.appyx.core.integrationpoint.ActivityIntegrationPoint
 import com.bumble.appyx.core.integrationpoint.IntegrationPointProvider
@@ -29,7 +29,7 @@ class MainActivity :
         appyxV1IntegrationPoint = ActivityIntegrationPoint(this, savedInstanceState)
         enableEdgeToEdge()
 
-        val application = applicationContext as ArrowsApplication
+        val application = applicationContext as SkeinApplication
         val consentManager = application.consentManager()
 
         consentManager.gatherConsent(this) {
@@ -44,7 +44,7 @@ class MainActivity :
 
         setContent {
             val currentTheme by appViewModel.theme.collectAsState()
-            ArrowsTheme(themeName = currentTheme) {
+            SkeinTheme(themeName = currentTheme) {
                 NodeHost(integrationPoint = appyxV1IntegrationPoint) { buildContext ->
                     RootNode(
                         buildContext = buildContext,

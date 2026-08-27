@@ -1,11 +1,11 @@
-# Modularization Plan — Arrows Android (Clean Architecture)
+# Modularization Plan — Skein Android (Clean Architecture)
 
 ## Goals
 
 - Enforce strict layer boundaries (data cannot import UI, domain has no Android deps)
 - Reduce incremental build times via Gradle module parallelism
 - Enable feature-level isolation and independent testing
-- Prepare for Hilt DI (replaces the current manual injection in `ArrowsApplication`)
+- Prepare for Hilt DI (replaces the current manual injection in `SkeinApplication`)
 - Make the pure game engine reusable and testable without Android
 
 ---
@@ -228,9 +228,9 @@ engine/LevelManager.kt
 engine/RemovalAnimator.kt
 engine/TransformationState.kt
 engine/BoardImageProcessor.kt
-ArrowsGameView.kt
+SkeinGameView.kt
 GameScreen.kt
-ArrowsBoardRenderer.kt
+SkeinBoardRenderer.kt
 TapAnimationState.kt
 SoundManager.kt
 GameActivityHelpers.kt
@@ -328,7 +328,7 @@ implementation(project(":feature:settings"))
 
 Files that stay here:
 ```
-ArrowsApplication.kt    ← slimmed down; Hilt @HiltAndroidApp
+SkeinApplication.kt    ← slimmed down; Hilt @HiltAndroidApp
 MainActivity.kt         ← slimmed down; Hilt @AndroidEntryPoint
 ```
 
@@ -338,7 +338,7 @@ The `BuildConfig` ad unit ID fields remain here since they're variant-specific.
 
 ## Dependency Injection Migration (Manual → Hilt)
 
-Current state: manual injection in `ArrowsApplication`, factories passed via constructor.
+Current state: manual injection in `SkeinApplication`, factories passed via constructor.
 Problem: in a multi-module setup manual wiring across module boundaries becomes unmanageable.
 
 **Recommended: Hilt**
@@ -350,14 +350,14 @@ Problem: in a multi-module setup manual wiring across module boundaries becomes 
    id("com.google.dagger.hilt.android") version "2.51" apply false
    ```
 2. Apply `hilt.android` plugin + `hilt.compiler` KSP in each module that needs injection.
-3. Annotate `ArrowsApplication` with `@HiltAndroidApp`.
+3. Annotate `SkeinApplication` with `@HiltAndroidApp`.
 4. Annotate `MainActivity` with `@AndroidEntryPoint`.
 5. Create Hilt modules:
    - `:data` → `@Module @InstallIn(SingletonComponent)` providing `AppDatabase`, DAOs, `UserPreferencesRepository`
    - `:ads` → `@Module @InstallIn(SingletonComponent)` providing `ConsentManager`, `RewardAdManager`, `InterstitialAdManager`
    - `:feature:game` → `@Module @InstallIn(ViewModelComponent)` providing `GameEngineConfig`
 6. Replace manual ViewModel factories with `@HiltViewModel`.
-7. Delete `ArrowsApplication.database`, `.gameStateDao`, `.rewardAdManager`, etc. — Hilt owns them.
+7. Delete `SkeinApplication.database`, `.gameStateDao`, `.rewardAdManager`, etc. — Hilt owns them.
 
 ---
 
@@ -396,12 +396,12 @@ Problem: in a multi-module setup manual wiring across module boundaries becomes 
 - Move Appyx `RootNode` and all nodes once all features are stable modules
 
 ### Phase 8 — Slim down `:app`
-- `:app` should contain only `MainActivity`, `ArrowsApplication`, manifest, `BuildConfig` ad IDs
+- `:app` should contain only `MainActivity`, `SkeinApplication`, manifest, `BuildConfig` ad IDs
 - Remove all direct source files from `:app`
 
 ### Phase 9 — Hilt wiring
 - Add Hilt DI across all modules (can be done incrementally per feature during phases 6–7)
-- Delete manual injection code in `ArrowsApplication`
+- Delete manual injection code in `SkeinApplication`
 
 ---
 
@@ -444,4 +444,4 @@ include(":core:ui")
 - [ ] `:core:models` and `:domain` have no Android SDK imports
 - [ ] Each feature module can be compiled independently without `:app`
 - [ ] All existing unit tests pass in their new module locations
-- [ ] Manual DI code in `ArrowsApplication` is deleted
+- [ ] Manual DI code in `SkeinApplication` is deleted

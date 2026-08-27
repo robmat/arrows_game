@@ -4,7 +4,7 @@
     <string name="add_life_label">জীবন যোগ করুন</string>
     <string name="ads_removed">বিজ্ঞাপন সরানো হয়েছে!</string>
     <string name="animation_speed_label">অ্যানিমেশনের গতি</string>
-    <string name="app_name">তীর</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">স্বয়ংক্রিয়</string>
     <string name="cancel_label">বাতিল করুন</string>
     <string name="choose_forced_shape_title">জোরপূর্বক আকৃতি নির্বাচন করুন</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">অগ্রগতি বাতিল করবেন?</string>
     <string name="debug_menu_title">ডিবাগ মেনু</string>
     <string name="email_body_template">\n\n\n---\nঅ্যাপ সংস্করণ: %1$s\nডিভাইস: %2$s</string>
-    <string name="email_subject">তীর খেলা সমর্থন</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">পর্যালোচনা প্রবাহ চালু করা যায়নি</string>
     <string name="error_could_not_open_browser">ব্রাউজার খোলা যায়নি</string>
     <string name="error_could_not_open_email">ইমেল অ্যাপ খোলা যায়নি</string>

@@ -19,7 +19,7 @@ The project already has solid foundations:
 | Testing            | Good        | JUnit + Mockito + fake doubles, Jacoco coverage               |
 | Design system      | Basic       | Material 3 theme, shared colors/typography in `:core:ui`      |
 | Lint & Detekt      | Minimal     | Detekt integrated but sparse config                           |
-| DI                 | Manual only | `ArrowsApplication` wires everything by hand                  |
+| DI                 | Manual only | `SkeinApplication` wires everything by hand                  |
 | Build conventions  | None        | No `build-logic` module; boilerplate in each `build.gradle`   |
 | Baseline profiles  | None        | No startup optimization                                       |
 | Benchmarks         | None        | No Macrobenchmark module                                      |
@@ -31,13 +31,13 @@ The project already has solid foundations:
 **Priority: High** | **Impact: Architecture, Testability**
 
 NIA uses Hilt throughout. The project currently passes dependencies manually through
-`ArrowsApplication` and composable parameters. This creates tight coupling and makes testing
+`SkeinApplication` and composable parameters. This creates tight coupling and makes testing
 harder.
 
 ### What to do
 
 - Add `hilt-android` + `hilt-compiler` (KSP) to the version catalog.
-- Annotate `ArrowsApplication` with `@HiltAndroidApp`.
+- Annotate `SkeinApplication` with `@HiltAndroidApp`.
 - Annotate `MainActivity` with `@AndroidEntryPoint`.
 - Convert `GameEngine` to `@HiltViewModel` with `@Inject constructor`.
 - Create `@Module` classes in `:data` to `@Binds` repository interfaces to implementations.
@@ -151,7 +151,7 @@ The project's `:core:ui` has theme files and a few shared components but no form
     `MaterialTheme.typography`.
   - **Shape**: Define corner radius tokens (`ShapeDefaults`).
   - **Spacing**: Add a `Dimensions` object with standard padding values.
-- Create an `ArrowsTheme` composable wrapping `MaterialTheme` with the game's custom tokens.
+- Create an `SkeinTheme` composable wrapping `MaterialTheme` with the game's custom tokens.
 - Add dynamic color support (`dynamicDarkColorScheme` / `dynamicLightColorScheme` on Android 12+).
 - Optionally create an `app-catalog` module (like NIA) to preview all components in isolation.
 
@@ -163,7 +163,7 @@ The project's `:core:ui` has theme files and a few shared components but no form
 | `SettingsSection`  | `SettingsView`         | Already reused; formalize as token-aware  |
 | `SettingsToggle`   | `SettingsView`         | Move to design system                    |
 | `ThemeButton`      | Inline in settings     | Generalize as `ColorSwatchPicker`        |
-| `GameTopBar`       | `feature:game`         | Extract common `ArrowsTopBar` to `:core:ui` |
+| `GameTopBar`       | `feature:game`         | Extract common `SkeinTopBar` to `:core:ui` |
 
 ---
 

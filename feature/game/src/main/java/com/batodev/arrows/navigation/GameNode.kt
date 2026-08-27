@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.batodev.arrows.ArrowsGameView
+import com.batodev.arrows.SkeinGameView
 import com.batodev.arrows.CustomGameParams
 import com.batodev.arrows.ads.InterstitialAdManager
 import com.batodev.arrows.ads.RewardAdManager
@@ -66,7 +66,7 @@ class GameNode(
             containerColor = themeColors.background,
         ) { innerPadding ->
             Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-                ArrowsGameView(
+                SkeinGameView(
                     appViewModel = appViewModel,
                     isAdFree = isAdFree,
                     rewardAdManager = rewardAdManager,

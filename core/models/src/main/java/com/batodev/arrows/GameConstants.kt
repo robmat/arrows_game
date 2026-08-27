@@ -7,6 +7,7 @@ object GameConstants {
     // GAME ENGINE DEFAULTS
     // ====================
     const val INITIAL_LIVES = 5
+    const val LOST_LIFE_ALPHA = 0.3f
 
     // ====================
     // GAME PROGRESSION
@@ -29,9 +30,8 @@ object GameConstants {
     const val HOME_ENTER_ANIM_DURATION = 400
     const val HOME_STAGGER_DELAY_MS = 120
     const val HOME_ENTER_OFFSET_DP = 60f
-    const val HOME_TRIANGLE_ROTATE_DURATION = 8000
-    const val HOME_TRIANGLE_PULSE_DURATION = 1800
-    const val HOME_TRIANGLE_PULSE_SCALE = 1.12f
+    const val HOME_LOGO_PULSE_DURATION = 1800
+    const val HOME_LOGO_PULSE_SCALE = 1.12f
     const val HOME_BUTTON_PULSE_DURATION = 1400
     const val HOME_BUTTON_PULSE_SCALE = 1.03f
 

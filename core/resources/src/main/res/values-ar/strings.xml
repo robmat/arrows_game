@@ -4,7 +4,7 @@
     <string name="add_life_label">أضف الحياة</string>
     <string name="ads_removed">تمت إزالة الإعلانات!</string>
     <string name="animation_speed_label">سرعة الرسوم المتحركة</string>
-    <string name="app_name">الأسهم</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">آلي</string>
     <string name="cancel_label">يلغي</string>
     <string name="choose_forced_shape_title">اختر الشكل القسري</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">هل نتجاهل التقدم المحرز؟</string>
     <string name="debug_menu_title">قائمة تصحيح الأخطاء</string>
     <string name="email_body_template">\n\n\n---\nإصدار التطبيق: %1$s\nالجهاز: %2$s</string>
-    <string name="email_subject">دعم ألعاب آروز</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">تعذر بدء عملية المراجعة</string>
     <string name="error_could_not_open_browser">تعذر فتح المتصفح</string>
     <string name="error_could_not_open_email">تعذر فتح تطبيق البريد الإلكتروني</string>

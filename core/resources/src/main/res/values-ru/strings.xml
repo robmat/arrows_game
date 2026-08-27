@@ -4,7 +4,7 @@
     <string name="add_life_label">Добавить жизнь</string>
     <string name="ads_removed">Реклама удалена!</string>
     <string name="animation_speed_label">Скорость анимации</string>
-    <string name="app_name">Стрелы</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">Авто</string>
     <string name="cancel_label">Отмена</string>
     <string name="choose_forced_shape_title">Выберите принудительную форму</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">Отменить прогресс?</string>
     <string name="debug_menu_title">МЕНЮ ОТЛАДКИ</string>
     <string name="email_body_template">\n\n\n---\nВерсия приложения: %1$s\nУстройство: %2$s</string>
-    <string name="email_subject">Поддержка игры Arrows</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Не удалось запустить процесс проверки.</string>
     <string name="error_could_not_open_browser">Не удалось открыть браузер.</string>
     <string name="error_could_not_open_email">Не удалось открыть почтовое приложение.</string>

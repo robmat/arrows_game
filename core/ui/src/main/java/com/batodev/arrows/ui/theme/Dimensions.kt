@@ -3,7 +3,7 @@ package com.batodev.arrows.ui.theme
 import androidx.compose.ui.unit.dp
 
 /**
- * Standardized spacing and size tokens for the Arrows design system.
+ * Standardized spacing and size tokens for the Skein design system.
  *
  * Use these instead of inline magic numbers to ensure visual consistency
  * across all screens and components.

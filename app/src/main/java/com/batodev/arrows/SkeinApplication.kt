@@ -16,13 +16,13 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.util.concurrent.atomic.AtomicBoolean
 
-class ArrowsApplication : Application() {
+class SkeinApplication : Application() {
     private val isAdsInitialized = AtomicBoolean(false)
 
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            androidContext(this@ArrowsApplication)
+            androidContext(this@SkeinApplication)
             modules(dataModule, adsModule, viewModelModule)
         }
     }
@@ -31,7 +31,7 @@ class ArrowsApplication : Application() {
         if (!isAdsInitialized.compareAndSet(false, true)) return
 
         CoroutineScope(Dispatchers.Main).launch {
-            MobileAds.initialize(this@ArrowsApplication)
+            MobileAds.initialize(this@SkeinApplication)
             get<RewardAdManager>().loadRewardAd()
             get<InterstitialAdManager>().loadInterstitialAd()
         }

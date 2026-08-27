@@ -101,7 +101,7 @@ private fun getThemeColors(themeName: String): ThemeColors =
     }
 
 @Composable
-fun ArrowsTheme(
+fun SkeinTheme(
     themeName: String = "Dark",
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,

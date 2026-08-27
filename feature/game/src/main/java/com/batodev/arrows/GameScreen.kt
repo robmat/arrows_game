@@ -90,7 +90,7 @@ private val CONFETTI_COLORS =
     )
 
 @Composable
-fun ArrowsGameView(
+fun SkeinGameView(
     appViewModel: AppViewModel,
     isAdFree: Boolean,
     rewardAdManager: RewardAdManager,
@@ -384,7 +384,7 @@ private fun BoardLayer(
                     alpha = boardAlpha,
                 ),
     ) {
-        ArrowsBoardRenderer.Board(
+        SkeinBoardRenderer.Board(
             level = engine.level,
             flashingSnakeId = engine.flashingSnakeId,
             removalProgress = engine.removalProgress,

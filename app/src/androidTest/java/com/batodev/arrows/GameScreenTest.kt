@@ -17,7 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 // GameEngine renders the whole board (snakes/arrows) on a single Canvas
-// (ArrowsBoardRenderer) rather than individual Composables, so it's not addressable via
+// (SkeinBoardRenderer) rather than individual Composables, so it's not addressable via
 // Compose's semantics tree the way buttons/text are - solveCurrentLevel() (see
 // ComposeTestSupport.kt) drives it with real synthesized taps at coordinates computed
 // the same way InputHandler interprets a genuine user tap, actually playing and winning

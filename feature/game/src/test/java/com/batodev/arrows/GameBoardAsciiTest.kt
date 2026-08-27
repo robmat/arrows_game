@@ -25,7 +25,7 @@ class GameBoardAsciiTest {
         val level = engine.generateSolvableLevel(params)
 
         println("\n" + "=".repeat(60))
-        println("Generated Arrows Puzzle - ASCII Art")
+        println("Generated Skein Puzzle - ASCII Art")
         println("Board Size: ${level.width} x ${level.height}")
         println("Number of Snakes: ${level.snakes.size}\n")
 

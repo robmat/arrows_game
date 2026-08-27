@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-class ArrowsAndroidLibraryComposePlugin : Plugin<Project> {
+class SkeinAndroidLibraryComposePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply("arrows.android.library")

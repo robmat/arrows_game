@@ -4,7 +4,7 @@
     <string name="add_life_label">命を吹き込む</string>
     <string name="ads_removed">広告が削除されました!</string>
     <string name="animation_speed_label">アニメーション速度</string>
-    <string name="app_name">矢印</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">オート</string>
     <string name="cancel_label">キャンセル</string>
     <string name="choose_forced_shape_title">強制形状を選択</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">進行状況を破棄しますか?</string>
     <string name="debug_menu_title">デバッグメニュー</string>
     <string name="email_body_template">\n\n\n---\nアプリのバージョン: %1$s\nデバイス: %2$s</string>
-    <string name="email_subject">アローズゲームサポート</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">レビューフローを開始できませんでした</string>
     <string name="error_could_not_open_browser">ブラウザを開けませんでした</string>
     <string name="error_could_not_open_email">メールアプリを開けませんでした</string>

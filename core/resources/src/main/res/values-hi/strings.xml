@@ -4,7 +4,7 @@
     <string name="add_life_label">जीवन जोड़ें</string>
     <string name="ads_removed">विज्ञापन हटा दिए गए!</string>
     <string name="animation_speed_label">एनीमेशन गति</string>
-    <string name="app_name">तीर</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">ऑटो</string>
     <string name="cancel_label">रद्द करना</string>
     <string name="choose_forced_shape_title">बाध्य आकार चुनें</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">प्रगति को त्याग दें?</string>
     <string name="debug_menu_title">डीबग मेनू</string>
     <string name="email_body_template">\n\n\n---\nऐप संस्करण: %1$s\nडिवाइस: %2$s</string>
-    <string name="email_subject">एरो गेम सपोर्ट</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">समीक्षा प्रक्रिया शुरू नहीं हो सकी</string>
     <string name="error_could_not_open_browser">ब्राउज़र नहीं खुल सका</string>
     <string name="error_could_not_open_email">ईमेल ऐप नहीं खुल सका</string>

@@ -4,7 +4,7 @@
     <string name="add_life_label">Add Life</string>
     <string name="ads_removed">Ads Removed!</string>
     <string name="animation_speed_label">Animation Speed</string>
-    <string name="app_name">Arrows</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">Auto</string>
     <string name="cancel_label">Cancel</string>
     <string name="choose_forced_shape_title">Choose Forced Shape</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">Discard Progress?</string>
     <string name="debug_menu_title">DEBUG MENU</string>
     <string name="email_body_template">\n\n\n---\nApp Version: %1$s\nDevice: %2$s</string>
-    <string name="email_subject">Arrows Game Support</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Could not launch review flow</string>
     <string name="error_could_not_open_browser">Could not open browser</string>
     <string name="error_could_not_open_email">Could not open email app</string>
@@ -55,7 +55,6 @@
     <string name="lives_auto_label">Lives (0 for Auto)</string>
     <string name="loading_ad">Loading Ad…</string>
     <string name="loading_label">Loading..</string>
-    <string name="logo_text" translatable="false">rrows</string>
     <string name="manage_consent_label">Manage GDPR consent</string>
     <string name="more_games_label">More Games</string>
     <string name="none_auto_label">None (Auto)</string>

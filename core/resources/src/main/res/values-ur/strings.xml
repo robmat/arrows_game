@@ -4,7 +4,7 @@
     <string name="add_life_label">زندگی شامل کریں۔</string>
     <string name="ads_removed">اشتہارات کو ہٹا دیا گیا!</string>
     <string name="animation_speed_label">حرکت پذیری کی رفتار</string>
-    <string name="app_name">تیر</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">آٹو</string>
     <string name="cancel_label">منسوخ کریں۔</string>
     <string name="choose_forced_shape_title">جبری شکل کا انتخاب کریں۔</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">پیش رفت کو مسترد کریں؟</string>
     <string name="debug_menu_title">ڈیبگ مینو</string>
     <string name="email_body_template">\n\n\n---\nایپ ورژن: %1$s\nآلہ: %2$s</string>
-    <string name="email_subject">تیر کھیل کی حمایت</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">جائزہ کا بہاؤ شروع نہیں کیا جا سکا</string>
     <string name="error_could_not_open_browser">براؤزر نہیں کھول سکا</string>
     <string name="error_could_not_open_email">ای میل ایپ نہیں کھول سکی</string>

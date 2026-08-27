@@ -30,19 +30,19 @@ gradlePlugin {
     plugins {
         register("arrowsAndroidLibrary") {
             id = "arrows.android.library"
-            implementationClass = "ArrowsAndroidLibraryPlugin"
+            implementationClass = "SkeinAndroidLibraryPlugin"
         }
         register("arrowsAndroidLibraryCompose") {
             id = "arrows.android.library.compose"
-            implementationClass = "ArrowsAndroidLibraryComposePlugin"
+            implementationClass = "SkeinAndroidLibraryComposePlugin"
         }
         register("arrowsAndroidFeature") {
             id = "arrows.android.feature"
-            implementationClass = "ArrowsAndroidFeaturePlugin"
+            implementationClass = "SkeinAndroidFeaturePlugin"
         }
         register("arrowsKotlinJvm") {
             id = "arrows.kotlin.jvm"
-            implementationClass = "ArrowsKotlinJvmPlugin"
+            implementationClass = "SkeinKotlinJvmPlugin"
         }
     }
 }

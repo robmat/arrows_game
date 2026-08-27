@@ -4,7 +4,7 @@
     <string name="add_life_label">Adicione vida</string>
     <string name="ads_removed">Anúncios removidos!</string>
     <string name="animation_speed_label">Velocidade da animação</string>
-    <string name="app_name">Flechas</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">Auto</string>
     <string name="cancel_label">Cancelar</string>
     <string name="choose_forced_shape_title">Escolha Forma Forçada</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">Descartar o progresso?</string>
     <string name="debug_menu_title">MENU DE DEPURAÇÃO</string>
     <string name="email_body_template">\n\n\n---\nVersão do aplicativo: %1$s\nDispositivo: %2$s</string>
-    <string name="email_subject">Suporte para jogos Arrows</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Não foi possível iniciar o fluxo de revisão.</string>
     <string name="error_could_not_open_browser">Não foi possível abrir o navegador.</string>
     <string name="error_could_not_open_email">Não foi possível abrir o aplicativo de e-mail.</string>

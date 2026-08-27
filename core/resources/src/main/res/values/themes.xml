@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Arrows" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">#1E1F28</item>
+    <style name="Theme.Skein" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#13302F</item>
     </style>
 </resources>

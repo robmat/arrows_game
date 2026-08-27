@@ -27,7 +27,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Arrows"
+rootProject.name = "Skein"
 include(":app")
 include(":core:models")
 include(":core:resources")

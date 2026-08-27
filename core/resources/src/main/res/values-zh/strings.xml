@@ -4,7 +4,7 @@
     <string name="add_life_label">增添生活</string>
     <string name="ads_removed">广告已移除！</string>
     <string name="animation_speed_label">动画速度</string>
-    <string name="app_name">箭头</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">汽车</string>
     <string name="cancel_label">取消</string>
     <string name="choose_forced_shape_title">选择强制形状</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">放弃进步？</string>
     <string name="debug_menu_title">调试菜单</string>
     <string name="email_body_template">\n\n\n---\n应用程序版本: %1$s\n设备: %2$s</string>
-    <string name="email_subject">箭头游戏支持</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">无法启动审核流程</string>
     <string name="error_could_not_open_browser">无法打开浏览器</string>
     <string name="error_could_not_open_email">无法打开电子邮件应用程序</string>

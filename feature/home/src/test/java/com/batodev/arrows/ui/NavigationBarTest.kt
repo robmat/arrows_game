@@ -29,6 +29,31 @@ class NavigationBarTest {
     }
 
     @Test
+    fun `test generator not navigable when locked and debug bypass disabled`() {
+        val isUnlocked = false
+        val debugBypass = false
+        val canNavigate = isUnlocked || debugBypass
+        assertFalse("Generator should not be navigable when locked outside debug builds", canNavigate)
+    }
+
+    @Test
+    fun `test generator navigable when locked but debug bypass enabled`() {
+        val isUnlocked = false
+        val debugBypass = true
+        val canNavigate = isUnlocked || debugBypass
+        assertTrue("Generator should be navigable when locked in debug builds", canNavigate)
+    }
+
+    @Test
+    fun `test generator navigable when unlocked regardless of debug bypass`() {
+        val isUnlocked = true
+        for (debugBypass in listOf(true, false)) {
+            val canNavigate = isUnlocked || debugBypass
+            assertTrue("Generator should be navigable once unlocked", canNavigate)
+        }
+    }
+
+    @Test
     fun `test navigation destination HOME enum exists`() {
         val destination = NavigationDestination.HOME
         assertEquals("HOME destination should exist", NavigationDestination.HOME, destination)

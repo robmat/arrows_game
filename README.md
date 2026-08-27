@@ -1,6 +1,6 @@
-# Arrows Game (Android)
+# Skein (Android)
 
-**Arrows Game** is a modular Android puzzle game inspired by *Arrows – Puzzle Escape*.
+**Skein** is a modular Android puzzle game about untangling looping line paths.
 
 Google Play: https://play.google.com/store/apps/details?id=com.batodev.arrows
 
@@ -94,7 +94,7 @@ The project follows **Clean Architecture** with **feature-based modularization**
 The project uses **Koin** for dependency injection, allowing for a decoupled and testable architecture across its modular structure.
 
 ### How it works
-1. **Centralized Initialization**: Koin is started in `ArrowsApplication` using `startKoin`, where the Android context is provided and all modules are loaded.
+1. **Centralized Initialization**: Koin is started in `SkeinApplication` using `startKoin`, where the Android context is provided and all modules are loaded.
 2. **Modular Definitions**: Each layer/feature defines its own Koin module (e.g., `dataModule`, `adsModule`, `viewModelModule`), keeping dependencies close to where they are used.
 3. **Injection**:
     - **Appyx Nodes**: Implement `KoinComponent` to use `by inject()` for retrieving dependencies that aren't passed via constructors.
@@ -117,7 +117,7 @@ The project uses **Koin** for dependency injection, allowing for a decoupled and
 | File | Purpose |
 |------|---------|
 | `MainActivity.kt` | Hosts the Appyx `RootNode`, applies the theme |
-| `ArrowsApplication.kt` | Initializes Koin, Room DB, repositories, and ad managers |
+| `SkeinApplication.kt` | Initializes Koin, Room DB, repositories, and ad managers |
 
 ---
 
@@ -169,7 +169,7 @@ RootNode                    ← ParentNode, owns BackStack<NavTarget>
 | `engine/TapHandler.kt` | Tap animations, snake flash, removal feedback |
 | `engine/TransformationState.kt` | Zoom/pan state (scale + offset) |
 | `engine/RemovalAnimator.kt` | Timing for snake removal animation sequences |
-| `ArrowsBoardRenderer.kt` | Canvas-based composable rendering snakes, arrows, guidance lines |
+| `SkeinBoardRenderer.kt` | Canvas-based composable rendering snakes, arrows, guidance lines |
 | `ui/game/WinCelebrationScreen.kt` | Video playback + confetti + message on win |
 | `ui/game/IntroOverlay.kt` | First-run tutorial overlay |
 | `SoundManager.kt` | Plays tap / win audio |

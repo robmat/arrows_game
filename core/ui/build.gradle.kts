@@ -4,6 +4,9 @@ plugins {
 
 android {
     namespace = "com.batodev.arrows.core.ui"
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {

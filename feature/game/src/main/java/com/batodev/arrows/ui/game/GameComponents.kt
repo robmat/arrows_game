@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.VideoLabel
 import androidx.compose.material3.Button
@@ -28,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -109,10 +109,13 @@ private fun HeartsDisplay(
     Row(verticalAlignment = Alignment.CenterVertically) {
         repeat(maxLives) { index ->
             Icon(
-                imageVector = if (index < lives) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                imageVector = Icons.Default.FiberManualRecord,
                 contentDescription = stringResource(R.string.content_description_life),
                 tint = HeartRed,
-                modifier = Modifier.size(24.dp),
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .alpha(if (index < lives) 1f else GameConstants.LOST_LIFE_ALPHA),
             )
             if (index < maxLives - 1) {
                 Spacer(modifier = Modifier.width(4.dp))

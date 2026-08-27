@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.batodev.arrows.GameConstants
+import com.batodev.arrows.core.ui.BuildConfig
 import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.ui.theme.InactiveIcon
 import com.batodev.arrows.ui.theme.NavigationIndicator
@@ -120,6 +121,9 @@ fun RowScope.GeneratorNavigationItem(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
+    // Debug builds keep the locked icon/label below GENERATOR_UNLOCK_LEVEL, but stay
+    // navigable, so a developer can reach the generator without playing to level 20.
+    val canNavigate = isUnlocked || BuildConfig.DEBUG
     val icon = if (isUnlocked) Icons.Default.AutoAwesome else Icons.Default.Lock
     val label =
         if (isUnlocked) {
@@ -133,7 +137,7 @@ fun RowScope.GeneratorNavigationItem(
         label = { Text(label) },
         selected = selected,
         onClick = {
-            if (isUnlocked && !selected) {
+            if (canNavigate && !selected) {
                 onNavigate()
             }
         },

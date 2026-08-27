@@ -12,17 +12,17 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val DarkBackground = Color(0xFF1E1F28)
-val AccentBlue = Color(0xFF5B7BFE)
+val DarkBackground = Color(0xFF13302F)
+val AccentBlue = Color(0xFF3FA9A0)
 val LightCyan = Color(0xFF4CC9F0)
-val BottomBarBackground = Color(0xFF2A2C3E)
+val BottomBarBackground = Color(0xFF1A3B3A)
 val InactiveIcon = Color(0xFF6C6E85)
 
 val HeartRed = Color(0xFFFF5252)
 val ProgressBarGreen = Color(0xFF00E676)
-val TopBarButtonBackground = Color(0xFF3E4155)
+val TopBarButtonBackground = Color(0xFF2A5254)
 
-val SnakeColor = Color(0xFFA9B1FF)
+val SnakeColor = Color(0xFFE8D9B5)
 
 val White = Color(0xFFFFFFFF)
 val LightGray = Color(0xFFD3D3D3)

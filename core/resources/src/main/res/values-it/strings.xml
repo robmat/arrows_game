@@ -4,7 +4,7 @@
     <string name="add_life_label">Aggiungi vita</string>
     <string name="ads_removed">Pubblicità rimossa!</string>
     <string name="animation_speed_label">Velocità di animazione</string>
-    <string name="app_name">Frecce</string>
+    <string name="app_name">Skein</string>
     <string name="auto_label">Auto</string>
     <string name="cancel_label">Cancellare</string>
     <string name="choose_forced_shape_title">Scegli la forma forzata</string>
@@ -34,7 +34,7 @@
     <string name="custom_gen_warning_title">Scartare i progressi?</string>
     <string name="debug_menu_title">MENU DI DEBUG</string>
     <string name="email_body_template">\n\n\n---\nVersione app: %1$s\nDispositivo: %2$s</string>
-    <string name="email_subject">Supporto per il gioco Arrows</string>
+    <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Impossibile avviare il flusso di revisione</string>
     <string name="error_could_not_open_browser">Impossibile aprire il browser</string>
     <string name="error_could_not_open_email">Impossibile aprire l\'app di posta elettronica</string>
