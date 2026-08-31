@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.batodev.arrows.GameConstants
-import com.batodev.arrows.core.ui.BuildConfig
 import com.batodev.arrows.core.resources.R
+import com.batodev.arrows.core.ui.BuildConfig
 import com.batodev.arrows.ui.theme.InactiveIcon
 import com.batodev.arrows.ui.theme.NavigationIndicator
 import com.batodev.arrows.ui.theme.ThemeColors

@@ -206,4 +206,3 @@ private fun PlayButton(
         Text(text = text, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
 }
-
