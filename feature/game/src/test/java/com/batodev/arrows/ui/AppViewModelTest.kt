@@ -47,7 +47,7 @@ class AppViewModelTest {
                     viewModel.theme.collect {}
                 }
 
-            viewModel.saveTheme("Light")
+            viewModel.preferences.saveTheme("Light")
             assertEquals("Light", repository.themeFlow.value)
             assertEquals("Light", viewModel.theme.value)
 

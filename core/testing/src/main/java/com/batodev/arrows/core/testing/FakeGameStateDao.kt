@@ -1,9 +1,11 @@
 package com.batodev.arrows.core.testing
 
+import com.batodev.arrows.data.BoardWithSnakes
 import com.batodev.arrows.data.GameBoardEntity
 import com.batodev.arrows.data.GameStateDao
 import com.batodev.arrows.data.SnakeBodyPointEntity
 import com.batodev.arrows.data.SnakeEntity
+import com.batodev.arrows.data.SnakeWithPoints
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -44,13 +46,24 @@ class FakeGameStateDao : GameStateDao() {
         }
     }
 
-    override suspend fun getBoard(stateType: String): GameBoardEntity? =
-        boards.values.find { it.stateType == stateType }
-
-    override suspend fun getSnakes(boardId: Long): List<SnakeEntity> = snakes.values.filter { it.boardId == boardId }
-
-    override suspend fun getBodyPoints(snakeRowId: Long): List<SnakeBodyPointEntity> =
-        points.values.filter { it.snakeRowId == snakeRowId }.sortedBy { it.orderIndex }
+    // Backs the base class's real-Room `loadGameLevel`, which fetches its board/snakes/points
+    // through a single `@Relation` query (see [BoardWithSnakes]) - this fake has no SQL relation
+    // to run, so it reassembles the same shape directly from its maps; `loadGameLevel` itself is
+    // inherited unchanged (it does the board->snakes->points assembly and sorts each snake's
+    // points by orderIndex once, the same way for both the real DAO and this fake).
+    override suspend fun getBoardWithSnakes(stateType: String): BoardWithSnakes? {
+        val board = boards.values.find { it.stateType == stateType } ?: return null
+        val snakesForBoard =
+            snakes.values
+                .filter { it.boardId == board.boardId }
+                .map { snake ->
+                    SnakeWithPoints(
+                        snake = snake,
+                        points = points.values.filter { it.snakeRowId == snake.snakeRowId },
+                    )
+                }
+        return BoardWithSnakes(board, snakesForBoard)
+    }
 
     override suspend fun deleteByStateType(stateType: String) {
         val boardIds =

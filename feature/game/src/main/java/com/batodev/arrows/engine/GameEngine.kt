@@ -171,7 +171,7 @@ class GameEngine(
                     lives =
                         currentL
                     isLoading = false
-                    animateEntry()
+                    entryAnimator.animate(level.snakes, level.width, level.height)
                 },
                 onFailure = { regenerateLevel() },
             )
@@ -189,7 +189,7 @@ class GameEngine(
             removalAnimator.clear()
             entryAnimator.clear()
             saveState()
-            animateEntry()
+            entryAnimator.animate(level.snakes, level.width, level.height)
         }
     }
 
@@ -318,7 +318,7 @@ class GameEngine(
                         removalAnimator.clear()
                         entryAnimator.clear()
                         isLoading = false
-                        animateEntry()
+                        entryAnimator.animate(level.snakes, level.width, level.height)
                         coroutineScope.launch(backgroundDispatcher) {
                             levelManager.saveInitialState(newLevel, lives)
                         }
@@ -326,10 +326,6 @@ class GameEngine(
                 ),
             )
         }
-    }
-
-    private fun animateEntry() {
-        entryAnimator.animate(level.snakes, level.width, level.height)
     }
 
     private fun saveState() {

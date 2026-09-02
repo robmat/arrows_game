@@ -18,6 +18,8 @@ class AppViewModel(
 ) : ViewModel() {
     var shapeProvider: com.batodev.arrows.engine.BoardShapeProvider? = null
 
+    val preferences = PreferenceActions(viewModelScope, userPreferencesRepository)
+
     val theme: StateFlow<String> =
         userPreferencesRepository.theme.stateIn(
             scope = viewModelScope,
@@ -102,39 +104,9 @@ class AppViewModel(
             initialValue = null,
         )
 
-    fun saveTheme(theme: String) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveThemePreference(theme)
-        }
-    }
-
-    fun saveVibration(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveVibrationPreference(enabled)
-        }
-    }
-
-    fun saveSounds(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveSoundsPreference(enabled)
-        }
-    }
-
-    fun saveFillBoard(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveFillBoardPreference(enabled)
-        }
-    }
-
     fun saveWinVideosEnabled(enabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveWinVideosEnabled(enabled)
-        }
-    }
-
-    fun saveAnimationSpeed(speed: String) {
-        viewModelScope.launch {
-            userPreferencesRepository.saveAnimationSpeed(speed)
         }
     }
 

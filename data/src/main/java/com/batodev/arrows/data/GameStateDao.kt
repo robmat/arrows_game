@@ -22,14 +22,9 @@ abstract class GameStateDao {
     @Insert
     abstract suspend fun insertBodyPoints(points: List<SnakeBodyPointEntity>)
 
+    @Transaction
     @Query("SELECT * FROM game_boards WHERE stateType = :stateType LIMIT 1")
-    abstract suspend fun getBoard(stateType: String): GameBoardEntity?
-
-    @Query("SELECT * FROM snakes WHERE boardId = :boardId")
-    abstract suspend fun getSnakes(boardId: Long): List<SnakeEntity>
-
-    @Query("SELECT * FROM snake_body_points WHERE snakeRowId = :snakeRowId ORDER BY orderIndex")
-    abstract suspend fun getBodyPoints(snakeRowId: Long): List<SnakeBodyPointEntity>
+    abstract suspend fun getBoardWithSnakes(stateType: String): BoardWithSnakes?
 
     @Query("DELETE FROM game_boards WHERE stateType = :stateType")
     abstract suspend fun deleteByStateType(stateType: String)
@@ -64,18 +59,19 @@ abstract class GameStateDao {
 
     @Transaction
     open suspend fun loadGameLevel(stateType: String): GameLevelData? {
-        val board = getBoard(stateType) ?: return null
-        val snakeEntities = getSnakes(board.boardId)
+        val boardWithSnakes = getBoardWithSnakes(stateType) ?: return null
         val snakes =
-            snakeEntities.map { snakeEntity ->
-                val points = getBodyPoints(snakeEntity.snakeRowId)
+            boardWithSnakes.snakes.map { snakeWithPoints ->
                 SnakeData(
-                    id = snakeEntity.snakeId,
-                    headDirection = snakeEntity.headDirection,
-                    bodyPoints = points.map { PointData(it.x, it.y) },
+                    id = snakeWithPoints.snake.snakeId,
+                    headDirection = snakeWithPoints.snake.headDirection,
+                    bodyPoints =
+                        snakeWithPoints.points
+                            .sortedBy { it.orderIndex }
+                            .map { PointData(it.x, it.y) },
                 )
             }
-        return GameLevelData(board.width, board.height, snakes)
+        return GameLevelData(boardWithSnakes.board.width, boardWithSnakes.board.height, snakes)
     }
 
     @Transaction
