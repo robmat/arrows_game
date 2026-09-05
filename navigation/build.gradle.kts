@@ -26,9 +26,9 @@ dependencies {
     // strictly pinned to this repo's own value.
     testImplementation(libs.mockito.core) { version { strictly("5.22.0") } }
     testImplementation(libs.mockito.kotlin)
-    // kotlin-reflect pinned to match this repo's own Kotlin version (2.3.10),
+    // kotlin-reflect pinned to match this repo's own Kotlin version (2.4.10),
     // not the shared alias.
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:2.3.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:2.4.10")
     testImplementation(libs.bumble.appyx.testing.unit.common)
     testImplementation(libs.bumble.appyx.testing.junit5)
 }
