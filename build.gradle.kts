@@ -6,7 +6,7 @@ plugins {
     // fleet-wide 2.2.10 at 2.3.10; folding it in would be a real, untested-here
     // Kotlin change, not a mechanical catalog migration.
     id("org.jetbrains.kotlin.jvm") version "2.4.10" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.10" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10" apply false
     alias(libs.plugins.detekt)
     // aboutlibraries isn't in the shared catalog (single-repo use).
     id("com.mikepenz.aboutlibraries.plugin.android") version "14.0.0-b02" apply false
