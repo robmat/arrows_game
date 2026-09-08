@@ -28,5 +28,9 @@ dependencies {
     // Behind the shared catalog's value (25.4.0) - still sourced from it,
     // strictly pinned to this repo's own value.
     api(libs.play.services.ads) { version { strictly("25.0.0") } }
+    // play-services-ads transitively pins the ancient androidx.work:work-runtime:2.7.0 -
+    // override it so WorkManager's own WorkDatabase creation doesn't crash on real
+    // devices (see sgtpuzzles' fix for the full incident writeup).
+    implementation(libs.androidx.work.runtime)
     api(libs.google.ump)
 }
