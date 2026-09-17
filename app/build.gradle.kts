@@ -41,9 +41,12 @@ android {
         }
     }
 
-    // Instrumented tests run against releaseTest - the same R8 output as release - so
-    // they exercise minified code rather than the unminified debug APK.
-    testBuildType = "releaseTest"
+    // androidTest sources attach only to the variant named here, so keep the default on debug:
+    // that is what Android Studio selects, what marks app/src/androidTest as a test source root,
+    // and what keeps local test runs fast (no R8 pass per run).
+    // Run with -PminifiedTests to point the suite at releaseTest instead - the same R8 output as
+    // release, which is what catches release-only breakage (see proguard-rules-test.pro).
+    testBuildType = if (project.hasProperty("minifiedTests")) "releaseTest" else "debug"
     buildTypes {
         release {
             isMinifyEnabled = true

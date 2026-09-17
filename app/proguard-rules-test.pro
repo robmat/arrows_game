@@ -85,3 +85,10 @@
 # "No static method $default$getKey(androidx.compose.runtime.MonotonicFrameClock)".
 -keep class **$-CC { *; }
 -keepclassmembers class * { public static *** $default$*(...); }
+
+# Hilt entry points are resolved by the instrumentation (EntryPointAccessors), not by app
+# code, so R8 strips them and the test dies with
+# "NoClassDefFoundError: dagger.hilt.android.EntryPointAccessors".
+-keep class dagger.** { *; }
+-keep class javax.annotation.** { *; }
+-dontwarn dagger.**

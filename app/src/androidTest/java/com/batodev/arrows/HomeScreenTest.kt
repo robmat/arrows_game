@@ -1,5 +1,6 @@
 package com.batodev.arrows
 
+import android.content.pm.ApplicationInfo
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
@@ -9,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.batodev.arrows.core.resources.R
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -67,9 +69,23 @@ class HomeScreenTest {
 
         // AppNavigationBar's GeneratorNavigationItem has canNavigate = isUnlocked ||
         // BuildConfig.DEBUG - a deliberate dev convenience so the generator is reachable
-        // without grinding to level 20. connectedAndroidTest always runs the debug
-        // variant, so the tap does navigate here despite the item showing locked.
-        composeTestRule.onNodeWithText(context.getString(R.string.generate_start_label)).assertExists()
+        // without grinding to level 20. This used to assume connectedAndroidTest always
+        // runs the debug variant; testBuildType is now releaseTest, so assert the actual
+        // contract in whichever variant is under test rather than only the debug half.
+        // This module generates no BuildConfig, so read the debuggable flag off the app itself.
+        val isDebuggable = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val generatorScreen = composeTestRule.onAllNodesWithText(context.getString(R.string.generate_start_label))
+        if (isDebuggable) {
+            assertTrue(
+                "locked generator should still navigate in debug builds",
+                generatorScreen.fetchSemanticsNodes().isNotEmpty(),
+            )
+        } else {
+            assertTrue(
+                "locked generator must not navigate in non-debug builds",
+                generatorScreen.fetchSemanticsNodes().isEmpty(),
+            )
+        }
     }
 
     @Test
