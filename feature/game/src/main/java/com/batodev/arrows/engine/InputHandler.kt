@@ -35,19 +35,27 @@ class InputHandler {
         isObstructed: (Snake) -> Boolean,
     ): Snake? =
         snakes
-            .map { snake ->
-                val head = snake.body.first()
-                val cellOffset = GameConstants.CELL_CENTER + snake.headDirection.dx * TAP_AREA_OFFSET_FACTOR
-                val tapAreaCenterX = head.x + cellOffset
-                val cellOffsetY = GameConstants.CELL_CENTER + snake.headDirection.dy * TAP_AREA_OFFSET_FACTOR
-                val tapAreaCenterY = head.y + cellOffsetY
-
-                val dx = tapAreaCenterX - cellX
-                val dy = tapAreaCenterY - cellY
-                val distSq = dx * dx + dy * dy
-
-                Triple(snake, distSq, isObstructed(snake))
-            }.filter { it.second <= DEFAULT_TOLERANCE * DEFAULT_TOLERANCE }
+            .map { snake -> snake to tapDistanceSq(snake, cellX, cellY) }
+            .filter { (_, distSq) -> distSq <= DEFAULT_TOLERANCE * DEFAULT_TOLERANCE }
+            // Only the few snakes within tap range need the obstruction check - running it for
+            // every snake on the board made taps on large boards ANR.
+            .map { (snake, distSq) -> Triple(snake, distSq, isObstructed(snake)) }
             .minWithOrNull(compareBy({ it.third }, { it.second }))
             ?.first
+
+    private fun tapDistanceSq(
+        snake: Snake,
+        cellX: Float,
+        cellY: Float,
+    ): Float {
+        val head = snake.body.first()
+        val cellOffset = GameConstants.CELL_CENTER + snake.headDirection.dx * TAP_AREA_OFFSET_FACTOR
+        val tapAreaCenterX = head.x + cellOffset
+        val cellOffsetY = GameConstants.CELL_CENTER + snake.headDirection.dy * TAP_AREA_OFFSET_FACTOR
+        val tapAreaCenterY = head.y + cellOffsetY
+
+        val dx = tapAreaCenterX - cellX
+        val dy = tapAreaCenterY - cellY
+        return dx * dx + dy * dy
+    }
 }

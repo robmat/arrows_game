@@ -32,26 +32,6 @@ object SolvabilityChecker {
             }?.id
     }
 
-    fun isLineOfSightObstructed(
-        level: GameLevel,
-        snake: Snake,
-        ignoreIds: Set<Int> = emptySet(),
-    ): Boolean {
-        val head = snake.body.first()
-        val direction = snake.headDirection
-        var current = head + direction
-
-        while (isInside(current, level.width, level.height)) {
-            val isOccupied =
-                level.snakes.any { other ->
-                    other.id !in ignoreIds && other.body.contains(current)
-                }
-            if (isOccupied) return true
-            current += direction
-        }
-        return false
-    }
-
     private fun createGrid(level: GameLevel): Array<IntArray> {
         val grid = Array(level.width) { IntArray(level.height) }
         level.snakes.forEach { s -> s.body.forEach { p -> grid[p.x][p.y] = s.id } }

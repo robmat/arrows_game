@@ -230,21 +230,11 @@ class GameEngine(
                     offsetY,
                 ),
             )
+        val lineOfSight = LineOfSight(level, removalAnimator.removalProgress.keys)
         val tappedSnake =
-            inputHandler.findTappedSnake(gridCoords.x, gridCoords.y, level.snakes) {
-                SolvabilityChecker.isLineOfSightObstructed(
-                    level,
-                    it,
-                    removalAnimator.removalProgress.keys,
-                )
-            }
+            inputHandler.findTappedSnake(gridCoords.x, gridCoords.y, level.snakes, lineOfSight::isObstructed)
         if (tappedSnake != null) {
-            val isObstructed =
-                SolvabilityChecker.isLineOfSightObstructed(
-                    level,
-                    tappedSnake,
-                    removalAnimator.removalProgress.keys,
-                )
+            val isObstructed = lineOfSight.isObstructed(tappedSnake)
             tapHandler.handleSnakeTap(
                 TapParams(
                     tappedSnake,
