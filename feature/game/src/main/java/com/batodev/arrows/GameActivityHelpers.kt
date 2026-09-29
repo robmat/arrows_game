@@ -35,8 +35,8 @@ import kotlinx.coroutines.delay
 
 data class GameWonStateParams(
     val engine: GameEngine,
-    val incrementGamesCompleted: () -> Unit,
-    val gamesCompletedProvider: () -> Int,
+    /** Records the finished game and returns the new total of completed games. */
+    val recordGameCompleted: suspend () -> Int,
     val activity: Activity,
     val interstitialAdManager: InterstitialAdManager,
     val isAdFree: Boolean,
@@ -203,8 +203,7 @@ suspend fun finishGameAfterCelebration(
     if (waitForConfetti) {
         delay(GameConstants.GAME_WON_EXIT_DELAY)
     }
-    params.incrementGamesCompleted()
-    val gamesCompleted = params.gamesCompletedProvider()
+    val gamesCompleted = params.recordGameCompleted()
     if (shouldShowInterstitialAd(params.isAdFree, gamesCompleted)) {
         params.interstitialAdManager.showInterstitialAd(params.activity) {
             params.onFinish()

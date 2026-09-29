@@ -6,6 +6,7 @@ import com.batodev.arrows.GameConstants
 import com.batodev.arrows.data.GameStateDao
 import com.batodev.arrows.data.IUserPreferencesRepository
 import com.batodev.arrows.data.hasSavedLevel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -107,13 +108,6 @@ class AppViewModel(
             initialValue = 0,
         )
 
-    val gamesCompleted: StateFlow<Int> =
-        userPreferencesRepository.gamesCompleted.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
-            initialValue = 0,
-        )
-
     val introCompleted: StateFlow<Boolean?> =
         userPreferencesRepository.introCompleted.stateIn(
             scope = viewModelScope,
@@ -151,11 +145,17 @@ class AppViewModel(
         }
     }
 
-    fun incrementGamesCompleted() {
-        viewModelScope.launch {
-            userPreferencesRepository.incrementGamesCompleted()
-        }
-    }
+    /**
+     * Records a finished game and returns the new total, read back from the database - the caller
+     * decides on it whether an interstitial is due. Runs in viewModelScope, so the write completes
+     * even if the game screen is already going away.
+     */
+    suspend fun incrementGamesCompleted(): Int =
+        viewModelScope
+            .async {
+                userPreferencesRepository.incrementGamesCompleted()
+                userPreferencesRepository.gamesCompleted.first()
+            }.await()
 
     fun saveIntroCompleted(completed: Boolean) {
         viewModelScope.launch {

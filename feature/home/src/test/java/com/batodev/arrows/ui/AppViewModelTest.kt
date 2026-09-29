@@ -76,6 +76,16 @@ class AppViewModelTest {
         }
 
     @Test
+    fun `test incrementGamesCompleted returns the new total`() =
+        runTest {
+            // The interstitial decision is made on this return value; it used to read a StateFlow
+            // nothing collected, which stayed at 0 forever.
+            assertEquals(1, viewModel.incrementGamesCompleted())
+            assertEquals(2, viewModel.incrementGamesCompleted())
+            assertEquals(2, repository.gamesCompletedFlow.value)
+        }
+
+    @Test
     fun `test banner ads stay hidden until the ads SDK is initialized`() =
         runTest {
             val collectJob =

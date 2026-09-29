@@ -138,8 +138,7 @@ fun SkeinGameView(
         remember(activity, interstitialAdManager, isAdFree) {
             GameWonStateParams(
                 engine = engine,
-                incrementGamesCompleted = appViewModel::incrementGamesCompleted,
-                gamesCompletedProvider = { appViewModel.gamesCompleted.value },
+                recordGameCompleted = appViewModel::incrementGamesCompleted,
                 activity = activity ?: return@remember null,
                 interstitialAdManager = interstitialAdManager,
                 isAdFree = isAdFree,
