@@ -70,6 +70,7 @@ data class GameScreenContentParams(
     val themeColors: ThemeColors,
     val rewardAdManager: RewardAdManager,
     val isAdFree: Boolean,
+    val showBannerAds: Boolean,
     val isAdLoaded: Boolean,
     val isAdLoading: Boolean,
     val handleHint: () -> Unit,

@@ -5,6 +5,9 @@ import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
@@ -25,6 +28,11 @@ class AdsInitializer(
     private val isStarted = AtomicBoolean(false)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private val _isInitialized = MutableStateFlow(false)
+
+    /** True once the SDK has been started - which only happens after consent allows ad requests. */
+    val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
+
     fun initialize() {
         if (!isStarted.compareAndSet(false, true)) return
 
@@ -33,6 +41,7 @@ class AdsInitializer(
             withContext(Dispatchers.Main) {
                 rewardAdManager.loadRewardAd()
                 interstitialAdManager.loadInterstitialAd()
+                _isInitialized.value = true
             }
         }
     }

@@ -123,6 +123,7 @@ fun SkeinGameView(
     val uiState = engine.uiState
     val introState = rememberIntroState(appViewModel, uiState is GameUiState.Loading, engine.level.snakes.size)
     val isWinVideosEnabled by appViewModel.isWinVideosEnabled.collectAsState()
+    val showBannerAds by appViewModel.showBannerAds.collectAsState()
     var confettiState by remember { mutableStateOf<List<Party>>(emptyList()) }
     var showGuidanceLines by remember { mutableStateOf(false) }
     var showCelebrationVideo by remember { mutableStateOf(false) }
@@ -182,6 +183,7 @@ fun SkeinGameView(
             themeColors,
             rewardAdManager,
             isAdFree,
+            showBannerAds,
             isAdLoaded,
             isAdLoading,
             handleHint,
@@ -348,7 +350,7 @@ private fun GameScreenContent(params: GameScreenContentParams) {
                 params.celebrationParams,
             ),
         )
-        if (!params.isAdFree) {
+        if (params.showBannerAds) {
             BannerAdView()
         }
     }

@@ -51,7 +51,7 @@ fun MainScreen(
 ) {
     val hasSavedLevel by appViewModel.hasSavedLevel.collectAsState()
     val levelNumber by appViewModel.levelNumber.collectAsState()
-    val isAdFree by appViewModel.isAdFree.collectAsState()
+    val showBannerAds by appViewModel.showBannerAds.collectAsState()
     val themeColors = LocalThemeColors.current
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -61,7 +61,7 @@ fun MainScreen(
         containerColor = themeColors.background,
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (!isAdFree) {
+                if (showBannerAds) {
                     BannerAdView()
                 }
                 AppNavigationBar(

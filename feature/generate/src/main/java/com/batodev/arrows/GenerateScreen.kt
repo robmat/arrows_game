@@ -87,7 +87,7 @@ fun GenerateScreen(
     val hasSavedLevel by appViewModel.hasSavedLevel.collectAsState()
     val isFillBoardEnabled by appViewModel.isFillBoardEnabled.collectAsState()
     val levelNumber by appViewModel.levelNumber.collectAsState()
-    val isAdFree by appViewModel.isAdFree.collectAsState()
+    val showBannerAds by appViewModel.showBannerAds.collectAsState()
     val themeColors = LocalThemeColors.current
     val maxSize = GenerateScreenLogic.resolveMaxSize(isFillBoardEnabled)
     var width by remember { mutableFloatStateOf(GameConstants.GENERATOR_DEFAULT_SIZE) }
@@ -119,7 +119,7 @@ fun GenerateScreen(
             maxSize,
             shapes,
             selectedShape,
-            isAdFree,
+            showBannerAds,
             contentReady,
             { width = it },
             { height = it },
@@ -146,7 +146,7 @@ private data class GenerateScaffoldState(
     val maxSize: Float,
     val shapes: List<String>,
     val selectedShape: String,
-    val isAdFree: Boolean,
+    val showBannerAds: Boolean,
     val contentReady: Boolean,
     val onWidthChange: (Float) -> Unit,
     val onHeightChange: (Float) -> Unit,
@@ -180,7 +180,7 @@ private fun GenerateScaffoldContent(state: GenerateScaffoldState) {
         },
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (!state.isAdFree) {
+                if (state.showBannerAds) {
                     BannerAdView()
                 }
                 AppNavigationBar(

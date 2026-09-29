@@ -57,6 +57,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val levelNumber by viewModel.levelNumber.collectAsState()
     val isAdFree by viewModel.isAdFree.collectAsState()
+    val showBannerAds by viewModel.showBannerAds.collectAsState()
     val rewardAdCount by viewModel.rewardAdCount.collectAsState()
     val isVibrationEnabled by viewModel.isVibrationEnabled.collectAsState()
     val isSoundsEnabled by viewModel.isSoundsEnabled.collectAsState()
@@ -115,6 +116,7 @@ fun SettingsScreen(
                 themeColors = themeColors,
                 levelNumber = levelNumber,
                 isAdFree = isAdFree,
+                showBannerAds = showBannerAds,
                 rewardAdCount = rewardAdCount,
                 preferencesParams =
                     PreferencesParams(
@@ -148,6 +150,7 @@ private data class SettingsScaffoldParams(
     val themeColors: com.batodev.arrows.ui.theme.ThemeColors,
     val levelNumber: Int,
     val isAdFree: Boolean,
+    val showBannerAds: Boolean,
     val rewardAdCount: Int,
     val preferencesParams: PreferencesParams,
     val debugMenuState: DebugMenuState?,
@@ -195,7 +198,7 @@ private fun SettingsScaffold(params: SettingsScaffoldParams) {
         containerColor = params.themeColors.background,
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (!params.isAdFree) {
+                if (params.showBannerAds) {
                     BannerAdView()
                 }
                 AppNavigationBar(

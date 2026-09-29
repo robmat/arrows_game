@@ -6,8 +6,10 @@ import com.batodev.arrows.GameConstants
 import com.batodev.arrows.data.GameStateDao
 import com.batodev.arrows.data.IUserPreferencesRepository
 import com.batodev.arrows.data.hasSavedLevel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ import kotlinx.coroutines.launch
 class AppViewModel(
     private val userPreferencesRepository: IUserPreferencesRepository,
     private val gameStateDao: GameStateDao,
+    isAdsSdkInitialized: Flow<Boolean>,
 ) : ViewModel() {
     var shapeProvider: com.batodev.arrows.engine.BoardShapeProvider? = null
 
@@ -78,6 +81,20 @@ class AppViewModel(
 
     val isAdFree: StateFlow<Boolean> =
         userPreferencesRepository.isAdFree.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
+            initialValue = false,
+        )
+
+    /**
+     * Whether screens show a banner: only once consent has let the ads SDK start and the user is
+     * known not to be ad-free. Starts false, so no banner is created - and no ad requested - while
+     * either is still unknown.
+     */
+    val showBannerAds: StateFlow<Boolean> =
+        combine(userPreferencesRepository.isAdFree, isAdsSdkInitialized) { isAdFree, isInitialized ->
+            isInitialized && !isAdFree
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(GameConstants.STOP_TIMEOUT_MILLIS),
             initialValue = false,

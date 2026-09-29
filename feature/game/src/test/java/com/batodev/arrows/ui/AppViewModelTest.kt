@@ -4,6 +4,7 @@ import com.batodev.arrows.core.testing.FakeGameStateDao
 import com.batodev.arrows.core.testing.FakeUserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -25,7 +26,7 @@ class AppViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = AppViewModel(repository, gameStateDao)
+        viewModel = AppViewModel(repository, gameStateDao, MutableStateFlow(false))
     }
 
     @After

@@ -4,6 +4,7 @@ import com.batodev.arrows.core.testing.FakeGameStateDao
 import com.batodev.arrows.core.testing.FakeUserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -20,12 +21,13 @@ import org.junit.Test
 class AppViewModelTest {
     private val repository = FakeUserPreferencesRepository()
     private val gameStateDao = FakeGameStateDao()
+    private val isAdsSdkInitialized = MutableStateFlow(false)
     private lateinit var viewModel: AppViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = AppViewModel(repository, gameStateDao)
+        viewModel = AppViewModel(repository, gameStateDao, isAdsSdkInitialized)
     }
 
     @After
@@ -69,6 +71,36 @@ class AppViewModelTest {
             viewModel.regenerateCurrentLevel()
 
             assertFalse(viewModel.hasSavedLevel.value)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `test banner ads stay hidden until the ads SDK is initialized`() =
+        runTest {
+            val collectJob =
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.showBannerAds.collect {}
+                }
+            repository.isAdFreeFlow.value = false
+            assertFalse(viewModel.showBannerAds.value)
+
+            isAdsSdkInitialized.value = true
+            assertTrue(viewModel.showBannerAds.value)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `test banner ads stay hidden for ad-free users`() =
+        runTest {
+            val collectJob =
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.showBannerAds.collect {}
+                }
+            isAdsSdkInitialized.value = true
+            repository.isAdFreeFlow.value = true
+            assertFalse(viewModel.showBannerAds.value)
 
             collectJob.cancel()
         }
