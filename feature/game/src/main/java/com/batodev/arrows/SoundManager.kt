@@ -3,13 +3,17 @@ package com.batodev.arrows
 import android.content.Context
 import android.content.res.Resources
 import android.media.MediaPlayer
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import com.batodev.arrows.core.resources.R
 import kotlin.random.Random
 
 class SoundManager(
-    private val context: Context,
+    context: Context,
 ) {
+    // Playback is posted to a long-lived background thread, which must not keep an Activity alive.
+    private val context = context.applicationContext
     private var isSoundsEnabled = true
 
     private val switchSounds =
@@ -85,17 +89,34 @@ class SoundManager(
     }
 
     private fun playSound(resId: Int) {
-        try {
-            MediaPlayer.create(context, resId)?.apply {
-                setOnCompletionListener { mp ->
-                    mp.release()
+        // MediaPlayer.create() prepares synchronously - binder calls into the media server that can
+        // stall on low-end devices - so it must not run inside tap handling on the main thread.
+        soundHandler.post {
+            try {
+                MediaPlayer.create(context, resId)?.apply {
+                    activePlayers += this
+                    setOnCompletionListener { mp ->
+                        activePlayers -= mp
+                        mp.release()
+                    }
+                    start()
                 }
-                start()
+            } catch (e: IllegalStateException) {
+                Log.e("SoundManager", "Failed to play sound: Illegal state", e)
+            } catch (e: Resources.NotFoundException) {
+                Log.e("SoundManager", "Failed to play sound: Resource not found", e)
             }
-        } catch (e: IllegalStateException) {
-            Log.e("SoundManager", "Failed to play sound: Illegal state", e)
-        } catch (e: Resources.NotFoundException) {
-            Log.e("SoundManager", "Failed to play sound: Resource not found", e)
         }
+    }
+
+    private companion object {
+        // Shared by every SoundManager and started on first use: a new SoundManager is built each
+        // time the game screen builds its engine factory, so none of them can own a thread.
+        // Players created here deliver their completion callbacks on this thread too.
+        val soundHandler by lazy { Handler(HandlerThread("SoundManager").apply { start() }.looper) }
+
+        // Only touched on the sound thread. Holds each player until it finishes: nothing else
+        // references it after create(), so it could otherwise be finalized mid-sound.
+        val activePlayers = mutableSetOf<MediaPlayer>()
     }
 }
