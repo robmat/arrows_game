@@ -8,7 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -67,21 +67,10 @@ object SkeinBoardRenderer {
         guidanceAlpha: Float = 0f,
     ) {
         val themeColors = LocalThemeColors.current
-        val infiniteTransition = rememberInfiniteTransition(label = "flash")
-        val flashPulseAlpha by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = GameConstants.FLASH_MIN_ALPHA,
-            animationSpec =
-                infiniteRepeatable(
-                    animation =
-                        tween(
-                            durationMillis = GameConstants.FLASH_PULSE_DURATION,
-                            easing = LinearEasing,
-                        ),
-                    repeatMode = RepeatMode.Reverse,
-                ),
-            label = "flashAlpha",
-        )
+        // Composed only while a snake is flashing, and read only inside the draw lambda: an
+        // always-running pulse re-recorded the whole board every frame for as long as the game
+        // was on screen - a main-thread load that showed up in Play Console ANR traces.
+        val flashPulseAlpha = if (flashingSnakeId != null) rememberFlashPulseAlpha() else null
 
         Canvas(modifier = modifier) {
             val metrics = calculateBoardMetrics(level, size)
@@ -119,7 +108,7 @@ object SkeinBoardRenderer {
                     removalProgress = removalProgress,
                     entryProgress = entryProgress,
                     flashingSnakeId = flashingSnakeId,
-                    flashPulseAlpha = flashPulseAlpha,
+                    flashPulseAlpha = flashPulseAlpha?.value ?: 1f,
                     themeColors = themeColors,
                 )
             drawSnakes(drawingParams)
@@ -127,6 +116,23 @@ object SkeinBoardRenderer {
             drawContext.canvas.restore()
         }
     }
+
+    @Composable
+    private fun rememberFlashPulseAlpha(): State<Float> =
+        rememberInfiniteTransition(label = "flash").animateFloat(
+            initialValue = 1f,
+            targetValue = GameConstants.FLASH_MIN_ALPHA,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = GameConstants.FLASH_PULSE_DURATION,
+                            easing = LinearEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            label = "flashAlpha",
+        )
 
     private fun calculateBoardMetrics(
         level: GameLevel,
