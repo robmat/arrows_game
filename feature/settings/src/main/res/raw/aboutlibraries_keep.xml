@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- aboutlibraries looks its generated JSON up by name (Resources.getIdentifier), which the
+     resource shrinker cannot see. Without this keep, release builds drop it and opening the
+     third-party licenses screen crashes. Not packaged into the APK. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@raw/aboutlibraries" />

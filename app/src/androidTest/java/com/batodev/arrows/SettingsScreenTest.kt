@@ -2,8 +2,10 @@ package com.batodev.arrows
 
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.batodev.arrows.core.resources.R
@@ -60,6 +62,24 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.theme_red)).performClick()
 
         composeTestRule.onNodeWithText(context.getString(R.string.choose_theme_title)).assertDoesNotExist()
+    }
+
+    @Test
+    fun licensesDialogListsBundledLibraries() {
+        // aboutlibraries loads its generated JSON by resource name, which the release resource
+        // shrinker can't see - without feature/settings' raw/aboutlibraries_keep.xml the JSON was
+        // stripped and opening this dialog crashed the app under -PminifiedTests (and in release).
+        composeTestRule
+            .onNodeWithText(context.getString(R.string.third_party_licenses_label))
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.waitUntil(5_000) {
+            composeTestRule
+                .onAllNodesWithText("Apache License 2.0", substring = true)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
     }
 
     @Test
