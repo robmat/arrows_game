@@ -52,9 +52,8 @@ class InterstitialAdManager(
         onAdDismissed: () -> Unit,
     ) {
         interstitialAd?.let { ad ->
-            ad.show(activity)
-            _isAdLoaded.value = false
-            interstitialAd = null
+            // Set before show(), as Google requires: a failure to show can be reported during
+            // show() itself, and onAdDismissed - which moves the game on - must still run.
             ad.fullScreenContentCallback =
                 object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
@@ -66,6 +65,9 @@ class InterstitialAdManager(
                         onAdDismissed()
                     }
                 }
+            _isAdLoaded.value = false
+            interstitialAd = null
+            ad.show(activity)
         } ?: run {
             loadInterstitialAd()
             onAdDismissed()

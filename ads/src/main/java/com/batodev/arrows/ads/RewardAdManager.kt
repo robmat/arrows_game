@@ -53,12 +53,8 @@ class RewardAdManager(
         onAdDismissed: () -> Unit,
     ) {
         rewardedAd?.let { ad ->
-            ad.show(activity) { _ ->
-                onRewarded()
-                _isAdLoaded.value = false
-                rewardedAd = null
-                loadRewardAd()
-            }
+            // Set before show(), as Google requires: a failure to show can be reported during
+            // show() itself, and onAdDismissed must still run.
             ad.fullScreenContentCallback =
                 object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
@@ -74,6 +70,12 @@ class RewardAdManager(
                         rewardedAd = null
                     }
                 }
+            ad.show(activity) { _ ->
+                onRewarded()
+                _isAdLoaded.value = false
+                rewardedAd = null
+                loadRewardAd()
+            }
         } ?: run {
             loadRewardAd()
             onAdDismissed()
