@@ -1,5 +1,6 @@
 package com.batodev.arrows.ads.di
 
+import com.batodev.arrows.ads.AdsInitializer
 import com.batodev.arrows.ads.ConsentManager
 import com.batodev.arrows.ads.InterstitialAdManager
 import com.batodev.arrows.ads.RewardAdManager
@@ -11,4 +12,5 @@ val adsModule =
         single { RewardAdManager(androidContext()) }
         single { InterstitialAdManager(androidContext()) }
         single { ConsentManager(androidContext()) }
+        single { AdsInitializer(androidContext(), get(), get()) }
     }
