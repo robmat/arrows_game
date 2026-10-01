@@ -7,6 +7,10 @@ package com.batodev.arrows.engine
  * own body. The occupancy grid is built once, on construction, so each test is a walk along the
  * ray. Scanning every snake's body for every ray cell instead, for every snake on the board, was
  * the top "Input dispatching timed out" ANR in Play Console on large boards.
+ *
+ * SolvabilityChecker's check, used by the generator and the hint, treats a snake's own body as
+ * clear instead. The two agree only because the generator never puts a snake's body on its own
+ * head's ray; if that changes, the hint can point at a snake whose tap costs a life.
  */
 class LineOfSight(
     private val level: GameLevel,

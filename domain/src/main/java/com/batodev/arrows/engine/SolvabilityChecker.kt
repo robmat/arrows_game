@@ -38,6 +38,7 @@ object SolvabilityChecker {
         return grid
     }
 
+    // A snake's own body doesn't block it here, unlike LineOfSight, which judges taps - see there.
     private fun hasCleanLoS(params: LoSParams): Boolean {
         var curr = params.head + params.dir
         while (isInside(curr, params.w, params.h)) {
