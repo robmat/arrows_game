@@ -45,6 +45,7 @@ import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.util.withContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 private const val TAG = "ThirdPartyLicenses"
@@ -58,10 +59,11 @@ fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
     val loadError = stringResource(R.string.error_could_not_load_licenses)
 
     LaunchedEffect(Unit) {
-        // ~100 KB of JSON: parsed off the main thread, and a missing or broken file (see
-        // raw/aboutlibraries_keep.xml) shows an error instead of crashing the app.
-        try {
-            libraries =
+        // ~100 KB of JSON, parsed off the main thread. A missing file (see
+        // raw/aboutlibraries_keep.xml) makes build() throw; aboutlibraries swallows parse errors,
+        // so a broken one comes back as an empty list. Either way, show an error instead.
+        val loaded =
+            try {
                 withContext(Dispatchers.Default) {
                     Libs
                         .Builder()
@@ -70,13 +72,13 @@ fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
                         .libraries
                         .sortedBy { it.name.lowercase() }
                 }
-        } catch (e: IllegalStateException) {
-            Log.w(TAG, "Could not load the licenses list", e)
-            error = loadError
-        } catch (e: IllegalArgumentException) {
-            Log.w(TAG, "Could not parse the licenses list", e)
-            error = loadError
-        }
+            } catch (e: IllegalStateException) {
+                // Cancellation is an IllegalStateException too, and must not be swallowed.
+                ensureActive()
+                Log.w(TAG, "Could not load the licenses list", e)
+                emptyList()
+            }
+        if (loaded.isEmpty()) error = loadError else libraries = loaded
     }
 
     Dialog(
