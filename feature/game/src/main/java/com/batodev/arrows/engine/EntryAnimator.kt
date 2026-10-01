@@ -7,7 +7,6 @@ import com.batodev.arrows.GameConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.pow
 
@@ -16,7 +15,11 @@ class EntryAnimator(
 ) {
     companion object {
         private const val CUBIC_EASING_POWER = 3
-        private const val COMPLETION_BUFFER_MS = 50L
+
+        // The ripple's stagger is spread over at most this long, however many snakes there are.
+        // At a flat 50ms per snake a big board's entry ran for tens of seconds (51s at level
+        // 1000) - and taps are ignored until it ends.
+        private const val MAX_TOTAL_STAGGER_MS = 1_500L
     }
 
     var entryProgress by mutableStateOf<Map<Int, Float>>(emptyMap())
@@ -24,7 +27,7 @@ class EntryAnimator(
     var isEntryAnimating by mutableStateOf(false)
         private set
 
-    private var entryJobs = mutableListOf<Job>()
+    private var entryJob: Job? = null
 
     fun animate(
         snakes: List<Snake>,
@@ -34,78 +37,54 @@ class EntryAnimator(
         clear()
         if (snakes.isEmpty()) return
 
+        val order = rippleOrder(snakes, boardWidth, boardHeight)
+        val stagger = minOf(GameConstants.SNAKE_ENTRY_STAGGER_MS, MAX_TOTAL_STAGGER_MS / maxOf(1, order.size - 1))
         isEntryAnimating = true
-        val initialProgress = snakes.associate { it.id to 0f }
-        entryProgress = initialProgress
+        entryProgress = order.associateWith { 0f }
 
-        // Sort by distance from board center -> ripple outward
-        val centerX = boardWidth.toFloat() / 2f
-        val centerY = boardHeight.toFloat() / 2f
-
-        val sortedSnakes =
-            snakes.sortedBy { snake ->
-                val cx =
-                    snake.body
-                        .map { it.x.toFloat() }
-                        .average()
-                        .toFloat()
-                val cy =
-                    snake.body
-                        .map { it.y.toFloat() }
-                        .average()
-                        .toFloat()
-                (cx - centerX) * (cx - centerX) + (cy - centerY) * (cy - centerY)
-            }
-
-        val duration = GameConstants.SNAKE_ENTRY_DURATION_MS
-        val stagger = GameConstants.SNAKE_ENTRY_STAGGER_MS
-        val frameDelay = GameConstants.REMOVAL_FRAME_DELAY_MS
-
-        sortedSnakes.forEachIndexed { index, snake ->
-            val delayMs = stagger * index
-            val snakeId = snake.id
-
-            val job =
-                coroutineScope.launch {
-                    if (delayMs > 0) {
-                        delay(delayMs)
-                    }
-                    if (!isActive) return@launch
-
-                    val startTime = System.currentTimeMillis()
-                    while (isActive) {
-                        val elapsed = System.currentTimeMillis() - startTime
-                        val progress = (elapsed.toFloat() / duration).coerceIn(0f, 1f)
-                        // Ease-out cubic for smooth deceleration: 1 - (1 - x)^3
-                        val eased = 1f - (1f - progress).pow(CUBIC_EASING_POWER)
-
-                        entryProgress = entryProgress.toMutableMap().apply { put(snakeId, eased) }
-
-                        if (progress >= 1f) {
-                            entryProgress = entryProgress.toMutableMap().apply { remove(snakeId) }
-                            break
-                        }
-                        delay(frameDelay)
-                    }
-                }
-            entryJobs.add(job)
-        }
-
-        // Clear isEntryAnimating after all snakes finish
-        val totalDuration = stagger * (sortedSnakes.size - 1) + duration + COMPLETION_BUFFER_MS
-        val completionJob =
+        // One loop drives every snake, rather than a coroutine per snake each copying the whole
+        // progress map every frame. Time is counted in frames, as in RemovalAnimator.
+        entryJob =
             coroutineScope.launch {
-                delay(totalDuration)
-                if (isActive) {
-                    isEntryAnimating = false
+                var elapsed = 0L
+                while (true) {
+                    val progress = HashMap<Int, Float>()
+                    order.forEachIndexed { index, snakeId ->
+                        val linear =
+                            ((elapsed - stagger * index).toFloat() / GameConstants.SNAKE_ENTRY_DURATION_MS)
+                                .coerceIn(0f, 1f)
+                        // Ease-out cubic for smooth deceleration: 1 - (1 - x)^3
+                        if (linear < 1f) progress[snakeId] = 1f - (1f - linear).pow(CUBIC_EASING_POWER)
+                    }
+                    entryProgress = progress
+                    if (progress.isEmpty()) break
+                    delay(GameConstants.REMOVAL_FRAME_DELAY_MS)
+                    elapsed += GameConstants.REMOVAL_FRAME_DELAY_MS
                 }
+                isEntryAnimating = false
             }
-        entryJobs.add(completionJob)
+    }
+
+    /** Snake ids by distance from the board centre, so the entry ripples outward. */
+    private fun rippleOrder(
+        snakes: List<Snake>,
+        boardWidth: Int,
+        boardHeight: Int,
+    ): List<Int> {
+        val centerX = boardWidth / 2f
+        val centerY = boardHeight / 2f
+        return snakes
+            .map { snake ->
+                val cx = snake.body.sumOf { it.x }.toFloat() / snake.body.size
+                val cy = snake.body.sumOf { it.y }.toFloat() / snake.body.size
+                snake.id to (cx - centerX) * (cx - centerX) + (cy - centerY) * (cy - centerY)
+            }.sortedBy { it.second }
+            .map { it.first }
     }
 
     fun clear() {
-        entryJobs.forEach { it.cancel() }
-        entryJobs.clear()
+        entryJob?.cancel()
+        entryJob = null
         entryProgress = emptyMap()
         isEntryAnimating = false
     }
