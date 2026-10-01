@@ -179,6 +179,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    // Stubs and verifies the Settings links' external intents (browser, email) so no other app
+    // opens on the device and takes window focus from later tests.
+    androidTestImplementation(libs.androidx.test.espresso.intents)
     androidTestImplementation(platform(libs.arrows.androidx.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     // GameLevel/Snake/Direction (core:models), SolvabilityChecker (domain) and

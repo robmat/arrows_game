@@ -11,8 +11,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.data.IUserPreferencesRepository
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,8 +46,7 @@ class SettingsScreenTest {
         composeTestRule.onAllNodes(isToggleable())[0].performClick()
 
         val repository = koinInstance<IUserPreferencesRepository>()
-        val stillEnabled = runBlocking { repository.isVibrationEnabled.first() }
-        assertFalse(stillEnabled)
+        awaitCondition("vibration to be switched off") { !repository.isVibrationEnabled.first() }
     }
 
     @Test
@@ -62,6 +59,66 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText(context.getString(R.string.theme_red)).performClick()
 
         composeTestRule.onNodeWithText(context.getString(R.string.choose_theme_title)).assertDoesNotExist()
+        val repository = koinInstance<IUserPreferencesRepository>()
+        awaitCondition("theme Red to be saved") { repository.theme.first() == "Red" }
+    }
+
+    // PreferencesSection's switches are, in order: vibrations, sounds, win videos, fill board.
+    @Test
+    fun togglingSoundsSwitchPersistsToRepository() {
+        composeTestRule.onAllNodes(isToggleable())[1].performScrollTo().performClick()
+
+        val repository = koinInstance<IUserPreferencesRepository>()
+        awaitCondition("sounds to be switched off") { !repository.isSoundsEnabled.first() }
+    }
+
+    @Test
+    fun togglingWinVideosSwitchPersistsToRepository() {
+        composeTestRule.onAllNodes(isToggleable())[2].performScrollTo().performClick()
+
+        val repository = koinInstance<IUserPreferencesRepository>()
+        awaitCondition("win videos to be switched on") { repository.isWinVideosEnabled.first() }
+    }
+
+    @Test
+    fun togglingFillBoardSwitchPersistsToRepository() {
+        composeTestRule.onAllNodes(isToggleable())[3].performScrollTo().performClick()
+
+        val repository = koinInstance<IUserPreferencesRepository>()
+        awaitCondition("fill board to be switched on") { repository.isFillBoardEnabled.first() }
+    }
+
+    @Test
+    fun choosingAnAnimationSpeedPersistsIt() {
+        composeTestRule
+            .onNodeWithText(context.getString(R.string.animation_speed_label))
+            .performScrollTo()
+            .performClick()
+        // Not "Medium": that's the baseline, already showing behind the dialog as the row's value.
+        composeTestRule.onNodeWithText(context.getString(R.string.speed_high)).performClick()
+
+        val repository = koinInstance<IUserPreferencesRepository>()
+        awaitCondition("animation speed High to be saved") { repository.animationSpeed.first() == "High" }
+    }
+
+    @Test
+    fun adFreePlayersSeeThatAdsAreRemoved() {
+        composeTestRule.onNodeWithText(context.getString(R.string.ads_removed)).performScrollTo().assertExists()
+    }
+
+    @Test
+    fun generatorNavItemOpensTheGeneratorOnceUnlocked() {
+        composeTestRule.unlockGenerator()
+        composeTestRule.waitUntil(5_000) {
+            composeTestRule
+                .onAllNodesWithText(context.getString(R.string.custom_gen_title))
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+
+        composeTestRule.onNodeWithText(context.getString(R.string.custom_gen_title)).performClick()
+
+        composeTestRule.onNodeWithText(context.getString(R.string.generate_start_label)).assertExists()
     }
 
     @Test
