@@ -20,6 +20,15 @@ android {
             buildConfigField("String", "INTERSTITIAL_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("Boolean", "DRAW_DEBUG_STUFF", "false")
         }
+        // -PminifiedTests builds the app's releaseTest variant. Without a build type of that name
+        // here, :ads fell back to release and the instrumented tests requested the live ad units;
+        // these are Google's test units, as in debug.
+        create("releaseTest") {
+            initWith(getByName("release"))
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
+            buildConfigField("String", "INTERSTITIAL_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
+        }
     }
 }
 
