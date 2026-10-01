@@ -60,6 +60,8 @@ class GameplayTest {
         composeTestRule.tapSnake(CraftedLevel.blockedSnake, level)
 
         awaitSavedLives(GameConstants.DEFAULT_INITIAL_LIVES - 1)
+        // A wrong removal would only be saved once its removal animation had finished.
+        Thread.sleep(1_000)
         awaitSavedSnakes(CraftedLevel.allIds)
     }
 

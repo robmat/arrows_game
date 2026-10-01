@@ -137,6 +137,7 @@ class GenerateScreenTest {
         composeTestRule.onNodeWithText(warningTitle).assertExists()
         composeTestRule.onNodeWithText(context.getString(R.string.cancel_label)).performClick()
         composeTestRule.onNodeWithText(warningTitle).assertDoesNotExist()
+        start.assertExists() // still on the generator
         val gameStateDao = koinInstance<GameStateDao>()
         awaitCondition("the saved game to be kept") {
             gameStateDao.loadGameLevel("CURRENT")?.snakes?.size == CraftedLevel.level.snakes.size

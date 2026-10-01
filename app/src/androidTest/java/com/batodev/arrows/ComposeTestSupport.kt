@@ -74,7 +74,7 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.r
         repository.saveAnimationSpeed("Medium")
         repository.saveCurrentLives(GameConstants.DEFAULT_INITIAL_LIVES)
         // The first-level finger overlay would otherwise appear on whichever test first starts a
-        // game on a fresh install; GameInteractionsTest turns it back on where it tests it.
+        // game on a fresh install; BoardViewTest turns it back on where it tests it.
         repository.saveIntroCompleted(true)
     }
     waitForIdle()

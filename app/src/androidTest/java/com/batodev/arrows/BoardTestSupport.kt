@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.unit.IntSize
 import androidx.test.platform.app.InstrumentationRegistry
 import com.batodev.arrows.core.resources.R
 import com.batodev.arrows.data.GameStateDao
@@ -74,25 +75,52 @@ fun ComposeTestRule.continueSavedGame() {
 }
 
 /**
- * Taps [snake]'s arrowhead - the point InputHandler.transformTapToGrid maps back onto it.
- * Valid while the board's pan/zoom is at its reset default.
+ * Where the board's cells land in the game area: SkeinBoardRenderer's layout, drawn at the
+ * board's default zoom (GameConstants.DEFAULT_SCALE) around the area's centre - the inverse of
+ * InputHandler.transformTapToGrid. Valid while pan/zoom is at its reset default.
  */
+private class BoardGeometry(
+    size: IntSize,
+    level: GameLevel,
+) {
+    private val cellSize = minOf(size.width.toFloat() / level.width, size.height.toFloat() / level.height)
+    private val leftOffset = (size.width - cellSize * level.width) / 2
+    private val topOffset = (size.height - cellSize * level.height) / 2
+    private val centerX = size.width / 2f
+    private val centerY = size.height / 2f
+
+    fun toScreen(
+        gridX: Float,
+        gridY: Float,
+    ) = Offset(
+        centerX + (gridX * cellSize + leftOffset - centerX) * GameConstants.DEFAULT_SCALE,
+        centerY + (gridY * cellSize + topOffset - centerY) * GameConstants.DEFAULT_SCALE,
+    )
+
+    fun cellAt(
+        screenX: Float,
+        screenY: Float,
+    ): Pair<Int, Int> {
+        val x = centerX + (screenX - centerX) / GameConstants.DEFAULT_SCALE
+        val y = centerY + (screenY - centerY) / GameConstants.DEFAULT_SCALE
+        return floor((x - leftOffset) / cellSize).toInt() to floor((y - topOffset) / cellSize).toInt()
+    }
+}
+
+/** Taps [snake]'s arrowhead - the point InputHandler.transformTapToGrid maps back onto it. */
 fun ComposeTestRule.tapSnake(
     snake: Snake,
     level: GameLevel,
 ) {
     val board = onNodeWithTag(GAME_AREA_TEST_TAG)
-    val size = board.fetchSemanticsNode().size
-    val containerWidth = size.width.toFloat()
-    val containerHeight = size.height.toFloat()
-    val cellSize = minOf(containerWidth / level.width, containerHeight / level.height)
-    val leftOffset = (containerWidth - cellSize * level.width) / 2
-    val topOffset = (containerHeight - cellSize * level.height) / 2
-
+    val geometry = BoardGeometry(board.fetchSemanticsNode().size, level)
     val head = snake.body.first()
-    val gridX = head.x + GameConstants.CELL_CENTER + snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR
-    val gridY = head.y + GameConstants.CELL_CENTER + snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR
-    board.performTouchInput { click(Offset(gridX * cellSize + leftOffset, gridY * cellSize + topOffset)) }
+    val tapPoint =
+        geometry.toScreen(
+            head.x + GameConstants.CELL_CENTER + snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR,
+            head.y + GameConstants.CELL_CENTER + snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR,
+        )
+    board.performTouchInput { click(tapPoint) }
     waitForIdle()
 }
 
@@ -141,16 +169,11 @@ fun ComposeTestRule.changedCells(
     level: GameLevel,
 ): Set<Pair<Int, Int>> {
     val size = onNodeWithTag(GAME_AREA_TEST_TAG).fetchSemanticsNode().size
-    val cellSize = minOf(size.width.toFloat() / level.width, size.height.toFloat() / level.height)
-    val leftOffset = (size.width - cellSize * level.width) / 2
-    val topOffset = (size.height - cellSize * level.height) / 2
+    val geometry = BoardGeometry(size, level)
     return before.indices
         .filter { before[it] != after[it] }
-        .map { index ->
-            val column = floor((index % size.width - leftOffset) / cellSize).toInt()
-            val row = floor((index / size.width - topOffset) / cellSize).toInt()
-            column to row
-        }.filter { (column, row) -> column in 0 until level.width && row in 0 until level.height }
+        .map { index -> geometry.cellAt((index % size.width).toFloat(), (index / size.width).toFloat()) }
+        .filter { (column, row) -> column in 0 until level.width && row in 0 until level.height }
         .toSet()
 }
 
