@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">无法启动审核流程</string>
     <string name="error_could_not_open_browser">无法打开浏览器</string>
+    <string name="error_could_not_load_licenses">无法加载许可证</string>
     <string name="error_could_not_open_email">无法打开电子邮件应用程序</string>
     <string name="fill_board_label">填充板（较慢）</string>
     <string name="forced_height_label">强制高度</string>

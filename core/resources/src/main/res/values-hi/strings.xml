@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">समीक्षा प्रक्रिया शुरू नहीं हो सकी</string>
     <string name="error_could_not_open_browser">ब्राउज़र नहीं खुल सका</string>
+    <string name="error_could_not_load_licenses">लाइसेंस लोड नहीं हो सके</string>
     <string name="error_could_not_open_email">ईमेल ऐप नहीं खुल सका</string>
     <string name="fill_board_label">बोर्ड भरें (धीमे)</string>
     <string name="forced_height_label">जबरन ऊंचाई</string>

@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Impossible de lancer le flux de révision</string>
     <string name="error_could_not_open_browser">Impossible d\'ouvrir le navigateur</string>
+    <string name="error_could_not_load_licenses">Impossible de charger les licences</string>
     <string name="error_could_not_open_email">Impossible d\'ouvrir l\'application de messagerie</string>
     <string name="fill_board_label">Remplir le tableau (plus lentement)</string>
     <string name="forced_height_label">Hauteur forcée</string>

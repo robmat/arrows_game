@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">レビューフローを開始できませんでした</string>
     <string name="error_could_not_open_browser">ブラウザを開けませんでした</string>
+    <string name="error_could_not_load_licenses">ライセンスを読み込めませんでした</string>
     <string name="error_could_not_open_email">メールアプリを開けませんでした</string>
     <string name="fill_board_label">ボードを埋める（遅い）</string>
     <string name="forced_height_label">強制高さ</string>

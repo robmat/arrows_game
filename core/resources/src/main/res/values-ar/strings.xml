@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">تعذر بدء عملية المراجعة</string>
     <string name="error_could_not_open_browser">تعذر فتح المتصفح</string>
+    <string name="error_could_not_load_licenses">تعذر تحميل التراخيص</string>
     <string name="error_could_not_open_email">تعذر فتح تطبيق البريد الإلكتروني</string>
     <string name="fill_board_label">املأ اللوحة (بشكل أبطأ)</string>
     <string name="forced_height_label">الطول القسري</string>

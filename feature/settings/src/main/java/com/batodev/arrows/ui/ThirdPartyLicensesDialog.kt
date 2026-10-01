@@ -1,5 +1,6 @@
 package com.batodev.arrows.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,10 @@ import com.batodev.arrows.ui.theme.White
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.util.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+private const val TAG = "ThirdPartyLicenses"
 
 @Composable
 fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
@@ -50,10 +55,28 @@ fun ThirdPartyLicensesDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     var libraries by remember { mutableStateOf<List<Library>>(emptyList()) }
     var error by remember { mutableStateOf<String?>(null) }
+    val loadError = stringResource(R.string.error_could_not_load_licenses)
 
     LaunchedEffect(Unit) {
-        val libs = Libs.Builder().withContext(context).build()
-        libraries = libs.libraries.sortedBy { it.name.lowercase() }
+        // ~100 KB of JSON: parsed off the main thread, and a missing or broken file (see
+        // raw/aboutlibraries_keep.xml) shows an error instead of crashing the app.
+        try {
+            libraries =
+                withContext(Dispatchers.Default) {
+                    Libs
+                        .Builder()
+                        .withContext(context)
+                        .build()
+                        .libraries
+                        .sortedBy { it.name.lowercase() }
+                }
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "Could not load the licenses list", e)
+            error = loadError
+        } catch (e: IllegalArgumentException) {
+            Log.w(TAG, "Could not parse the licenses list", e)
+            error = loadError
+        }
     }
 
     Dialog(

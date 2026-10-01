@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Der Überprüfungsprozess konnte nicht gestartet werden.</string>
     <string name="error_could_not_open_browser">Browser konnte nicht geöffnet werden</string>
+    <string name="error_could_not_load_licenses">Lizenzen konnten nicht geladen werden</string>
     <string name="error_could_not_open_email">E-Mail-App konnte nicht geöffnet werden</string>
     <string name="fill_board_label">Spielfeld füllen (langsamer)</string>
     <string name="forced_height_label">Erzwungene Höhe</string>

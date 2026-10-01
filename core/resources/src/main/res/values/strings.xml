@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Could not launch review flow</string>
     <string name="error_could_not_open_browser">Could not open browser</string>
+    <string name="error_could_not_load_licenses">Could not load licenses</string>
     <string name="error_could_not_open_email">Could not open email app</string>
     <string name="fill_board_label">Fill board (slower)</string>
     <string name="forced_height_label">Forced Height</string>

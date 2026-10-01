@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">جائزہ کا بہاؤ شروع نہیں کیا جا سکا</string>
     <string name="error_could_not_open_browser">براؤزر نہیں کھول سکا</string>
+    <string name="error_could_not_load_licenses">لائسنس لوڈ نہیں ہو سکے</string>
     <string name="error_could_not_open_email">ای میل ایپ نہیں کھول سکی</string>
     <string name="fill_board_label">فل بورڈ (آہستہ)</string>
     <string name="forced_height_label">جبری اونچائی</string>

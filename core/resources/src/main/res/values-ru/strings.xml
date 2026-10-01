@@ -37,6 +37,7 @@
     <string name="email_subject">Skein Game Support</string>
     <string name="error_could_not_launch_review">Не удалось запустить процесс проверки.</string>
     <string name="error_could_not_open_browser">Не удалось открыть браузер.</string>
+    <string name="error_could_not_load_licenses">Не удалось загрузить лицензии.</string>
     <string name="error_could_not_open_email">Не удалось открыть почтовое приложение.</string>
     <string name="fill_board_label">Заполнить доску (медленнее)</string>
     <string name="forced_height_label">Принудительная высота</string>
