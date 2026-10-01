@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
@@ -340,7 +341,7 @@ private fun GenerateContent(state: GenerateContentState) {
         }
 
         item {
-            Column(modifier = shapeSectionMod.fillMaxWidth()) {
+            Column(modifier = shapeSectionMod.fillMaxWidth().selectableGroup()) {
                 ShapeSectionHeader()
                 Spacer(modifier = Modifier.height(12.dp))
                 state.shapes.chunked(SHAPES_PER_ROW).forEachIndexed { rowIndex, row ->
