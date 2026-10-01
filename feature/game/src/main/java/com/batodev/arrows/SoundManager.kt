@@ -92,22 +92,32 @@ class SoundManager(
         // MediaPlayer.create() prepares synchronously - binder calls into the media server that can
         // stall on low-end devices - so it must not run inside tap handling on the main thread.
         soundHandler.post {
+            val player = createPlayer(resId) ?: return@post
+            activePlayers += player
+            player.setOnCompletionListener { mp ->
+                activePlayers -= mp
+                mp.release()
+            }
             try {
-                MediaPlayer.create(context, resId)?.apply {
-                    activePlayers += this
-                    setOnCompletionListener { mp ->
-                        activePlayers -= mp
-                        mp.release()
-                    }
-                    start()
-                }
+                player.start()
             } catch (e: IllegalStateException) {
                 Log.e("SoundManager", "Failed to play sound: Illegal state", e)
-            } catch (e: Resources.NotFoundException) {
-                Log.e("SoundManager", "Failed to play sound: Resource not found", e)
+                activePlayers -= player
+                player.release()
             }
         }
     }
+
+    private fun createPlayer(resId: Int): MediaPlayer? =
+        try {
+            MediaPlayer.create(context, resId)
+        } catch (e: IllegalStateException) {
+            Log.e("SoundManager", "Failed to create sound player: Illegal state", e)
+            null
+        } catch (e: Resources.NotFoundException) {
+            Log.e("SoundManager", "Failed to play sound: Resource not found", e)
+            null
+        }
 
     private companion object {
         // Shared by every SoundManager and started on first use: a new SoundManager is built each
