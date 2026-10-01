@@ -98,6 +98,19 @@ class HomeScreenTest {
     }
 
     @Test
+    fun continueResumesTheSavedGame() {
+        saveCraftedLevelInProgress()
+
+        // Home swaps Play for Continue once a game is saved; continueSavedGame() taps it.
+        composeTestRule.continueSavedGame()
+        composeTestRule.tapSnake(CraftedLevel.freeSnake, CraftedLevel.level)
+
+        // Only the crafted board, resumed rather than replaced by a fresh level, loses exactly
+        // the snake that was tapped.
+        awaitSavedSnakes(listOf(CraftedLevel.blockedSnake.id, CraftedLevel.extraSnake.id))
+    }
+
+    @Test
     fun systemBackPressFromHomeExitsApp() {
         assertBackPressFinishesScenario(composeTestRule.activityRule.scenario)
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.batodev.arrows.GameConstants
@@ -24,6 +25,8 @@ import com.batodev.arrows.engine.GameLevel
 import com.batodev.arrows.engine.SolvabilityChecker
 
 private val FINGER_SIZE: Dp = 120.dp
+
+const val INTRO_OVERLAY_TEST_TAG = "intro_overlay"
 
 @Composable
 fun IntroFingerOverlay(
@@ -73,7 +76,8 @@ fun IntroFingerOverlay(
                 Modifier
                     .size(FINGER_SIZE)
                     .offset(x = arrowHeadX - FINGER_SIZE / 2, y = arrowHeadY - FINGER_SIZE / 2)
-                    .graphicsLayer { this.alpha = alpha },
+                    .graphicsLayer { this.alpha = alpha }
+                    .testTag(INTRO_OVERLAY_TEST_TAG),
         )
     }
 }

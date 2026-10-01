@@ -1,14 +1,9 @@
 package com.batodev.arrows
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTouchInput
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -74,6 +69,13 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.r
         // even a previous run of the same test) last left behind.
         repository.saveVibrationPreference(true)
         repository.saveThemePreference("Green")
+        repository.saveSoundsPreference(true)
+        repository.saveFillBoardPreference(false)
+        repository.saveAnimationSpeed("Medium")
+        repository.saveCurrentLives(GameConstants.DEFAULT_INITIAL_LIVES)
+        // The first-level finger overlay would otherwise appear on whichever test first starts a
+        // game on a fresh install; GameInteractionsTest turns it back on where it tests it.
+        repository.saveIntroCompleted(true)
     }
     waitForIdle()
 }
@@ -144,25 +146,14 @@ private suspend fun awaitCurrentLevel(
  *
  * The removal order is precomputed up front with the exact same SolvabilityChecker the
  * production Hint button and level generator use (a snake is safely tappable once
- * nothing remains in front of it), then each tap's on-screen position is derived with
- * the exact inverse of InputHandler.transformTapToGrid's math. That inversion assumes
- * scale=1/offset=(0,0), true only while the board's pan/zoom is at its reset default -
- * always true right after a level (re)loads, since nothing in this flow ever pans/zooms.
+ * nothing remains in front of it), then each snake is tapped through tapSnake() (see
+ * BoardTestSupport.kt), which inverts InputHandler.transformTapToGrid's math - valid while
+ * the board's pan/zoom is at its reset default, always true right after a level
+ * (re)loads, since nothing in this flow ever pans/zooms.
  */
 fun ComposeTestRule.solveCurrentLevel(gameStateDao: GameStateDao) {
     waitUntil(15_000) { onAllNodesWithTag(GAME_AREA_TEST_TAG).fetchSemanticsNodes().isNotEmpty() }
     val level = runBlocking { awaitCurrentLevel(gameStateDao) }
-
-    val boardNode: SemanticsNodeInteraction = onNodeWithTag(GAME_AREA_TEST_TAG)
-    val containerSize = boardNode.fetchSemanticsNode().size
-    val containerWidth = containerSize.width.toFloat()
-    val containerHeight = containerSize.height.toFloat()
-
-    val cellSize = minOf(containerWidth / level.width, containerHeight / level.height)
-    val boardWidth = cellSize * level.width
-    val boardHeight = cellSize * level.height
-    val leftOffset = (containerWidth - boardWidth) / 2
-    val topOffset = (containerHeight - boardHeight) / 2
 
     val remaining = level.snakes.toMutableList()
     while (remaining.isNotEmpty()) {
@@ -170,19 +161,7 @@ fun ComposeTestRule.solveCurrentLevel(gameStateDao: GameStateDao) {
         val removableId =
             SolvabilityChecker.findRemovableSnake(workingLevel)
                 ?: error("Level not solvable from current remaining snake set - ${remaining.size} left: $remaining")
-        val snake = remaining.first { it.id == removableId }
-        val head = snake.body.first()
-        val gridX =
-            head.x + GameConstants.CELL_CENTER +
-                snake.headDirection.dx * GameConstants.TAP_AREA_OFFSET_FACTOR
-        val gridY =
-            head.y + GameConstants.CELL_CENTER +
-                snake.headDirection.dy * GameConstants.TAP_AREA_OFFSET_FACTOR
-        val screenX = gridX * cellSize + leftOffset
-        val screenY = gridY * cellSize + topOffset
-
-        boardNode.performTouchInput { click(Offset(screenX, screenY)) }
-        waitForIdle()
+        tapSnake(remaining.first { it.id == removableId }, level)
         // Outlasts the removal animation (up to REMOVAL_DURATION_LOW = 900ms) so the
         // next tap's obstruction check always sees a clean, settled board.
         Thread.sleep(1_000)
