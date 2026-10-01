@@ -9,8 +9,10 @@ import org.koin.dsl.module
 
 val adsModule =
     module {
-        single { RewardAdManager(androidContext()) }
-        single { InterstitialAdManager(androidContext()) }
+        // The ad managers request ads only once AdsInitializer has started the SDK, which it does
+        // only after consent allows it. Looked up on each call: AdsInitializer depends on them.
+        single { RewardAdManager(androidContext()) { get<AdsInitializer>().isInitialized.value } }
+        single { InterstitialAdManager(androidContext()) { get<AdsInitializer>().isInitialized.value } }
         single { ConsentManager(androidContext()) }
         single { AdsInitializer(androidContext(), get(), get()) }
     }

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class RewardAdManager(
     private val context: Context,
+    /** False until consent allows ad requests and the ads SDK has been started. */
+    private val canRequestAds: () -> Boolean,
 ) {
     private var rewardedAd: RewardedAd? = null
     private val _isAdLoaded = MutableStateFlow(false)
@@ -22,7 +24,7 @@ class RewardAdManager(
     val isAdLoading: StateFlow<Boolean> = _isAdLoading.asStateFlow()
 
     fun loadRewardAd() {
-        if (_isAdLoading.value || _isAdLoaded.value) return
+        if (!canRequestAds() || _isAdLoading.value || _isAdLoaded.value) return
 
         _isAdLoading.value = true
         val adRequest = AdRequest.Builder().build()

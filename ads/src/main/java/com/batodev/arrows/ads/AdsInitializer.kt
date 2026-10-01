@@ -39,9 +39,10 @@ class AdsInitializer(
         scope.launch {
             MobileAds.initialize(context)
             withContext(Dispatchers.Main) {
+                // First: the managers' loads are no-ops until this is set.
+                _isInitialized.value = true
                 rewardAdManager.loadRewardAd()
                 interstitialAdManager.loadInterstitialAd()
-                _isInitialized.value = true
             }
         }
     }
