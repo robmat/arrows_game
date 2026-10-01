@@ -69,7 +69,7 @@ object SkeinBoardRenderer {
         val themeColors = LocalThemeColors.current
         // Composed only while a snake is flashing, and read only inside the draw lambda: an
         // always-running pulse re-recorded the whole board every frame for as long as the game
-        // was on screen - a main-thread load that showed up in Play Console ANR traces.
+        // was on screen, keeping the main thread busy even when nobody was touching it.
         val flashPulseAlpha = if (flashingSnakeId != null) rememberFlashPulseAlpha() else null
 
         Canvas(modifier = modifier) {
@@ -116,23 +116,6 @@ object SkeinBoardRenderer {
             drawContext.canvas.restore()
         }
     }
-
-    @Composable
-    private fun rememberFlashPulseAlpha(): State<Float> =
-        rememberInfiniteTransition(label = "flash").animateFloat(
-            initialValue = 1f,
-            targetValue = GameConstants.FLASH_MIN_ALPHA,
-            animationSpec =
-                infiniteRepeatable(
-                    animation =
-                        tween(
-                            durationMillis = GameConstants.FLASH_PULSE_DURATION,
-                            easing = LinearEasing,
-                        ),
-                    repeatMode = RepeatMode.Reverse,
-                ),
-            label = "flashAlpha",
-        )
 
     private fun calculateBoardMetrics(
         level: GameLevel,
@@ -591,3 +574,21 @@ object SkeinBoardRenderer {
         )
     }
 }
+
+// Outside SkeinBoardRenderer, which already needs a TooManyFunctions suppression.
+@Composable
+private fun rememberFlashPulseAlpha(): State<Float> =
+    rememberInfiniteTransition(label = "flash").animateFloat(
+        initialValue = 1f,
+        targetValue = GameConstants.FLASH_MIN_ALPHA,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = GameConstants.FLASH_PULSE_DURATION,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "flashAlpha",
+    )
