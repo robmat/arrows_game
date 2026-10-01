@@ -31,7 +31,9 @@ class EntryAnimatorTest {
             runCurrent()
 
             assertTrue(animator.isEntryAnimating)
-            assertEquals(mapOf(1 to 0f, 2 to 0f), animator.entryProgress)
+            // Not exactly 0: the animation also follows real time, a little of which has passed.
+            assertEquals(setOf(1, 2), animator.entryProgress.keys)
+            assertTrue(animator.entryProgress.values.all { it < 0.05f })
 
             advanceTimeBy(GameConstants.SNAKE_ENTRY_STAGGER_MS + GameConstants.SNAKE_ENTRY_DURATION_MS + 100)
             runCurrent()

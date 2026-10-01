@@ -20,6 +20,7 @@ class EntryAnimator(
         // At a flat 50ms per snake a big board's entry ran for tens of seconds (51s at level
         // 1000) - and taps are ignored until it ends.
         private const val MAX_TOTAL_STAGGER_MS = 1_500L
+        private const val NANOS_PER_MILLI = 1_000_000L
     }
 
     var entryProgress by mutableStateOf<Map<Int, Float>>(emptyMap())
@@ -43,11 +44,16 @@ class EntryAnimator(
         entryProgress = order.associateWith { 0f }
 
         // One loop drives every snake, rather than a coroutine per snake each copying the whole
-        // progress map every frame. Time is counted in frames, as in RemovalAnimator.
+        // progress map every frame.
         entryJob =
             coroutineScope.launch {
-                var elapsed = 0L
+                val startNanos = System.nanoTime()
+                var frameTime = 0L
                 while (true) {
+                    // Real time drives the animation, so on a busy device slow frames skip ahead
+                    // instead of stretching it - and the tap lockout with it. Counting frames as
+                    // well keeps it moving under a test's virtual clock, where no real time passes.
+                    val elapsed = maxOf(frameTime, (System.nanoTime() - startNanos) / NANOS_PER_MILLI)
                     val progress = HashMap<Int, Float>()
                     order.forEachIndexed { index, snakeId ->
                         val linear =
@@ -59,7 +65,7 @@ class EntryAnimator(
                     entryProgress = progress
                     if (progress.isEmpty()) break
                     delay(GameConstants.REMOVAL_FRAME_DELAY_MS)
-                    elapsed += GameConstants.REMOVAL_FRAME_DELAY_MS
+                    frameTime += GameConstants.REMOVAL_FRAME_DELAY_MS
                 }
                 isEntryAnimating = false
             }
