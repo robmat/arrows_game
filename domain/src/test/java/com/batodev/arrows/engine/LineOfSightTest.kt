@@ -32,8 +32,10 @@ class LineOfSightTest {
             ignoreSets.forEach { ignoreIds ->
                 val lineOfSight = LineOfSight(level, ignoreIds)
                 level.snakes.forEach { snake ->
+                    // GameGenerator seeds itself from the clock, so print the whole level: a
+                    // failure can then be rebuilt as a fixed GameLevel.
                     assertEquals(
-                        "Snake ${snake.id} on ${level.width}x${level.height}, ignoring $ignoreIds",
+                        "Snake ${snake.id}, ignoring $ignoreIds, on $level",
                         scanEveryBody(level, snake, ignoreIds),
                         lineOfSight.isObstructed(snake),
                     )
