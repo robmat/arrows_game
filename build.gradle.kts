@@ -7,9 +7,7 @@ plugins {
     alias(libs.plugins.detekt)
     // aboutlibraries isn't in the shared catalog (single-repo use).
     id("com.mikepenz.aboutlibraries.plugin.android") version "14.0.0-b02" apply false
-    // KSP isn't in the shared catalog (only a handful of repos use it, each
-    // pinned to a KSP release matching its own Kotlin version).
-    id("com.google.devtools.ksp") version "2.3.6" apply false
+    alias(libs.plugins.ksp) apply false
     id("jacoco")
 }
 
