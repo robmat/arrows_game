@@ -17,13 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * MobileAds.initialize() runs on a background thread, as Google recommends: its synchronous part
  * (checking and loading the ads module from Google Play services) otherwise blocks the main thread
- * during launch, which is slow on low-end devices. The first ads are then loaded on the main
- * thread, which their load() calls require.
+ * during launch, which is slow on low-end devices. The first rewarded ad is then loaded on the main
+ * thread, which its load() call requires.
  */
 class AdsInitializer(
     private val context: Context,
     private val rewardAdManager: RewardAdManager,
-    private val interstitialAdManager: InterstitialAdManager,
 ) {
     private val isStarted = AtomicBoolean(false)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -39,10 +38,10 @@ class AdsInitializer(
         scope.launch {
             MobileAds.initialize(context)
             withContext(Dispatchers.Main) {
-                // First: the managers' loads are no-ops until this is set.
+                // First: the managers' loads are no-ops until this is set. The interstitial is not
+                // loaded here - the game screen loads it only when the coming win will show it.
                 _isInitialized.value = true
                 rewardAdManager.loadRewardAd()
-                interstitialAdManager.loadInterstitialAd()
             }
         }
     }

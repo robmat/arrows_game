@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.batodev.arrows.ui.AppViewModel
 import com.batodev.arrows.ui.theme.ThemeColors
 import com.batodev.arrows.ui.theme.White
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 
 data class GameWonStateParams(
     val engine: GameEngine,
@@ -195,6 +197,32 @@ fun shouldShowInterstitialAd(
     isAdFree: Boolean,
     gamesCompleted: Int,
 ): Boolean = !isAdFree && gamesCompleted > 0 && gamesCompleted % GameConstants.GAMES_BETWEEN_INTERSTITIALS == 0
+
+/** Whether the next won game shows an interstitial - the only time one is worth loading. */
+fun isInterstitialDueNext(
+    isAdFree: Boolean,
+    gamesCompleted: Int,
+): Boolean = shouldShowInterstitialAd(isAdFree, gamesCompleted + 1)
+
+/**
+ * Loads the interstitial when this game's win is one that shows it, and only then: an ad that is
+ * loaded but never shown counts against the show rate. [canRequestAds] becomes true once the ads
+ * SDK has started for a user who is not ad-free, which may be after this screen opened.
+ */
+@Composable
+fun PreloadInterstitialIfDue(
+    canRequestAds: Boolean,
+    userPreferencesRepository: UserPreferencesRepository,
+    interstitialAdManager: InterstitialAdManager,
+) {
+    LaunchedEffect(canRequestAds) {
+        if (canRequestAds &&
+            isInterstitialDueNext(isAdFree = false, gamesCompleted = userPreferencesRepository.gamesCompleted.first())
+        ) {
+            interstitialAdManager.loadInterstitialAd()
+        }
+    }
+}
 
 suspend fun finishGameAfterCelebration(
     params: GameWonStateParams,

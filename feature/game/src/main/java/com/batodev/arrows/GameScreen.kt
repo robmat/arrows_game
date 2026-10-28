@@ -145,6 +145,7 @@ fun SkeinGameView(
                 onFinish = onBack,
             )
         }
+    PreloadInterstitialIfDue(showBannerAds, userPreferencesRepository, interstitialAdManager)
     if (gameWonParams != null) {
         HandleGameWonState(
             uiState = uiState,

@@ -103,7 +103,7 @@ object GameConstants {
     // GAME FLOW & ANIMATIONS
     // ====================
     const val GAME_WON_EXIT_DELAY = 3000L
-    const val GAMES_BETWEEN_INTERSTITIALS = 5
+    const val GAMES_BETWEEN_INTERSTITIALS = 3
     const val GUIDANCE_ANIM_DURATION = 500
     const val PROGRESS_ANIM_DURATION = 500
     const val PROGRESS_BAR_WIDTH = 200
